@@ -5,7 +5,9 @@ from app.models import Company
 
 
 def is_platform_admin():
-    return current_user.is_authenticated and getattr(current_user, "is_platform_admin", False)
+    if not current_user.is_authenticated:
+        return False
+    return getattr(current_user, "is_platform_admin", False) or current_user.role == "Developer"
 
 
 def current_company_id():
