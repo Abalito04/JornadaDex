@@ -12,4 +12,4 @@ COPY . .
 
 EXPOSE 5000
 
-CMD ["sh", "-c", "flask --app run:app init-db && gunicorn -b 0.0.0.0:${PORT:-5000} run:app"]
+CMD ["sh", "-c", "gunicorn --workers 1 --timeout 120 -b 0.0.0.0:${PORT:-5000} run:app"]

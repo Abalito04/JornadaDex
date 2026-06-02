@@ -1,1 +1,1 @@
-web: flask --app run:app init-db && gunicorn -b 0.0.0.0:$PORT run:app
+web: gunicorn --workers 1 --timeout 120 -b 0.0.0.0:$PORT run:app

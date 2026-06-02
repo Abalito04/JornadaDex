@@ -1,7 +1,9 @@
-from flask import Flask
+from flask import Flask, request
 
 from app.config import Config
 from app.extensions import csrf, db, login_manager, migrate
+
+_database_checked = False
 
 
 def create_app(config_class=Config):
@@ -16,6 +18,16 @@ def create_app(config_class=Config):
     migrate.init_app(app, db)
     login_manager.init_app(app)
     csrf.init_app(app)
+
+    @app.before_request
+    def ensure_database():
+        global _database_checked
+        if _database_checked or request.endpoint == "healthz" or request.path.startswith("/static/"):
+            return
+
+        with app.app_context():
+            db.create_all()
+        _database_checked = True
 
     login_manager.login_view = "auth.login"
     login_manager.login_message = "Inicia sesion para continuar."
