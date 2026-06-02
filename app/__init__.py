@@ -1,4 +1,7 @@
+import os
+
 from flask import Flask, request
+from sqlalchemy import inspect, text
 
 from app.config import Config
 from app.extensions import csrf, db, login_manager, migrate
@@ -27,6 +30,8 @@ def create_app(config_class=Config):
 
         with app.app_context():
             db.create_all()
+            ensure_runtime_schema()
+            bootstrap_platform_admin()
         _database_checked = True
 
     login_manager.login_view = "auth.login"
@@ -45,6 +50,7 @@ def create_app(config_class=Config):
     from app.reports.routes import reports_bp
     from app.areas.routes import areas_bp
     from app.audit.routes import audit_bp
+    from app.platform.routes import platform_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(dashboard_bp)
@@ -53,8 +59,71 @@ def create_app(config_class=Config):
     app.register_blueprint(reports_bp)
     app.register_blueprint(areas_bp)
     app.register_blueprint(audit_bp)
+    app.register_blueprint(platform_bp)
+
+    @app.context_processor
+    def inject_global_context():
+        from app.context import current_company, is_platform_admin
+
+        return {
+            "active_company": current_company,
+            "is_platform_admin": is_platform_admin,
+        }
 
     from app.cli import register_cli
 
     register_cli(app)
     return app
+
+
+def ensure_runtime_schema():
+    inspector = inspect(db.engine)
+    if "users" not in inspector.get_table_names():
+        return
+    columns = {column["name"] for column in inspector.get_columns("users")}
+    if "is_platform_admin" not in columns:
+        db.session.execute(text("ALTER TABLE users ADD COLUMN is_platform_admin BOOLEAN NOT NULL DEFAULT FALSE"))
+        db.session.commit()
+
+
+def bootstrap_platform_admin():
+    from app.config import clean_env_value
+
+    username = clean_env_value(os.getenv("DEVELOPER_USERNAME"))
+    password = clean_env_value(os.getenv("DEVELOPER_PASSWORD"))
+    email = clean_env_value(os.getenv("DEVELOPER_EMAIL")) or "developer@trazalab.local"
+    if not username or not password:
+        return
+    username = username.strip().lower()
+    email = email.strip().lower()
+
+    from app.models import Company, User
+
+    user = User.query.filter_by(username=username).first()
+    if user:
+        user.email = email
+        user.is_platform_admin = True
+        user.role = "Developer"
+        user.is_active_flag = True
+        user.deleted_at = None
+        user.set_password(password)
+        db.session.commit()
+        return
+
+    company = Company.query.filter_by(name="TrazaLab Developer").first()
+    if not company:
+        company = Company(name="TrazaLab Developer", active=True)
+        db.session.add(company)
+        db.session.flush()
+
+    developer = User(
+        company_id=company.id,
+        username=username,
+        email=email,
+        role="Developer",
+        is_platform_admin=True,
+        is_company_owner=False,
+    )
+    developer.set_password(password)
+    db.session.add(developer)
+    db.session.commit()
