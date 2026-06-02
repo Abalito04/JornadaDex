@@ -121,9 +121,9 @@ def bootstrap_platform_admin():
         username=username,
         email=email,
         role="Developer",
-        is_platform_admin=True,
         is_company_owner=False,
     )
+    developer.is_platform_admin = True
     developer.set_password(password)
     db.session.add(developer)
     db.session.commit()
