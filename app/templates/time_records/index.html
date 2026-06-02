@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}Horas{% endblock %}
+{% block content %}
+<section class="page-title">
+  <h1>Iniciar tarea</h1>
+  <p>La fecha y hora se registran automaticamente con el servidor.</p>
+</section>
+
+<section class="panel">
+  <form method="post" class="grid-form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div>
+      <label>Empleado</label>
+      <select name="employee_id" required>
+        {% for employee in employees %}
+          <option value="{{ employee.id }}">{{ employee.full_name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div>
+      <label>Area</label>
+      <select id="areaSelect" name="area_id" required>
+        <option value="">Seleccionar</option>
+        {% for area in areas %}
+          <option value="{{ area.id }}">{{ area.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div>
+      <label>Tarea</label>
+      <select id="taskSelect" name="task_id" required>
+        <option value="">Seleccionar area primero</option>
+      </select>
+    </div>
+    <div class="full"><label>Observaciones</label><textarea name="observations" rows="2"></textarea></div>
+    <button type="submit">Iniciar tarea ahora</button>
+  </form>
+</section>
+
+<section class="panel">
+  <h2>Ultimos registros</h2>
+  <table>
+    <thead>
+      <tr><th>Empleado</th><th>Fecha</th><th>Inicio</th><th>Fin</th><th>Horas</th><th>Estado</th><th>Area</th><th>Tarea</th><th></th></tr>
+    </thead>
+    <tbody>
+      {% for record in records %}
+        <tr>
+          <td>{{ record.employee.full_name }}</td>
+          <td>{{ record.record_date }}</td>
+          <td>{{ record.start_time.strftime("%H:%M:%S") }}</td>
+          <td>{{ record.end_time.strftime("%H:%M:%S") if record.end_time else "" }}</td>
+          <td>{{ record.hours }}</td>
+          <td>{{ "En curso" if not record.end_time else "Finalizada" }}</td>
+          <td>{{ record.area.name }}</td>
+          <td>{{ record.task.name }}</td>
+          <td>
+            {% if not record.end_time %}
+              <form method="post" action="{{ url_for('time_records.finish', record_id=record.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit">Finalizar</button>
+              </form>
+            {% endif %}
+            <form method="post" action="{{ url_for('time_records.delete', record_id=record.id) }}" onsubmit="return confirm('Eliminar registro?')">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button class="danger" type="submit">Eliminar</button>
+            </form>
+          </td>
+        </tr>
+      {% else %}
+        <tr><td colspan="9">No hay registros cargados.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}

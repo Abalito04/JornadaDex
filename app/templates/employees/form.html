@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}{{ "Editar empleado" if employee else "Nuevo empleado" }}{% endblock %}
+{% block content %}
+<section class="page-title">
+  <h1>{{ "Editar empleado" if employee else "Nuevo empleado" }}</h1>
+  <p>{% if employee %}Modifica datos y, si hace falta, resetea la clave del usuario.{% else %}Tambien podes crearle usuario para que cargue sus horas.{% endif %}</p>
+</section>
+
+<section class="panel">
+  <form method="post" class="grid-form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div><label>Nombre</label><input name="first_name" value="{{ employee.first_name if employee else '' }}" required></div>
+    <div><label>Apellido</label><input name="last_name" value="{{ employee.last_name if employee else '' }}" required></div>
+    <div><label>Documento</label><input name="document_number" value="{{ employee.document_number if employee else '' }}" required></div>
+    <div><label>Email</label><input name="email" type="email" value="{{ employee.email if employee and employee.email else '' }}"></div>
+    <div><label>Telefono</label><input name="phone" value="{{ employee.phone if employee and employee.phone else '' }}"></div>
+    <div><label>Puesto</label><input name="position" value="{{ employee.position if employee and employee.position else '' }}"></div>
+    <div class="full"><label>Notas</label><textarea name="notes" rows="2">{{ employee.notes if employee and employee.notes else '' }}</textarea></div>
+
+    {% if employee %}
+      <div class="full form-divider">
+        <strong>Acceso</strong>
+        <span>{{ employee.user.username if employee.user else "Este empleado no tiene usuario creado." }}</span>
+      </div>
+      {% if employee.user %}
+        <div>
+          <label>Nueva clave</label>
+          <input name="password" type="password" placeholder="Dejar vacio para no cambiar">
+        </div>
+      {% endif %}
+    {% else %}
+      <div class="full checkbox-row">
+        <input id="create_user" name="create_user" type="checkbox">
+        <label for="create_user">Crear usuario de acceso</label>
+      </div>
+      <div><label>Usuario</label><input name="username"></div>
+      <div><label>Clave</label><input name="password" type="password"></div>
+      <div>
+        <label>Rol</label>
+        <select name="role">
+          <option value="Employee">Empleado</option>
+          <option value="Supervisor">Supervisor</option>
+        </select>
+      </div>
+    {% endif %}
+
+    <div class="full form-actions">
+      <button type="submit">Guardar cambios</button>
+      <a class="button ghost" href="{{ url_for('employees.index') }}">Cancelar</a>
+    </div>
+  </form>
+</section>
+{% endblock %}

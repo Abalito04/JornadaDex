@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}Areas y tareas{% endblock %}
+{% block content %}
+<section class="page-title">
+  <h1>Areas y tareas</h1>
+  <p>Catalogo de trabajo de la empresa.</p>
+</section>
+
+<section class="panel">
+  <h2>Nueva area</h2>
+  <form method="post" action="{{ url_for('areas.create_area') }}" class="grid-form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div>
+      <label>Nombre del area</label>
+      <input name="name" required>
+    </div>
+    <div>
+      <label>Descripcion</label>
+      <input name="description">
+    </div>
+    <button type="submit">Crear area</button>
+  </form>
+</section>
+
+<section class="panel area-cascade">
+  {% for area in areas %}
+    <details class="area-block" {% if loop.first %}open{% endif %}>
+      <summary class="area-header">
+        <div>
+          <h2>{{ area.name }}</h2>
+          <p>
+            {% set visible_tasks = area.tasks | rejectattr("deleted_at") | list %}
+            {{ visible_tasks|length }} tareas{% if area.description %} · {{ area.description }}{% endif %}
+          </p>
+        </div>
+        <span class="accordion-indicator">Mostrar</span>
+      </summary>
+
+      <div class="area-actions">
+        <form method="post" action="{{ url_for('areas.delete_area', area_id=area.id) }}" onsubmit="return confirm('Eliminar area y sus tareas?')">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button class="danger subtle small" type="submit">Eliminar area</button>
+        </form>
+      </div>
+
+      <div class="task-cascade">
+        {% for task in area.tasks if not task.deleted_at %}
+          <div class="task-row">
+            <span>{{ task.name }}</span>
+            <form method="post" action="{{ url_for('areas.delete_task', task_id=task.id) }}" onsubmit="return confirm('Eliminar tarea?')">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button class="danger subtle small" type="submit">Eliminar</button>
+            </form>
+          </div>
+        {% else %}
+          <div class="task-row empty">Sin tareas cargadas.</div>
+        {% endfor %}
+      </div>
+
+      <form method="post" action="{{ url_for('areas.create_task', area_id=area.id) }}" class="cascade-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input name="name" placeholder="Nueva tarea" required>
+        <input name="description" placeholder="Descripcion opcional">
+        <button class="small" type="submit">Agregar tarea</button>
+      </form>
+    </details>
+  {% else %}
+    <p>No hay areas cargadas.</p>
+  {% endfor %}
+</section>
+{% endblock %}

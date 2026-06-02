@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Nuevo empleado{% endblock %}
+{% block content %}
+<section class="page-title">
+  <h1>Nuevo empleado</h1>
+  <p>Tambien podes crearle usuario para que cargue sus horas.</p>
+</section>
+
+<section class="panel">
+  <form method="post" class="grid-form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div><label>Nombre</label><input name="first_name" required></div>
+    <div><label>Apellido</label><input name="last_name" required></div>
+    <div><label>Documento</label><input name="document_number" required></div>
+    <div><label>Email</label><input name="email" type="email"></div>
+    <div><label>Telefono</label><input name="phone"></div>
+    <div><label>Puesto</label><input name="position"></div>
+    <div class="full"><label>Notas</label><textarea name="notes" rows="2"></textarea></div>
+    <div class="full checkbox-row">
+      <input id="create_user" name="create_user" type="checkbox">
+      <label for="create_user">Crear usuario de acceso</label>
+    </div>
+    <div><label>Usuario</label><input name="username"></div>
+    <div><label>Clave</label><input name="password" type="password"></div>
+    <div>
+      <label>Rol</label>
+      <select name="role">
+        <option value="Employee">Empleado</option>
+        <option value="Supervisor">Supervisor</option>
+      </select>
+    </div>
+    <button type="submit">Guardar</button>
+  </form>
+</section>
+{% endblock %}

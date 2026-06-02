@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<section class="page-title">
+  <h1>Dashboard</h1>
+  <p>Indicadores de productividad de la empresa.</p>
+</section>
+
+<section class="metric-grid">
+  <article><span>Empleados activos</span><strong>{{ metrics.active_employees }}</strong></article>
+  <article><span>Horas hoy</span><strong>{{ "%.2f"|format(metrics.total_hours_today) }}</strong></article>
+  <article><span>Horas semana</span><strong>{{ "%.2f"|format(metrics.total_hours_week) }}</strong></article>
+  <article><span>Horas mes</span><strong>{{ "%.2f"|format(metrics.total_hours_month) }}</strong></article>
+  <article><span>Registros</span><strong>{{ metrics.total_records }}</strong></article>
+  <article><span>Areas activas</span><strong>{{ metrics.active_areas }}</strong></article>
+  <article><span>Tareas activas</span><strong>{{ metrics.active_tasks }}</strong></article>
+</section>
+
+<section class="two-columns">
+  <div class="panel">
+    <h2>Horas por area</h2>
+    <table>
+      <tbody>
+        {% for name, hours in by_area %}
+          <tr><td>{{ name }}</td><td>{{ "%.2f"|format(hours) }}</td></tr>
+        {% else %}
+          <tr><td colspan="2">Sin datos</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div class="panel">
+    <h2>Ranking por empleado</h2>
+    <table>
+      <tbody>
+        {% for first, last, hours in by_employee %}
+          <tr><td>{{ first }} {{ last }}</td><td>{{ "%.2f"|format(hours) }}</td></tr>
+        {% else %}
+          <tr><td colspan="2">Sin datos</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

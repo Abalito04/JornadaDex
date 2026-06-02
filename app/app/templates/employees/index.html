@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Empleados{% endblock %}
+{% block content %}
+<section class="page-title row-title">
+  <div>
+    <h1>Empleados</h1>
+    <p>Personas y usuarios vinculados a esta empresa.</p>
+  </div>
+  <a class="button" href="{{ url_for('employees.create') }}">Nuevo empleado</a>
+</section>
+
+<section class="panel">
+  <table>
+    <thead>
+      <tr><th>Nombre</th><th>Documento</th><th>Email</th><th>Puesto</th><th>Usuario</th><th></th></tr>
+    </thead>
+    <tbody>
+      {% for employee in employees %}
+        <tr>
+          <td>{{ employee.full_name }}</td>
+          <td>{{ employee.document_number }}</td>
+          <td>{{ employee.email or "" }}</td>
+          <td>{{ employee.position or "" }}</td>
+          <td>{{ employee.user.username if employee.user else "Sin usuario" }}</td>
+          <td>
+            <form method="post" action="{{ url_for('employees.delete', employee_id=employee.id) }}" onsubmit="return confirm('Eliminar empleado?')">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button class="danger" type="submit">Eliminar</button>
+            </form>
+          </td>
+        </tr>
+      {% else %}
+        <tr><td colspan="6">No hay empleados cargados.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}

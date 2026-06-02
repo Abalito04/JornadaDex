@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Reportes{% endblock %}
+{% block content %}
+<section class="page-title">
+  <h1>Reportes</h1>
+  <p>Total filtrado: {{ "%.2f"|format(total_hours) }} horas.</p>
+</section>
+
+<section class="panel">
+  <form method="get" class="filter-form">
+    <select name="employee_id">
+      <option value="">Todos los empleados</option>
+      {% for employee in employees %}
+        <option value="{{ employee.id }}" {% if request.args.get('employee_id') == employee.id|string %}selected{% endif %}>{{ employee.full_name }}</option>
+      {% endfor %}
+    </select>
+    <select name="area_id">
+      <option value="">Todas las areas</option>
+      {% for area in areas %}
+        <option value="{{ area.id }}" {% if request.args.get('area_id') == area.id|string %}selected{% endif %}>{{ area.name }}</option>
+      {% endfor %}
+    </select>
+    <input name="date_from" type="date" value="{{ request.args.get('date_from', '') }}">
+    <input name="date_to" type="date" value="{{ request.args.get('date_to', '') }}">
+    <button type="submit">Filtrar</button>
+    <a class="button secondary" href="{{ url_for('reports.export_csv', **request.args) }}">CSV</a>
+    <a class="button secondary" href="{{ url_for('reports.export_excel', **request.args) }}">Excel</a>
+  </form>
+</section>
+
+<section class="panel">
+  <table>
+    <thead>
+      <tr><th>Empleado</th><th>Fecha</th><th>Inicio</th><th>Fin</th><th>Horas</th><th>Estado</th><th>Area</th><th>Tarea</th></tr>
+    </thead>
+    <tbody>
+      {% for record in records %}
+        <tr>
+          <td>{{ record.employee.full_name }}</td>
+          <td>{{ record.record_date }}</td>
+          <td>{{ record.start_time.strftime("%H:%M:%S") }}</td>
+          <td>{{ record.end_time.strftime("%H:%M:%S") if record.end_time else "" }}</td>
+          <td>{{ record.hours }}</td>
+          <td>{{ "En curso" if not record.end_time else "Finalizada" }}</td>
+          <td>{{ record.area.name }}</td>
+          <td>{{ record.task.name }}</td>
+        </tr>
+      {% else %}
+        <tr><td colspan="8">Sin registros para los filtros elegidos.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}

@@ -1,0 +1,151 @@
+:root {
+  --bg: #f5f7fb;
+  --panel: #ffffff;
+  --text: #172033;
+  --muted: #667085;
+  --line: #d8dee9;
+  --brand: #1f6feb;
+  --brand-dark: #174ea6;
+  --danger: #c53030;
+  --sidebar: #111827;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+a { color: var(--brand); text-decoration: none; }
+
+.topbar {
+  height: 58px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 24px;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+.topbar span { color: var(--muted); margin-left: 12px; }
+
+.sidebar {
+  position: fixed;
+  top: 58px;
+  bottom: 0;
+  left: 0;
+  width: 220px;
+  background: var(--sidebar);
+  padding: 18px 12px;
+}
+.sidebar a {
+  display: block;
+  color: #eef2ff;
+  padding: 11px 12px;
+  border-radius: 6px;
+  margin-bottom: 4px;
+}
+.sidebar a:hover { background: #1f2937; }
+
+main.with-sidebar { margin-left: 220px; padding: 26px; }
+main.auth-main { min-height: calc(100vh - 58px); display: grid; place-items: center; padding: 24px; }
+
+.page-title { margin-bottom: 18px; }
+.page-title h1 { margin: 0 0 6px; font-size: 28px; }
+.page-title p { margin: 0; color: var(--muted); }
+.row-title { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+
+.panel, .auth-card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 18px;
+  box-shadow: 0 8px 20px rgba(17, 24, 39, 0.04);
+}
+.auth-card { width: min(420px, 100%); }
+.auth-card.wide { width: min(760px, 100%); }
+
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.metric-grid article {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 16px;
+}
+.metric-grid span { display: block; color: var(--muted); font-size: 13px; }
+.metric-grid strong { display: block; margin-top: 8px; font-size: 26px; }
+
+.two-columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 18px;
+}
+
+.grid-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 14px;
+}
+.full { grid-column: 1 / -1; }
+.filter-form { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+
+label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+input, select, textarea {
+  width: 100%;
+  border: 1px solid #b8c0cc;
+  border-radius: 6px;
+  padding: 10px;
+  font-size: 14px;
+  background: #fff;
+}
+textarea { resize: vertical; }
+
+button, .button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 6px;
+  background: var(--brand);
+  color: white;
+  padding: 10px 14px;
+  font-weight: 700;
+  cursor: pointer;
+  min-height: 40px;
+}
+button:hover, .button:hover { background: var(--brand-dark); color: white; }
+.secondary { background: #475467; }
+.danger { background: var(--danger); padding: 8px 10px; min-height: 34px; }
+.link-button { background: transparent; color: var(--brand); padding: 0; min-height: auto; }
+
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { border-bottom: 1px solid var(--line); padding: 10px; text-align: left; vertical-align: top; }
+th { color: #344054; background: #f8fafc; }
+
+.messages { margin-bottom: 16px; }
+.alert { padding: 12px 14px; border-radius: 6px; margin-bottom: 8px; }
+.alert.success { background: #dcfce7; color: #166534; }
+.alert.danger { background: #fee2e2; color: #991b1b; }
+.checkbox-row { display: flex; align-items: center; gap: 8px; }
+.checkbox-row input { width: auto; }
+.checkbox-row label { margin: 0; }
+.task-list { columns: 2; padding-left: 18px; }
+
+@media (max-width: 760px) {
+  .sidebar { position: static; width: auto; display: flex; overflow-x: auto; padding: 8px; }
+  main.with-sidebar { margin-left: 0; padding: 16px; }
+  .topbar { padding: 0 14px; }
+  .row-title { align-items: flex-start; flex-direction: column; }
+  table { display: block; overflow-x: auto; }
+}
