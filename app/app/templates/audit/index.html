@@ -3,10 +3,13 @@
 {% block content %}
 <section class="page-title">
   <h1>Auditoria</h1>
-  <p>Ultimos movimientos registrados para esta empresa.</p>
+  <p>Historial de acciones sensibles: inicios de sesion, altas, bajas, cambios y exportaciones.</p>
 </section>
 
 <section class="panel">
+  <div class="audit-help">
+    Sirve para controlar trazabilidad: quien hizo una accion, cuando la hizo y sobre que registro. Solo la ve el dueño de la empresa.
+  </div>
   <table>
     <thead>
       <tr><th>Fecha</th><th>Usuario</th><th>Accion</th><th>Tabla</th><th>ID</th><th>IP</th></tr>
@@ -16,7 +19,7 @@
         <tr>
           <td>{{ log.created_at.strftime("%Y-%m-%d %H:%M") }}</td>
           <td>{{ log.user.username if log.user else "" }}</td>
-          <td>{{ log.action }}</td>
+          <td><span class="audit-chip">{{ log.action }}</span></td>
           <td>{{ log.table_name }}</td>
           <td>{{ log.record_id or "" }}</td>
           <td>{{ log.ip_address or "" }}</td>

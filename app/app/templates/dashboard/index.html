@@ -19,27 +19,29 @@
 <section class="two-columns">
   <div class="panel">
     <h2>Horas por area</h2>
-    <table>
-      <tbody>
-        {% for name, hours in by_area %}
-          <tr><td>{{ name }}</td><td>{{ "%.2f"|format(hours) }}</td></tr>
-        {% else %}
-          <tr><td colspan="2">Sin datos</td></tr>
-        {% endfor %}
-      </tbody>
-    </table>
+    <div class="bar-chart">
+      {% for row in area_chart %}
+        <div class="bar-row">
+          <div class="bar-label"><span>{{ row.label }}</span><strong>{{ "%.2f"|format(row.value) }}</strong></div>
+          <div class="bar-track"><div class="bar-fill" style="width: {{ row.width }}%"></div></div>
+        </div>
+      {% else %}
+        <p class="empty-state">Sin datos para graficar.</p>
+      {% endfor %}
+    </div>
   </div>
   <div class="panel">
     <h2>Ranking por empleado</h2>
-    <table>
-      <tbody>
-        {% for first, last, hours in by_employee %}
-          <tr><td>{{ first }} {{ last }}</td><td>{{ "%.2f"|format(hours) }}</td></tr>
-        {% else %}
-          <tr><td colspan="2">Sin datos</td></tr>
-        {% endfor %}
-      </tbody>
-    </table>
+    <div class="bar-chart">
+      {% for row in employee_chart %}
+        <div class="bar-row">
+          <div class="bar-label"><span>{{ row.label }}</span><strong>{{ "%.2f"|format(row.value) }}</strong></div>
+          <div class="bar-track"><div class="bar-fill secondary-fill" style="width: {{ row.width }}%"></div></div>
+        </div>
+      {% else %}
+        <p class="empty-state">Sin datos para graficar.</p>
+      {% endfor %}
+    </div>
   </div>
 </section>
 {% endblock %}

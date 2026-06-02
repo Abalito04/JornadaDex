@@ -1,13 +1,14 @@
 from flask import request
 from flask_login import current_user
 
+from app.context import current_company_id
 from app.extensions import db
 from app.models import AuditLog
 
 
 def write_audit(action, table_name, record_id=None, previous_values=None, new_values=None, company_id=None):
     if not company_id and current_user.is_authenticated:
-        company_id = current_user.company_id
+        company_id = current_company_id()
 
     if not company_id:
         return

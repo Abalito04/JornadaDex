@@ -6,6 +6,7 @@ from flask_login import current_user, login_required
 from openpyxl import Workbook
 from sqlalchemy import func
 
+from app.context import current_company_id, is_platform_admin
 from app.extensions import db
 from app.models import Area, Employee, Task, TimeRecord
 from app.services.audit_service import write_audit
@@ -18,8 +19,8 @@ reports_bp = Blueprint("reports", __name__, url_prefix="/reports")
 @login_required
 def index():
     records = _filtered_records().all()
-    employees = Employee.query.filter_by(company_id=current_user.company_id, deleted_at=None).order_by(Employee.last_name).all()
-    areas = Area.query.filter_by(company_id=current_user.company_id, deleted_at=None).order_by(Area.name).all()
+    employees = Employee.query.filter_by(company_id=current_company_id(), deleted_at=None).order_by(Employee.last_name).all()
+    areas = Area.query.filter_by(company_id=current_company_id(), deleted_at=None).order_by(Area.name).all()
     total_hours = sum(float(record.hours) for record in records)
     return render_template("reports/index.html", records=records, employees=employees, areas=areas, total_hours=total_hours)
 
@@ -66,8 +67,8 @@ def export_excel():
 
 
 def _filtered_records():
-    query = TimeRecord.query.filter_by(company_id=current_user.company_id, deleted_at=None)
-    if current_user.role == "Employee" and not current_user.is_company_owner:
+    query = TimeRecord.query.filter_by(company_id=current_company_id(), deleted_at=None)
+    if current_user.role == "Employee" and not current_user.is_company_owner and not is_platform_admin():
         query = query.filter(TimeRecord.employee_id == current_user.employee_id)
 
     employee_id = request.args.get("employee_id")

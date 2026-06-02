@@ -52,6 +52,7 @@ class User(UserMixin, db.Model, AuditMixin):
     password_hash = db.Column(db.String(255), nullable=False)
     role = db.Column(db.String(30), nullable=False, default="Employee")
     is_company_owner = db.Column(db.Boolean, default=False, nullable=False)
+    is_platform_admin = db.Column(db.Boolean, default=False, nullable=False)
     is_active_flag = db.Column(db.Boolean, default=True, nullable=False)
     last_login_at = db.Column(db.DateTime, nullable=True)
 

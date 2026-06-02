@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Empresas{% endblock %}
+{% block content %}
+<section class="page-title">
+  <h1>Empresas</h1>
+  <p>Selecciona la empresa que queres administrar como Developer.</p>
+</section>
+
+<section class="panel">
+  <table>
+    <thead>
+      <tr><th>Empresa</th><th>Estado</th><th></th></tr>
+    </thead>
+    <tbody>
+      {% for company in companies %}
+        <tr>
+          <td>{{ company.name }}</td>
+          <td>{{ "Activa" if company.active else "Inactiva" }}</td>
+          <td>
+            <form method="post" action="{{ url_for('platform.select_company', company_id=company.id) }}">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button class="small" type="submit">Administrar</button>
+            </form>
+          </td>
+        </tr>
+      {% else %}
+        <tr><td colspan="3">No hay empresas creadas.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}

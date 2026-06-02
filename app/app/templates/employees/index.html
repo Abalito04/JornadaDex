@@ -23,10 +23,16 @@
           <td>{{ employee.position or "" }}</td>
           <td>{{ employee.user.username if employee.user else "Sin usuario" }}</td>
           <td>
-            <form method="post" action="{{ url_for('employees.delete', employee_id=employee.id) }}" onsubmit="return confirm('Eliminar empleado?')">
-              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-              <button class="danger" type="submit">Eliminar</button>
-            </form>
+            {% set is_owner_employee = employee.user and employee.user.is_company_owner %}
+            {% if current_user.is_company_owner or is_platform_admin() or not is_owner_employee %}
+              <a class="button small secondary" href="{{ url_for('employees.edit', employee_id=employee.id) }}">Editar</a>
+              <form method="post" action="{{ url_for('employees.delete', employee_id=employee.id) }}" onsubmit="return confirm('Eliminar empleado?')">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button class="danger small" type="submit">Eliminar</button>
+              </form>
+            {% else %}
+              <span class="muted-text">Protegido</span>
+            {% endif %}
           </td>
         </tr>
       {% else %}
