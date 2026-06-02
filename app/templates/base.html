@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="es">
 <head>
   <meta charset="utf-8">
@@ -12,7 +12,7 @@
       <span class="brand-mark">TL</span>
       <strong>TrazaLab</strong>
       {% if current_user.is_authenticated %}
-        <span class="company-name">{{ current_user.company.name }}</span>
+        <span class="company-name">{{ active_company().name if active_company() else current_user.company.name }}</span>
       {% endif %}
     </div>
     {% if current_user.is_authenticated %}
@@ -26,13 +26,17 @@
   {% if current_user.is_authenticated %}
     <nav class="sidebar">
       <a href="{{ url_for('dashboard.index') }}">Dashboard</a>
+      {% if is_platform_admin() %}
+        <a href="{{ url_for('platform.companies') }}">Empresas</a>
+        <a href="{{ url_for('platform.users') }}">Usuarios</a>
+      {% endif %}
       <a href="{{ url_for('time_records.index') }}">Horas</a>
-      {% if current_user.role in ['Administrator', 'Supervisor'] or current_user.is_company_owner %}
+      {% if current_user.role in ['Administrator', 'Supervisor'] or current_user.is_company_owner or is_platform_admin() %}
         <a href="{{ url_for('employees.index') }}">Empleados</a>
         <a href="{{ url_for('areas.index') }}">Areas y tareas</a>
       {% endif %}
       <a href="{{ url_for('reports.index') }}">Reportes</a>
-      {% if current_user.role == 'Administrator' or current_user.is_company_owner %}
+      {% if current_user.role == 'Administrator' or current_user.is_company_owner or is_platform_admin() %}
         <a href="{{ url_for('audit.index') }}">Auditoria</a>
       {% endif %}
     </nav>
@@ -53,4 +57,3 @@
   <script src="{{ url_for('static', filename='js/app.js') }}"></script>
 </body>
 </html>
-

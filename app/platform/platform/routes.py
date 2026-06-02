@@ -1,0 +1,179 @@
+from flask import Blueprint, flash, redirect, render_template, request, session, url_for
+from flask_login import login_required
+
+from app.extensions import db
+from app.context import is_platform_admin
+from app.models import Company, User
+from app.services.audit_service import write_audit
+
+platform_bp = Blueprint("platform", __name__, url_prefix="/platform")
+
+
+def require_platform_admin():
+    if not is_platform_admin():
+        return ("Forbidden", 403)
+    return None
+
+
+@platform_bp.route("/companies")
+@login_required
+def companies():
+    denied = require_platform_admin()
+    if denied:
+        return denied
+    companies = Company.query.filter(Company.deleted_at.is_(None)).order_by(Company.name).all()
+    return render_template("platform/companies.html", companies=companies)
+
+
+@platform_bp.route("/companies/create", methods=["POST"])
+@login_required
+def create_company():
+    denied = require_platform_admin()
+    if denied:
+        return denied
+
+    name = request.form.get("name", "").strip()
+    tax_id = request.form.get("tax_id", "").strip() or None
+    if not name:
+        flash("El nombre de la empresa es obligatorio.", "danger")
+        return redirect(url_for("platform.companies"))
+
+    exists = Company.query.filter_by(name=name, deleted_at=None).first()
+    if exists:
+        flash("Ya existe una empresa con ese nombre.", "danger")
+        return redirect(url_for("platform.companies"))
+
+    company = Company(name=name, tax_id=tax_id, active=True)
+    db.session.add(company)
+    db.session.flush()
+    write_audit("CREATE", "companies", company.id, new_values={"name": company.name}, company_id=company.id)
+    db.session.commit()
+    flash("Empresa creada.", "success")
+    return redirect(url_for("platform.companies"))
+
+
+@platform_bp.route("/companies/<int:company_id>/edit", methods=["GET", "POST"])
+@login_required
+def edit_company(company_id):
+    denied = require_platform_admin()
+    if denied:
+        return denied
+
+    company = Company.query.filter_by(id=company_id, deleted_at=None).first_or_404()
+    if request.method == "POST":
+        previous_values = {"name": company.name, "tax_id": company.tax_id, "active": company.active}
+        company.name = request.form.get("name", "").strip()
+        company.tax_id = request.form.get("tax_id", "").strip() or None
+        company.active = request.form.get("active") == "on"
+        if not company.name:
+            flash("El nombre de la empresa es obligatorio.", "danger")
+            return redirect(url_for("platform.edit_company", company_id=company.id))
+        write_audit(
+            "UPDATE",
+            "companies",
+            company.id,
+            previous_values=previous_values,
+            new_values={"name": company.name, "tax_id": company.tax_id, "active": company.active},
+            company_id=company.id,
+        )
+        db.session.commit()
+        flash("Empresa actualizada.", "success")
+        return redirect(url_for("platform.companies"))
+
+    return render_template("platform/company_form.html", company=company)
+
+
+@platform_bp.route("/companies/<int:company_id>/delete", methods=["POST"])
+@login_required
+def delete_company(company_id):
+    denied = require_platform_admin()
+    if denied:
+        return denied
+
+    company = Company.query.filter_by(id=company_id, deleted_at=None).first_or_404()
+    company.soft_delete()
+    company.active = False
+    write_audit("DELETE", "companies", company.id, previous_values={"name": company.name}, company_id=company.id)
+    db.session.commit()
+    if session.get("active_company_id") == company.id:
+        session.pop("active_company_id", None)
+    flash("Empresa eliminada logicamente.", "success")
+    return redirect(url_for("platform.companies"))
+
+
+@platform_bp.route("/users")
+@login_required
+def users():
+    denied = require_platform_admin()
+    if denied:
+        return denied
+    users = User.query.filter(User.deleted_at.is_(None)).order_by(User.username).all()
+    return render_template("platform/users.html", users=users)
+
+
+@platform_bp.route("/users/<int:user_id>/edit", methods=["GET", "POST"])
+@login_required
+def edit_user(user_id):
+    denied = require_platform_admin()
+    if denied:
+        return denied
+
+    user = User.query.filter_by(id=user_id, deleted_at=None).first_or_404()
+    companies = Company.query.filter(Company.deleted_at.is_(None)).order_by(Company.name).all()
+    if request.method == "POST":
+        previous_values = {
+            "username": user.username,
+            "email": user.email,
+            "role": user.role,
+            "company_id": user.company_id,
+            "is_active": user.is_active_flag,
+            "is_company_owner": user.is_company_owner,
+            "is_platform_admin": user.is_platform_admin,
+        }
+        user.username = request.form.get("username", "").strip().lower()
+        user.email = request.form.get("email", "").strip().lower()
+        user.role = request.form.get("role", "Employee")
+        user.company_id = int(request.form.get("company_id") or user.company_id)
+        user.is_active_flag = request.form.get("is_active") == "on"
+        user.is_company_owner = request.form.get("is_company_owner") == "on"
+        user.is_platform_admin = request.form.get("is_platform_admin") == "on"
+        password = request.form.get("password", "")
+        if password:
+            user.set_password(password)
+            write_audit("PASSWORD_CHANGE", "users", user.id, new_values={"reset_by": "Developer"})
+        if not user.username or not user.email:
+            flash("Usuario y email son obligatorios.", "danger")
+            return redirect(url_for("platform.edit_user", user_id=user.id))
+        write_audit(
+            "UPDATE",
+            "users",
+            user.id,
+            previous_values=previous_values,
+            new_values={
+                "username": user.username,
+                "email": user.email,
+                "role": user.role,
+                "company_id": user.company_id,
+                "is_active": user.is_active_flag,
+                "is_company_owner": user.is_company_owner,
+                "is_platform_admin": user.is_platform_admin,
+            },
+            company_id=user.company_id,
+        )
+        db.session.commit()
+        flash("Usuario actualizado.", "success")
+        return redirect(url_for("platform.users"))
+
+    return render_template("platform/user_form.html", user=user, companies=companies)
+
+
+@platform_bp.route("/companies/<int:company_id>/select", methods=["POST"])
+@login_required
+def select_company(company_id):
+    denied = require_platform_admin()
+    if denied:
+        return denied
+    company = Company.query.filter_by(id=company_id, deleted_at=None).first_or_404()
+    session["active_company_id"] = company.id
+    flash(f"Empresa activa: {company.name}", "success")
+    return redirect(url_for("dashboard.index"))
