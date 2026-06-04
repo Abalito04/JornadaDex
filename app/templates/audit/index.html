@@ -1,35 +1,75 @@
 {% extends "base.html" %}
-{% block title %}Auditoria{% endblock %}
+{% block title %}Actividad{% endblock %}
 {% block content %}
 <section class="page-title">
-  <h1>Auditoria</h1>
-  <p>Historial de acciones sensibles: inicios de sesion, altas, bajas, cambios y exportaciones.</p>
+  <h1>Historial de actividad</h1>
+  <p>Selecciona un usuario para revisar sus movimientos importantes dentro del sistema.</p>
 </section>
 
-<section class="panel">
-  <div class="audit-help">
-    Sirve para controlar trazabilidad: quien hizo una accion, cuando la hizo y sobre que registro. Solo la ve el dueño de la empresa o el usuario Developer.
-  </div>
-  <div class="table-wrap">
-    <table>
-      <thead>
-        <tr><th>Fecha</th><th>Usuario</th><th>Accion</th><th>Tabla</th><th>ID</th><th>IP</th></tr>
-      </thead>
-      <tbody>
-        {% for log in logs %}
-          <tr>
-            <td>{{ log.created_at.strftime("%Y-%m-%d %H:%M") }}</td>
-            <td>{{ log.user.username if log.user else "" }}</td>
-            <td><span class="audit-chip">{{ log.action }}</span></td>
-            <td>{{ log.table_name }}</td>
-            <td>{{ log.record_id or "" }}</td>
-            <td>{{ log.ip_address or "" }}</td>
-          </tr>
-        {% else %}
-          <tr><td colspan="6">Sin auditoria todavia.</td></tr>
+<section class="panel activity-filter">
+  <form method="get" class="filter-form">
+    <div>
+      <label>Usuario</label>
+      <select name="user_id" required>
+        <option value="">Seleccionar usuario</option>
+        {% for user in users %}
+          <option value="{{ user.id }}" {% if selected_user_id == user.id %}selected{% endif %}>
+            {{ user.username }}{% if user.employee %} · {{ user.employee.full_name }}{% endif %}
+          </option>
         {% endfor %}
-      </tbody>
-    </table>
-  </div>
+      </select>
+    </div>
+    <button type="submit"><i data-lucide="search"></i>Ver actividad</button>
+    {% if selected_user %}
+      <a class="button ghost" href="{{ url_for('audit.index') }}">Limpiar</a>
+    {% endif %}
+  </form>
 </section>
+
+{% if not selected_user_id %}
+  <section class="activity-panel">
+    <div class="empty-state">
+      <i data-lucide="user-search"></i>
+      <strong>Selecciona un usuario para ver su historial.</strong>
+      <span>Asi evitamos una lista enorme y cada actividad queda asociada a una persona concreta.</span>
+    </div>
+  </section>
+{% elif selected_user and events %}
+  <section class="activity-panel">
+    {% for event in events %}
+      <article class="activity-item">
+        <div class="activity-icon"><i data-lucide="{{ event.icon }}"></i></div>
+        <div class="activity-content">
+          <div class="activity-head">
+            <div>
+              <span class="activity-category">{{ event.category }}</span>
+              <h2>{{ event.title }}</h2>
+            </div>
+            <time>{{ event.created_at.strftime("%Y-%m-%d %H:%M") }}</time>
+          </div>
+          <p>{{ event.detail }}</p>
+          {% if event.show_technical %}
+            <details class="technical-detail">
+              <summary>Ver detalle tecnico</summary>
+              <dl>
+                <div><dt>Accion</dt><dd>{{ event.technical.action }}</dd></div>
+                <div><dt>Tabla</dt><dd>{{ event.technical.table }}</dd></div>
+                <div><dt>ID</dt><dd>{{ event.technical.record_id or "" }}</dd></div>
+                <div><dt>IP</dt><dd>{{ event.technical.ip or "" }}</dd></div>
+              </dl>
+            </details>
+          {% endif %}
+        </div>
+      </article>
+    {% endfor %}
+  </section>
+{% else %}
+  <section class="activity-panel">
+    <div class="empty-state">
+      <i data-lucide="activity"></i>
+      <strong>Este usuario todavia no tiene actividad registrada.</strong>
+      <span>Cuando inicie sesion, cargue tareas o realice cambios, va a aparecer aca.</span>
+    </div>
+  </section>
+{% endif %}
 {% endblock %}
