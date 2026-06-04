@@ -35,7 +35,7 @@ def create_app(config_class=Config):
         _database_checked = True
 
     login_manager.login_view = "auth.login"
-    login_manager.login_message = "Inicia sesion para continuar."
+    login_manager.login_message = None
 
     from app.models import User
 
