@@ -14,6 +14,12 @@
         <option value="{{ employee.id }}" {% if request.args.get('employee_id') == employee.id|string %}selected{% endif %}>{{ employee.full_name }}</option>
       {% endfor %}
     </select>
+    <select name="accounting_client_id">
+      <option value="">Todos los clientes</option>
+      {% for client in clients %}
+        <option value="{{ client.id }}" {% if request.args.get('accounting_client_id') == client.id|string %}selected{% endif %}>{{ client.name }}</option>
+      {% endfor %}
+    </select>
     <select name="area_id">
       <option value="">Todas las areas</option>
       {% for area in areas %}
@@ -22,33 +28,50 @@
     </select>
     <input name="date_from" type="date" value="{{ request.args.get('date_from', '') }}">
     <input name="date_to" type="date" value="{{ request.args.get('date_to', '') }}">
-    <button type="submit">Filtrar</button>
-    <a class="button secondary" href="{{ url_for('reports.export_csv', **request.args) }}">CSV</a>
-    <a class="button secondary" href="{{ url_for('reports.export_excel', **request.args) }}">Excel</a>
+    <button type="submit"><i data-lucide="filter"></i>Filtrar</button>
+    <a class="button secondary" href="{{ url_for('reports.export_csv', **request.args) }}"><i data-lucide="file-down"></i>CSV</a>
+    <a class="button secondary" href="{{ url_for('reports.export_excel', **request.args) }}"><i data-lucide="sheet"></i>Excel</a>
   </form>
 </section>
 
 <section class="panel">
-  <table>
-    <thead>
-      <tr><th>Empleado</th><th>Fecha</th><th>Inicio</th><th>Fin</th><th>Horas</th><th>Estado</th><th>Area</th><th>Tarea</th></tr>
-    </thead>
-    <tbody>
-      {% for record in records %}
-        <tr>
-          <td>{{ record.employee.full_name }}</td>
-          <td>{{ record.record_date }}</td>
-          <td>{{ record.start_time.strftime("%H:%M:%S") }}</td>
-          <td>{{ record.end_time.strftime("%H:%M:%S") if record.end_time else "" }}</td>
-          <td>{{ record.hours }}</td>
-          <td>{{ "En curso" if not record.end_time else "Finalizada" }}</td>
-          <td>{{ record.area.name }}</td>
-          <td>{{ record.task.name }}</td>
-        </tr>
-      {% else %}
-        <tr><td colspan="8">Sin registros para los filtros elegidos.</td></tr>
-      {% endfor %}
-    </tbody>
-  </table>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Empleado</th><th>Cliente</th><th>Fecha</th><th>Inicio</th><th>Fin</th><th>Horas</th><th>Estado</th><th>Area</th><th>Tarea</th></tr>
+      </thead>
+      <tbody>
+        {% for record in records %}
+          <tr>
+            <td>{{ record.employee.full_name }}</td>
+            <td>{{ record.accounting_client.name if record.accounting_client else "Sin cliente" }}</td>
+            <td>{{ record.record_date }}</td>
+            <td>{{ record.start_time.strftime("%H:%M:%S") }}</td>
+            <td>{{ record.end_time.strftime("%H:%M:%S") if record.end_time else "" }}</td>
+            <td>{{ record.hours }}</td>
+            <td>
+              {% if not record.end_time %}
+                <span class="status-badge en-curso">En curso</span>
+              {% else %}
+                <span class="status-badge finalizada">Finalizada</span>
+              {% endif %}
+            </td>
+            <td>{{ record.area.name }}</td>
+            <td>{{ record.task.name }}</td>
+          </tr>
+        {% else %}
+          <tr>
+            <td colspan="9">
+              <div class="empty-state compact">
+                <i data-lucide="bar-chart-3"></i>
+                <strong>Sin registros para los filtros elegidos.</strong>
+                <span>Modifica el rango o los filtros para consultar otros movimientos.</span>
+              </div>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 </section>
 {% endblock %}

@@ -3,17 +3,23 @@
 {% block content %}
 <section class="auth-shell">
   <div class="auth-copy">
-    <span class="auth-eyebrow">Gestion y trazabilidad</span>
+    <svg class="auth-logo" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+      <rect x="7" y="7" width="34" height="34" rx="9" stroke="currentColor" stroke-width="2"></rect>
+      <path d="M16 31V17h5.5c4.2 0 7 2.7 7 7s-2.8 7-7 7H16Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"></path>
+      <path d="M31 17v14h5" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+    </svg>
+    <span class="auth-eyebrow">Gestion y trazabilidad contable</span>
     <h1>TrazaLab</h1>
-    <p>Controla tareas, tiempos, empleados y actividad operativa de cada empresa desde un solo lugar.</p>
+    <p>Control de tareas, tiempos, clientes contables y evidencia operativa para equipos administrativos.</p>
     <div class="auth-points">
-      <span>Registro automatico de horarios</span>
-      <span>Roles por empresa</span>
-      <span>Reportes y auditoria</span>
+      <span><i data-lucide="timer"></i>Registro automatico de horarios</span>
+      <span><i data-lucide="briefcase-business"></i>Clientes contables por tarea</span>
+      <span><i data-lucide="shield-check"></i>Reportes y auditoria</span>
     </div>
   </div>
 
   <section class="auth-card">
+    <div class="auth-card-kicker">Acceso seguro</div>
     <h2>Ingresar</h2>
     <p>Accede con tu usuario de empresa.</p>
     <form method="post" class="auth-form">
@@ -26,7 +32,7 @@
         <label>Clave</label>
         <input name="password" type="password" autocomplete="current-password" required>
       </div>
-      <button type="submit">Entrar</button>
+      <button type="submit"><i data-lucide="log-in"></i>Entrar</button>
     </form>
     <p class="auth-link">No tenes empresa creada? <a href="{{ url_for('auth.signup') }}">Crear empresa y jefe</a></p>
   </section>

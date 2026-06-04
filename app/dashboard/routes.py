@@ -5,7 +5,8 @@ from flask import Blueprint, render_template
 from flask_login import current_user, login_required
 from sqlalchemy import func
 
-from app.models import Area, Employee, Task, TimeRecord
+from app.context import current_company_id, is_platform_admin
+from app.models import AccountingClient, Area, Employee, Task, TimeRecord
 
 dashboard_bp = Blueprint("dashboard", __name__)
 
@@ -16,24 +17,34 @@ def index():
     today = date.today()
     week_start = today - timedelta(days=today.weekday())
     month_start = today.replace(day=1)
-    base = TimeRecord.query.filter_by(company_id=current_user.company_id, deleted_at=None)
-    if current_user.role == "Employee" and not current_user.is_company_owner:
+    company_id = current_company_id()
+    base = TimeRecord.query.filter_by(company_id=company_id, deleted_at=None)
+    if current_user.role == "Employee" and not current_user.is_company_owner and not is_platform_admin():
         base = base.filter(TimeRecord.employee_id == current_user.employee_id)
 
     metrics = {
-        "active_employees": Employee.query.filter_by(company_id=current_user.company_id, active=True, deleted_at=None).count(),
+        "active_employees": Employee.query.filter_by(company_id=company_id, active=True, deleted_at=None).count(),
+        "active_clients": AccountingClient.query.filter_by(company_id=company_id, active=True, deleted_at=None).count(),
         "total_hours_today": _sum_hours(base.filter(TimeRecord.record_date == today)),
         "total_hours_week": _sum_hours(base.filter(TimeRecord.record_date >= week_start)),
         "total_hours_month": _sum_hours(base.filter(TimeRecord.record_date >= month_start)),
         "total_records": base.count(),
-        "active_areas": Area.query.filter_by(company_id=current_user.company_id, active=True, deleted_at=None).count(),
-        "active_tasks": Task.query.join(Area).filter(Area.company_id == current_user.company_id, Task.active.is_(True), Task.deleted_at.is_(None)).count(),
+        "active_areas": Area.query.filter_by(company_id=company_id, active=True, deleted_at=None).count(),
+        "active_tasks": Task.query.join(Area).filter(Area.company_id == company_id, Task.active.is_(True), Task.deleted_at.is_(None)).count(),
     }
 
     by_area = (
         base.join(Area, TimeRecord.area_id == Area.id)
         .with_entities(Area.name, func.sum(TimeRecord.hours))
         .group_by(Area.name)
+        .order_by(func.sum(TimeRecord.hours).desc())
+        .limit(6)
+        .all()
+    )
+    by_client = (
+        base.join(AccountingClient, TimeRecord.accounting_client_id == AccountingClient.id)
+        .with_entities(AccountingClient.name, func.sum(TimeRecord.hours))
+        .group_by(AccountingClient.name)
         .order_by(func.sum(TimeRecord.hours).desc())
         .limit(6)
         .all()
@@ -47,13 +58,16 @@ def index():
         .all()
     )
     area_chart = _chart_rows([(name, hours) for name, hours in by_area])
+    client_chart = _chart_rows([(name, hours) for name, hours in by_client])
     employee_chart = _chart_rows([(f"{first} {last}", hours) for first, last, hours in by_employee])
     return render_template(
         "dashboard/index.html",
         metrics=metrics,
         by_area=by_area,
+        by_client=by_client,
         by_employee=by_employee,
         area_chart=area_chart,
+        client_chart=client_chart,
         employee_chart=employee_chart,
     )
 

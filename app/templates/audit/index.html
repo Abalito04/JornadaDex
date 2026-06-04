@@ -8,26 +8,28 @@
 
 <section class="panel">
   <div class="audit-help">
-    Sirve para controlar trazabilidad: quien hizo una accion, cuando la hizo y sobre que registro. Solo la ve el dueño de la empresa.
+    Sirve para controlar trazabilidad: quien hizo una accion, cuando la hizo y sobre que registro. Solo la ve el dueño de la empresa o el usuario Developer.
   </div>
-  <table>
-    <thead>
-      <tr><th>Fecha</th><th>Usuario</th><th>Accion</th><th>Tabla</th><th>ID</th><th>IP</th></tr>
-    </thead>
-    <tbody>
-      {% for log in logs %}
-        <tr>
-          <td>{{ log.created_at.strftime("%Y-%m-%d %H:%M") }}</td>
-          <td>{{ log.user.username if log.user else "" }}</td>
-          <td><span class="audit-chip">{{ log.action }}</span></td>
-          <td>{{ log.table_name }}</td>
-          <td>{{ log.record_id or "" }}</td>
-          <td>{{ log.ip_address or "" }}</td>
-        </tr>
-      {% else %}
-        <tr><td colspan="6">Sin auditoria todavia.</td></tr>
-      {% endfor %}
-    </tbody>
-  </table>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Fecha</th><th>Usuario</th><th>Accion</th><th>Tabla</th><th>ID</th><th>IP</th></tr>
+      </thead>
+      <tbody>
+        {% for log in logs %}
+          <tr>
+            <td>{{ log.created_at.strftime("%Y-%m-%d %H:%M") }}</td>
+            <td>{{ log.user.username if log.user else "" }}</td>
+            <td><span class="audit-chip">{{ log.action }}</span></td>
+            <td>{{ log.table_name }}</td>
+            <td>{{ log.record_id or "" }}</td>
+            <td>{{ log.ip_address or "" }}</td>
+          </tr>
+        {% else %}
+          <tr><td colspan="6">Sin auditoria todavia.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 </section>
 {% endblock %}

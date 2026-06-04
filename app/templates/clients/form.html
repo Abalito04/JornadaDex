@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}{{ "Editar cliente" if client.id else "Nuevo cliente" }}{% endblock %}
+{% block content %}
+<section class="page-title">
+  <h1>{{ "Editar cliente" if client.id else "Nuevo cliente contable" }}</h1>
+  <p>Datos fiscales y operativos del cliente para asociar tareas, horas y reportes.</p>
+</section>
+
+<section class="panel">
+  <form method="post" class="grid-form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div>
+      <label>Nombre de la empresa</label>
+      <input name="name" value="{{ client.name or '' }}" required>
+    </div>
+    <div>
+      <label>CUIT</label>
+      <input name="tax_id" value="{{ client.tax_id or '' }}">
+    </div>
+    <div class="full">
+      <label>Direccion</label>
+      <input name="address" value="{{ client.address or '' }}">
+    </div>
+    <div>
+      <label>Condicion fiscal</label>
+      <select name="fiscal_condition">
+        {% set selected_condition = client.fiscal_condition or '' %}
+        {% for condition in ["", "Responsable Inscripto", "Monotributo", "Exento", "No responsable", "Consumidor final"] %}
+          <option value="{{ condition }}" {% if selected_condition == condition %}selected{% endif %}>{{ condition or "Seleccionar" }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div>
+      <label>Convenio multilateral</label>
+      <select name="multilateral_agreement">
+        {% set selected_agreement = client.multilateral_agreement or '' %}
+        {% for agreement in ["", "No aplica", "Alta activa", "Pendiente", "Baja"] %}
+          <option value="{{ agreement }}" {% if selected_agreement == agreement %}selected{% endif %}>{{ agreement or "Seleccionar" }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="checkbox-row">
+      <input id="does_balance" name="does_balance" type="checkbox" {% if client.does_balance %}checked{% endif %}>
+      <label for="does_balance">Se le realiza balance</label>
+    </div>
+    <div class="checkbox-row">
+      <input id="active" name="active" type="checkbox" {% if client.active or not client.id %}checked{% endif %}>
+      <label for="active">Cliente activo</label>
+    </div>
+    <div class="full">
+      <label>Notas contables</label>
+      <textarea name="notes" rows="3">{{ client.notes or '' }}</textarea>
+    </div>
+    <div class="full form-actions">
+      <button type="submit">Guardar cliente</button>
+      <a class="button ghost" href="{{ url_for('clients.index') }}">Cancelar</a>
+    </div>
+  </form>
+</section>
+{% endblock %}

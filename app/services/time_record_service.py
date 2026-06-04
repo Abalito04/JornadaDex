@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from decimal import Decimal
 
 from app.extensions import db
-from app.models import Area, Employee, Task, TimeRecord
+from app.models import AccountingClient, Area, Employee, Task, TimeRecord
 from app.services.audit_service import write_audit
 
 
@@ -27,10 +27,19 @@ def calculate_hours(record_date, start_time, end_time):
     return Decimal(diff_seconds / 3600).quantize(Decimal("0.01"))
 
 
-def start_time_record(company_id, user_id, employee_id, area_id, task_id, observations):
+def start_time_record(company_id, user_id, employee_id, accounting_client_id, area_id, task_id, observations):
     employee = Employee.query.filter_by(id=employee_id, company_id=company_id, deleted_at=None).first()
     if not employee:
         raise ValueError("Empleado invalido.")
+
+    accounting_client = AccountingClient.query.filter_by(
+        id=accounting_client_id,
+        company_id=company_id,
+        active=True,
+        deleted_at=None,
+    ).first()
+    if not accounting_client:
+        raise ValueError("Cliente contable invalido.")
 
     area = Area.query.filter_by(id=area_id, company_id=company_id, deleted_at=None).first()
     if not area:
@@ -53,6 +62,7 @@ def start_time_record(company_id, user_id, employee_id, area_id, task_id, observ
     record = TimeRecord(
         company_id=company_id,
         employee_id=employee_id,
+        accounting_client_id=accounting_client_id,
         area_id=area_id,
         task_id=task_id,
         record_date=now.date(),
@@ -69,6 +79,7 @@ def start_time_record(company_id, user_id, employee_id, area_id, task_id, observ
         record.id,
         new_values={
             "employee_id": employee_id,
+            "accounting_client_id": accounting_client_id,
             "record_date": record.record_date.isoformat(),
             "start_time": record.start_time.strftime("%H:%M:%S"),
             "status": "in_progress",

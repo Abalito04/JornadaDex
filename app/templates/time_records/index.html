@@ -18,6 +18,15 @@
       </select>
     </div>
     <div>
+      <label>Cliente</label>
+      <select name="accounting_client_id" required>
+        <option value="">Seleccionar cliente</option>
+        {% for client in clients %}
+          <option value="{{ client.id }}">{{ client.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div>
       <label>Area</label>
       <select id="areaSelect" name="area_id" required>
         <option value="">Seleccionar</option>
@@ -33,44 +42,61 @@
       </select>
     </div>
     <div class="full"><label>Observaciones</label><textarea name="observations" rows="2"></textarea></div>
-    <button type="submit">Iniciar tarea ahora</button>
+    <button type="submit"><i data-lucide="play"></i>Iniciar tarea ahora</button>
   </form>
 </section>
 
 <section class="panel">
   <h2>Ultimos registros</h2>
-  <table>
-    <thead>
-      <tr><th>Empleado</th><th>Fecha</th><th>Inicio</th><th>Fin</th><th>Horas</th><th>Estado</th><th>Area</th><th>Tarea</th><th></th></tr>
-    </thead>
-    <tbody>
-      {% for record in records %}
-        <tr>
-          <td>{{ record.employee.full_name }}</td>
-          <td>{{ record.record_date }}</td>
-          <td>{{ record.start_time.strftime("%H:%M:%S") }}</td>
-          <td>{{ record.end_time.strftime("%H:%M:%S") if record.end_time else "" }}</td>
-          <td>{{ record.hours }}</td>
-          <td>{{ "En curso" if not record.end_time else "Finalizada" }}</td>
-          <td>{{ record.area.name }}</td>
-          <td>{{ record.task.name }}</td>
-          <td>
-            {% if not record.end_time %}
-              <form method="post" action="{{ url_for('time_records.finish', record_id=record.id) }}">
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Empleado</th><th>Cliente</th><th>Fecha</th><th>Inicio</th><th>Fin</th><th>Horas</th><th>Estado</th><th>Area</th><th>Tarea</th><th></th></tr>
+      </thead>
+      <tbody>
+        {% for record in records %}
+          <tr>
+            <td>{{ record.employee.full_name }}</td>
+            <td>{{ record.accounting_client.name if record.accounting_client else "Sin cliente" }}</td>
+            <td>{{ record.record_date }}</td>
+            <td>{{ record.start_time.strftime("%H:%M:%S") }}</td>
+            <td>{{ record.end_time.strftime("%H:%M:%S") if record.end_time else "" }}</td>
+            <td>{{ record.hours }}</td>
+            <td>
+              {% if not record.end_time %}
+                <span class="status-badge en-curso">En curso</span>
+              {% else %}
+                <span class="status-badge finalizada">Finalizada</span>
+              {% endif %}
+            </td>
+            <td>{{ record.area.name }}</td>
+            <td>{{ record.task.name }}</td>
+            <td>
+              {% if not record.end_time %}
+                <form method="post" action="{{ url_for('time_records.finish', record_id=record.id) }}">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                  <button class="small" type="submit">Finalizar</button>
+                </form>
+              {% endif %}
+              <form method="post" action="{{ url_for('time_records.delete', record_id=record.id) }}" onsubmit="return confirm('Eliminar registro?')">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <button type="submit">Finalizar</button>
+                <button class="danger small" type="submit">Eliminar</button>
               </form>
-            {% endif %}
-            <form method="post" action="{{ url_for('time_records.delete', record_id=record.id) }}" onsubmit="return confirm('Eliminar registro?')">
-              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-              <button class="danger" type="submit">Eliminar</button>
-            </form>
-          </td>
-        </tr>
-      {% else %}
-        <tr><td colspan="9">No hay registros cargados.</td></tr>
-      {% endfor %}
-    </tbody>
-  </table>
+            </td>
+          </tr>
+        {% else %}
+          <tr>
+            <td colspan="10">
+              <div class="empty-state compact">
+                <i data-lucide="clipboard-list"></i>
+                <strong>No hay registros cargados.</strong>
+                <span>Cuando se inicien tareas, van a aparecer con fecha y hora automatica.</span>
+              </div>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 </section>
 {% endblock %}

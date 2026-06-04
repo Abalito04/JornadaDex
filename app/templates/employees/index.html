@@ -6,39 +6,49 @@
     <h1>Empleados</h1>
     <p>Personas y usuarios vinculados a esta empresa.</p>
   </div>
-  <a class="button" href="{{ url_for('employees.create') }}">Nuevo empleado</a>
+  <a class="button" href="{{ url_for('employees.create') }}"><i data-lucide="plus"></i>Nuevo empleado</a>
 </section>
 
 <section class="panel">
-  <table>
-    <thead>
-      <tr><th>Nombre</th><th>Documento</th><th>Email</th><th>Puesto</th><th>Usuario</th><th></th></tr>
-    </thead>
-    <tbody>
-      {% for employee in employees %}
-        <tr>
-          <td>{{ employee.full_name }}</td>
-          <td>{{ employee.document_number }}</td>
-          <td>{{ employee.email or "" }}</td>
-          <td>{{ employee.position or "" }}</td>
-          <td>{{ employee.user.username if employee.user else "Sin usuario" }}</td>
-          <td>
-            {% set is_owner_employee = employee.user and employee.user.is_company_owner %}
-            {% if current_user.is_company_owner or not is_owner_employee %}
-              <a class="button small secondary" href="{{ url_for('employees.edit', employee_id=employee.id) }}">Editar</a>
-              <form method="post" action="{{ url_for('employees.delete', employee_id=employee.id) }}" onsubmit="return confirm('Eliminar empleado?')">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <button class="danger small" type="submit">Eliminar</button>
-              </form>
-            {% else %}
-              <span class="muted-text">Protegido</span>
-            {% endif %}
-          </td>
-        </tr>
-      {% else %}
-        <tr><td colspan="6">No hay empleados cargados.</td></tr>
-      {% endfor %}
-    </tbody>
-  </table>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Nombre</th><th>Documento</th><th>Email</th><th>Puesto</th><th>Usuario</th><th></th></tr>
+      </thead>
+      <tbody>
+        {% for employee in employees %}
+          <tr>
+            <td>{{ employee.full_name }}</td>
+            <td>{{ employee.document_number }}</td>
+            <td>{{ employee.email or "" }}</td>
+            <td>{{ employee.position or "" }}</td>
+            <td>{{ employee.user.username if employee.user else "Sin usuario" }}</td>
+            <td>
+              {% set is_owner_employee = employee.user and employee.user.is_company_owner %}
+              {% if current_user.is_company_owner or is_platform_admin() or not is_owner_employee %}
+                <a class="button small secondary" href="{{ url_for('employees.edit', employee_id=employee.id) }}">Editar</a>
+                <form method="post" action="{{ url_for('employees.delete', employee_id=employee.id) }}" onsubmit="return confirm('Eliminar empleado?')">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                  <button class="danger small" type="submit">Eliminar</button>
+                </form>
+              {% else %}
+                <span class="muted-text">Protegido</span>
+              {% endif %}
+            </td>
+          </tr>
+        {% else %}
+          <tr>
+            <td colspan="6">
+              <div class="empty-state compact">
+                <i data-lucide="users"></i>
+                <strong>No hay empleados cargados.</strong>
+                <span>Crea empleados y usuarios para comenzar a registrar tareas.</span>
+              </div>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 </section>
 {% endblock %}

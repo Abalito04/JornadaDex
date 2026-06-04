@@ -39,6 +39,7 @@ class Company(db.Model, AuditMixin):
     users = db.relationship("User", back_populates="company", foreign_keys="User.company_id")
     employees = db.relationship("Employee", back_populates="company")
     areas = db.relationship("Area", back_populates="company")
+    accounting_clients = db.relationship("AccountingClient", back_populates="company")
 
 
 class User(UserMixin, db.Model, AuditMixin):
@@ -128,12 +129,33 @@ class Task(db.Model, AuditMixin):
     __table_args__ = (db.UniqueConstraint("area_id", "name", name="uq_task_area"),)
 
 
+class AccountingClient(db.Model, AuditMixin):
+    __tablename__ = "accounting_clients"
+
+    id = db.Column(db.Integer, primary_key=True)
+    company_id = db.Column(db.Integer, db.ForeignKey("companies.id"), nullable=False)
+    name = db.Column(db.String(180), nullable=False)
+    tax_id = db.Column(db.String(50), nullable=True)
+    address = db.Column(db.String(255), nullable=True)
+    fiscal_condition = db.Column(db.String(120), nullable=True)
+    multilateral_agreement = db.Column(db.String(120), nullable=True)
+    does_balance = db.Column(db.Boolean, default=False, nullable=False)
+    active = db.Column(db.Boolean, default=True, nullable=False)
+    notes = db.Column(db.Text, nullable=True)
+
+    company = db.relationship("Company", back_populates="accounting_clients")
+    time_records = db.relationship("TimeRecord", back_populates="accounting_client")
+
+    __table_args__ = (db.UniqueConstraint("company_id", "name", name="uq_accounting_client_company"),)
+
+
 class TimeRecord(db.Model, AuditMixin):
     __tablename__ = "time_records"
 
     id = db.Column(db.Integer, primary_key=True)
     company_id = db.Column(db.Integer, db.ForeignKey("companies.id"), nullable=False)
     employee_id = db.Column(db.Integer, db.ForeignKey("employees.id"), nullable=False)
+    accounting_client_id = db.Column(db.Integer, db.ForeignKey("accounting_clients.id"), nullable=True)
     area_id = db.Column(db.Integer, db.ForeignKey("areas.id"), nullable=False)
     task_id = db.Column(db.Integer, db.ForeignKey("tasks.id"), nullable=False)
     record_date = db.Column(db.Date, nullable=False)
@@ -143,6 +165,7 @@ class TimeRecord(db.Model, AuditMixin):
     observations = db.Column(db.Text, nullable=True)
 
     employee = db.relationship("Employee", back_populates="time_records")
+    accounting_client = db.relationship("AccountingClient", back_populates="time_records")
     area = db.relationship("Area")
     task = db.relationship("Task", back_populates="time_records")
 

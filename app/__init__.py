@@ -46,6 +46,7 @@ def create_app(config_class=Config):
     from app.auth.routes import auth_bp
     from app.dashboard.routes import dashboard_bp
     from app.employees.routes import employees_bp
+    from app.clients.routes import clients_bp
     from app.time_records.routes import time_records_bp
     from app.reports.routes import reports_bp
     from app.areas.routes import areas_bp
@@ -55,6 +56,7 @@ def create_app(config_class=Config):
     app.register_blueprint(auth_bp)
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(employees_bp)
+    app.register_blueprint(clients_bp)
     app.register_blueprint(time_records_bp)
     app.register_blueprint(reports_bp)
     app.register_blueprint(areas_bp)
@@ -84,6 +86,12 @@ def ensure_runtime_schema():
     if "is_platform_admin" not in columns:
         db.session.execute(text("ALTER TABLE users ADD COLUMN is_platform_admin BOOLEAN NOT NULL DEFAULT FALSE"))
         db.session.commit()
+
+    if "time_records" in inspector.get_table_names():
+        time_record_columns = {column["name"] for column in inspector.get_columns("time_records")}
+        if "accounting_client_id" not in time_record_columns:
+            db.session.execute(text("ALTER TABLE time_records ADD COLUMN accounting_client_id INTEGER"))
+            db.session.commit()
 
 
 def bootstrap_platform_admin():

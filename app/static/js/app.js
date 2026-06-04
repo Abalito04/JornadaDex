@@ -1,5 +1,24 @@
 const areaSelect = document.getElementById("areaSelect");
 const taskSelect = document.getElementById("taskSelect");
+const themeToggle = document.getElementById("themeToggle");
+const root = document.documentElement;
+const themeStorageKey = "trazalab-theme";
+
+let themePreference = localStorage.getItem(themeStorageKey) || "system";
+
+function applyTheme() {
+  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  const resolvedTheme = themePreference === "system" ? (prefersDark ? "dark" : "light") : themePreference;
+  root.dataset.theme = resolvedTheme;
+
+  if (themeToggle) {
+    themeToggle.innerHTML = resolvedTheme === "dark" ? '<i data-lucide="sun"></i>' : '<i data-lucide="moon"></i>';
+  }
+
+  if (window.lucide) {
+    window.lucide.createIcons();
+  }
+}
 
 if (areaSelect && taskSelect) {
   areaSelect.addEventListener("change", async () => {
@@ -19,3 +38,20 @@ if (areaSelect && taskSelect) {
     });
   });
 }
+
+if (themeToggle) {
+  themeToggle.addEventListener("click", () => {
+    const currentTheme = root.dataset.theme || "light";
+    themePreference = currentTheme === "dark" ? "light" : "dark";
+    localStorage.setItem(themeStorageKey, themePreference);
+    applyTheme();
+  });
+}
+
+window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
+  if (themePreference === "system") {
+    applyTheme();
+  }
+});
+
+applyTheme();

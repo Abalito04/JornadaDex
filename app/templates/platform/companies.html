@@ -23,32 +23,34 @@
 </section>
 
 <section class="panel">
-  <table>
-    <thead>
-      <tr><th>Empresa</th><th>ID fiscal</th><th>Estado</th><th></th></tr>
-    </thead>
-    <tbody>
-      {% for company in companies %}
-        <tr>
-          <td>{{ company.name }}</td>
-          <td>{{ company.tax_id or "" }}</td>
-          <td>{{ "Activa" if company.active else "Inactiva" }}</td>
-          <td>
-            <form method="post" action="{{ url_for('platform.select_company', company_id=company.id) }}">
-              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-              <button class="small" type="submit">Administrar</button>
-            </form>
-            <a class="button small secondary" href="{{ url_for('platform.edit_company', company_id=company.id) }}">Editar</a>
-            <form method="post" action="{{ url_for('platform.delete_company', company_id=company.id) }}" onsubmit="return confirm('Eliminar empresa?')">
-              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-              <button class="danger small" type="submit">Eliminar</button>
-            </form>
-          </td>
-        </tr>
-      {% else %}
-        <tr><td colspan="4">No hay empresas creadas.</td></tr>
-      {% endfor %}
-    </tbody>
-  </table>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Empresa</th><th>ID fiscal</th><th>Estado</th><th></th></tr>
+      </thead>
+      <tbody>
+        {% for company in companies %}
+          <tr>
+            <td>{{ company.name }}</td>
+            <td>{{ company.tax_id or "" }}</td>
+            <td><span class="status-badge {{ 'completed' if company.active else 'blocked' }}">{{ "Activa" if company.active else "Inactiva" }}</span></td>
+            <td>
+              <form method="post" action="{{ url_for('platform.select_company', company_id=company.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button class="small" type="submit">Administrar</button>
+              </form>
+              <a class="button small secondary" href="{{ url_for('platform.edit_company', company_id=company.id) }}">Editar</a>
+              <form method="post" action="{{ url_for('platform.delete_company', company_id=company.id) }}" onsubmit="return confirm('Eliminar empresa?')">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button class="danger small" type="submit">Eliminar</button>
+              </form>
+            </td>
+          </tr>
+        {% else %}
+          <tr><td colspan="4">No hay empresas creadas.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 </section>
 {% endblock %}

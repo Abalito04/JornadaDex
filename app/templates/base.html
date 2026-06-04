@@ -4,45 +4,105 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}TrazaLab{% endblock %}</title>
+  <link rel="preconnect" href="https://api.fontshare.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+  <script>
+    (function () {
+      var storedTheme = localStorage.getItem("trazalab-theme");
+      var prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+      var theme = storedTheme || (prefersDark ? "dark" : "light");
+      document.documentElement.dataset.theme = theme;
+    })();
+  </script>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
-  <header class="topbar">
-    <div class="brand">
-      <span class="brand-mark">TL</span>
-      <strong>TrazaLab</strong>
-      {% if current_user.is_authenticated %}
-        <span class="company-name">{{ active_company().name if active_company() else current_user.company.name }}</span>
-      {% endif %}
-    </div>
-    {% if current_user.is_authenticated %}
-      <form method="post" action="{{ url_for('auth.logout') }}" class="topbar-action">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        <button class="button ghost" type="submit">Salir</button>
-      </form>
-    {% endif %}
-  </header>
-
   {% if current_user.is_authenticated %}
-    <nav class="sidebar">
-      <a href="{{ url_for('dashboard.index') }}">Dashboard</a>
+    {% set current_path = request.path %}
+    {% set company = active_company() %}
+    <aside class="sidebar" aria-label="Navegacion principal">
+      <a class="brand" href="{{ url_for('dashboard.index') }}">
+        <svg class="brand-mark" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <rect x="7" y="7" width="34" height="34" rx="9" stroke="currentColor" stroke-width="2"></rect>
+          <path d="M16 31V17h5.5c4.2 0 7 2.7 7 7s-2.8 7-7 7H16Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"></path>
+          <path d="M31 17v14h5" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+        </svg>
+        <span class="brand-name">TrazaLab <small>Accounting ops</small></span>
+      </a>
+
+      <nav class="nav-section">
+        <a class="nav-item {{ 'active' if current_path == url_for('dashboard.index') else '' }}" href="{{ url_for('dashboard.index') }}" aria-label="Dashboard">
+          <i data-lucide="layout-dashboard"></i><span>Dashboard</span>
+        </a>
+        <a class="nav-item {{ 'active' if current_path.startswith('/time-records') else '' }}" href="{{ url_for('time_records.index') }}" aria-label="Horas">
+          <i data-lucide="timer"></i><span>Horas</span>
+        </a>
+        {% if current_user.role in ['Administrator', 'Supervisor'] or current_user.is_company_owner or is_platform_admin() %}
+          <a class="nav-item {{ 'active' if current_path.startswith('/employees') else '' }}" href="{{ url_for('employees.index') }}" aria-label="Empleados">
+            <i data-lucide="users"></i><span>Empleados</span>
+          </a>
+          <a class="nav-item {{ 'active' if current_path.startswith('/clients') else '' }}" href="{{ url_for('clients.index') }}" aria-label="Clientes">
+            <i data-lucide="briefcase-business"></i><span>Clientes</span>
+          </a>
+          <a class="nav-item {{ 'active' if current_path.startswith('/areas') else '' }}" href="{{ url_for('areas.index') }}" aria-label="Areas y tareas">
+            <i data-lucide="clipboard-list"></i><span>Areas y tareas</span>
+          </a>
+        {% endif %}
+        <a class="nav-item {{ 'active' if current_path.startswith('/reports') else '' }}" href="{{ url_for('reports.index') }}" aria-label="Reportes">
+          <i data-lucide="bar-chart-3"></i><span>Reportes</span>
+        </a>
+        {% if current_user.role == 'Administrator' or current_user.is_company_owner or is_platform_admin() %}
+          <a class="nav-item {{ 'active' if current_path.startswith('/audit') else '' }}" href="{{ url_for('audit.index') }}" aria-label="Auditoria">
+            <i data-lucide="shield-check"></i><span>Auditoria</span>
+          </a>
+        {% endif %}
+      </nav>
+
       {% if is_platform_admin() %}
-        <a href="{{ url_for('platform.companies') }}">Empresas</a>
-        <a href="{{ url_for('platform.users') }}">Usuarios</a>
+        <p class="nav-label">Plataforma</p>
+        <nav class="nav-section secondary">
+          <a class="nav-item {{ 'active' if current_path.startswith('/platform/companies') else '' }}" href="{{ url_for('platform.companies') }}" aria-label="Empresas">
+            <i data-lucide="building-2"></i><span>Empresas</span>
+          </a>
+          <a class="nav-item {{ 'active' if current_path.startswith('/platform/users') else '' }}" href="{{ url_for('platform.users') }}" aria-label="Usuarios">
+            <i data-lucide="user-cog"></i><span>Usuarios</span>
+          </a>
+        </nav>
       {% endif %}
-      <a href="{{ url_for('time_records.index') }}">Horas</a>
-      {% if current_user.role in ['Administrator', 'Supervisor'] or current_user.is_company_owner or is_platform_admin() %}
-        <a href="{{ url_for('employees.index') }}">Empleados</a>
-        <a href="{{ url_for('areas.index') }}">Areas y tareas</a>
-      {% endif %}
-      <a href="{{ url_for('reports.index') }}">Reportes</a>
-      {% if current_user.role == 'Administrator' or current_user.is_company_owner or is_platform_admin() %}
-        <a href="{{ url_for('audit.index') }}">Auditoria</a>
-      {% endif %}
-    </nav>
+    </aside>
   {% endif %}
 
-  <main class="{% if current_user.is_authenticated %}with-sidebar{% else %}auth-main{% endif %}">
+  <div class="{% if current_user.is_authenticated %}app-shell{% else %}auth-shell-page{% endif %}">
+    {% if current_user.is_authenticated %}
+      <header class="topbar">
+        <div class="page-heading">
+          <i data-lucide="scan-line"></i>
+          <div>
+            <strong>{% block page_heading %}{{ self.title() }}{% endblock %}</strong>
+            <span>{{ company.name if company else "Vista de plataforma" }}</span>
+          </div>
+        </div>
+        <div class="top-actions">
+          <button class="icon-button" id="themeToggle" type="button" aria-label="Cambiar tema">
+            <i data-lucide="moon"></i>
+          </button>
+          <div class="user-chip">
+            <span class="avatar">{{ (current_user.username or 'U')[:2].upper() }}</span>
+            <span class="role-badge">{{ "Developer" if is_platform_admin() else current_user.role }}</span>
+          </div>
+          <form method="post" action="{{ url_for('auth.logout') }}" class="topbar-action">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="icon-button" type="submit" aria-label="Salir"><i data-lucide="log-out"></i></button>
+          </form>
+        </div>
+      </header>
+    {% endif %}
+
+    <main class="{% if current_user.is_authenticated %}with-sidebar{% else %}auth-main{% endif %}">
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
         <div class="messages">
@@ -53,7 +113,8 @@
       {% endif %}
     {% endwith %}
     {% block content %}{% endblock %}
-  </main>
+    </main>
+  </div>
   <script src="{{ url_for('static', filename='js/app.js') }}"></script>
 </body>
 </html>

@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Clientes contables{% endblock %}
+{% block content %}
+<section class="page-title row-title">
+  <div>
+    <h1>Clientes contables</h1>
+    <p>Base de empresas/clientes para asignar cada registro de trabajo a un contexto contable concreto.</p>
+  </div>
+  <a class="button" href="{{ url_for('clients.create') }}"><i data-lucide="plus"></i>Nuevo cliente</a>
+</section>
+
+<section class="panel">
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Cliente</th><th>CUIT</th><th>Condicion fiscal</th><th>Convenio multilateral</th><th>Balance</th><th>Estado</th><th></th></tr>
+      </thead>
+      <tbody>
+        {% for client in clients %}
+          <tr>
+            <td>{{ client.name }}</td>
+            <td>{{ client.tax_id or "" }}</td>
+            <td>{{ client.fiscal_condition or "" }}</td>
+            <td>{{ client.multilateral_agreement or "" }}</td>
+            <td>{{ "Si" if client.does_balance else "No" }}</td>
+            <td><span class="status-badge {{ 'completed' if client.active else 'blocked' }}">{{ "Activo" if client.active else "Inactivo" }}</span></td>
+            <td>
+              <a class="button small secondary" href="{{ url_for('clients.edit', client_id=client.id) }}">Editar</a>
+              <form method="post" action="{{ url_for('clients.delete', client_id=client.id) }}" onsubmit="return confirm('Eliminar cliente contable?')">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button class="danger small" type="submit">Eliminar</button>
+              </form>
+            </td>
+          </tr>
+        {% else %}
+          <tr>
+            <td colspan="7">
+              <div class="empty-state compact">
+                <i data-lucide="briefcase-business"></i>
+                <strong>No hay clientes contables cargados.</strong>
+                <span>Carga el primer cliente para poder asociarlo a los registros de trabajo.</span>
+              </div>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}
