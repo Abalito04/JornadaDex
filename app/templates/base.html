@@ -26,12 +26,10 @@
     {% set company = active_company() %}
     <aside class="sidebar" aria-label="Navegacion principal">
       <a class="brand" href="{{ url_for('dashboard.index') }}">
-        <svg class="brand-mark" viewBox="0 0 48 48" fill="none" aria-hidden="true">
-          <rect x="7" y="7" width="34" height="34" rx="9" stroke="currentColor" stroke-width="2"></rect>
-          <path d="M16 31V17h5.5c4.2 0 7 2.7 7 7s-2.8 7-7 7H16Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"></path>
-          <path d="M31 17v14h5" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
-        </svg>
-        <span class="brand-name">TrazaLab <small>Accounting ops</small></span>
+        <span class="brand-logo-frame">
+          <img class="logo-light" src="{{ url_for('static', filename='img/trazalab-logo.svg') }}" alt="TrazaLab">
+          <img class="logo-dark" src="{{ url_for('static', filename='img/trazalab-logo-dark.svg') }}" alt="TrazaLab">
+        </span>
       </a>
 
       <nav class="nav-section">

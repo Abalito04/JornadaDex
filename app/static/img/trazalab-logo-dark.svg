@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 360" role="img" aria-labelledby="title desc">
+  <title id="title">TrazaLab - Gestion de Empleados</title>
+  <desc id="desc">Logo de TrazaLab adaptado para modo oscuro.</desc>
+
+  <defs>
+    <linearGradient id="cyanGreen" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#42E6A4"/>
+      <stop offset="100%" stop-color="#00C9FF"/>
+    </linearGradient>
+    <linearGradient id="greenCyan" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0%" stop-color="#DDFBF0"/>
+      <stop offset="100%" stop-color="#42E6A4"/>
+    </linearGradient>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#061816" flood-opacity="0.18"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="360" fill="none"/>
+
+  <g transform="translate(80 55)" filter="url(#softShadow)">
+    <path d="M198 18 A122 122 0 1 0 229 64" fill="none" stroke="#DDFBF0" stroke-width="14" stroke-linecap="round"/>
+    <path d="M198 18 A122 122 0 0 1 250 74" fill="none" stroke="#42E6A4" stroke-width="14" stroke-linecap="round"/>
+    <path d="M255 54 L253 94 L219 75 Z" fill="#42E6A4"/>
+
+    <circle cx="195" cy="20" r="22" fill="#102521" stroke="#42E6A4" stroke-width="12"/>
+    <circle cx="36" cy="168" r="19" fill="#102521" stroke="#42E6A4" stroke-width="11"/>
+
+    <circle cx="175" cy="118" r="33" fill="#DDFBF0"/>
+    <path d="M113 232 C113 185 137 158 175 158 C213 158 237 185 237 232 Z" fill="#DDFBF0"/>
+
+    <circle cx="74" cy="157" r="25" fill="#42E6A4"/>
+    <path d="M31 232 C31 194 48 179 74 179 C100 179 117 194 117 232 Z" fill="#42E6A4"/>
+
+    <circle cx="276" cy="157" r="25" fill="#42E6A4"/>
+    <path d="M233 232 C233 194 250 179 276 179 C302 179 319 194 319 232 Z" fill="#42E6A4"/>
+
+    <path d="M175 250 V288 M175 272 H86 V305 M175 272 H264 V305" fill="none" stroke="#DDFBF0" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="86" cy="305" r="16" fill="#102521" stroke="#42E6A4" stroke-width="8"/>
+    <circle cx="175" cy="305" r="16" fill="#102521" stroke="#DDFBF0" stroke-width="8"/>
+    <circle cx="264" cy="305" r="16" fill="#102521" stroke="#42E6A4" stroke-width="8"/>
+  </g>
+
+  <g transform="translate(430 137)">
+    <text x="0" y="75" font-family="Montserrat, Poppins, Avenir Next, Arial, sans-serif" font-size="112" font-weight="800" letter-spacing="-5" fill="#DDFBF0">Traza</text>
+    <text x="463" y="75" font-family="Montserrat, Poppins, Avenir Next, Arial, sans-serif" font-size="112" font-weight="400" letter-spacing="-5" fill="#42E6A4">Lab</text>
+    <line x1="434" y1="-4" x2="434" y2="76" stroke="#42E6A4" stroke-width="8" stroke-linecap="round"/>
+    <text x="6" y="140" font-family="Montserrat, Poppins, Avenir Next, Arial, sans-serif" font-size="36" font-weight="400" letter-spacing="14" fill="#A7DCCB">Gestion de Empleados</text>
+  </g>
+</svg>
