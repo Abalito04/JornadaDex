@@ -5,7 +5,7 @@ const previewTabs = document.querySelectorAll("[data-preview-tab]");
 const previewPanels = document.querySelectorAll("[data-preview-panel]");
 const previewTitle = document.querySelector("[data-preview-title]");
 const previewCopy = document.querySelector("[data-preview-copy]");
-const smoothLinks = document.querySelectorAll(".landing-menu a[href^='#'], .landing-cta a[href^='#']");
+const smoothLinks = document.querySelectorAll(".landing-menu a[href^='#'], .landing-cta a[href^='#'], .landing-footer a[href^='#']");
 const revealItems = document.querySelectorAll(".landing-copy, .landing-preview, .landing-section, .landing-day, .landing-evidence, .landing-band");
 const root = document.documentElement;
 const themeStorageKey = "trazalab-theme";
@@ -48,15 +48,15 @@ if (areaSelect && taskSelect) {
 if (previewTabs.length && previewPanels.length) {
   const previewContent = {
     tiempos: {
-      title: "32:45hs",
+      title: "Tareas en curso",
       copy: "Horas registradas por área, con formato 24hs y trazabilidad por tarea.",
     },
     supervision: {
-      title: "3 equipos",
+      title: "Supervisión activa",
       copy: "El supervisor ve avances del equipo y puede revisar registros con contexto.",
     },
     reportes: {
-      title: "186 registros",
+      title: "Reportes listos",
       copy: "Los reportes resumen empleados, clientes, áreas y registros del período.",
     },
   };

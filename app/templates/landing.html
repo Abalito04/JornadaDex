@@ -1,236 +1,228 @@
 {% extends "base.html" %}
-{% block title %}TrazaLab | Gestión de empleados{% endblock %}
+{% block title %}TrazaLab | Gestión y trazabilidad empresarial{% endblock %}
 {% block content %}
-<section class="landing-page">
-  <header class="landing-nav">
-    <a class="landing-brand" href="{{ url_for('dashboard.landing') }}" aria-label="TrazaLab">
-      <img class="logo-light" src="{{ url_for('static', filename='img/trazalab-logo.svg') }}" alt="TrazaLab">
-      <img class="logo-dark" src="{{ url_for('static', filename='img/trazalab-logo-dark.svg') }}" alt="TrazaLab">
-    </a>
-    <nav class="landing-menu" aria-label="Secciones">
-      <a href="#funciones">Funciones</a>
-      <a href="#roles">Roles</a>
-      <a href="#evidencia">Reportes</a>
-    </nav>
-    <div class="landing-actions">
-      <button class="icon-button" data-theme-toggle type="button" aria-label="Cambiar tema">
-        <i data-lucide="moon"></i>
-      </button>
-      {% if current_user.is_authenticated %}
-        <a class="button small" href="{{ url_for('dashboard.index') }}">Ir al panel</a>
-      {% else %}
-        <a class="button small" href="{{ url_for('auth.login') }}">Ingresar</a>
-      {% endif %}
-    </div>
-  </header>
-
-  <section class="landing-hero">
-    <div class="landing-copy">
-      <h1>TrazaLab</h1>
-      <p class="landing-lead">
-        Control de tareas, tiempos y trazabilidad para equipos contables y administrativos.
-      </p>
-      <div class="landing-live-note">
-        <span class="live-dot"></span>
-        <span>Una vista clara para saber qué se hizo, cuándo y bajo qué supervisión.</span>
-      </div>
-      <p>
-        Cada tarea queda asociada a un empleado, supervisor, cliente, área y horario real. La empresa gana evidencia
-        para supervisar trabajo diario, medir tiempos y consultar reportes sin depender de planillas sueltas.
-      </p>
-      <div class="landing-checks">
-        <span><i data-lucide="check-circle-2"></i>Registro automático de fecha y hora</span>
-        <span><i data-lucide="check-circle-2"></i>Asignacion por supervisor</span>
-        <span><i data-lucide="check-circle-2"></i>Reportes por usuario, área y cliente</span>
-      </div>
-      <div class="landing-cta">
-        {% if current_user.is_authenticated %}
-          <a class="button" href="{{ url_for('dashboard.index') }}"><i data-lucide="layout-dashboard"></i>Ir al panel</a>
-        {% else %}
-          <a class="button" href="{{ url_for('auth.login') }}"><i data-lucide="log-in"></i>Iniciar sesión</a>
-        {% endif %}
-        <a class="button ghost" href="#funciones">Ver funciones</a>
-      </div>
-      <div class="landing-proof">
-        <article>
-          <strong>24hs</strong>
-          <span>Formato horario unificado</span>
-        </article>
-        <article>
-          <strong>3 roles</strong>
-          <span>Empleado, supervisor y dueño</span>
-        </article>
-        <article>
-          <strong>100%</strong>
-          <span>Registros con trazabilidad</span>
-        </article>
-      </div>
-    </div>
-
-    <div class="landing-preview" aria-label="Resumen visual de TrazaLab">
-      <div class="landing-logo-hero">
+<section class="landing-page landing-v2">
+  <section class="landing-hero-band">
+    <header class="landing-nav landing-container">
+      <a class="landing-brand" href="{{ url_for('dashboard.landing') }}" aria-label="TrazaLab">
         <img class="logo-light" src="{{ url_for('static', filename='img/trazalab-logo.svg') }}" alt="TrazaLab">
         <img class="logo-dark" src="{{ url_for('static', filename='img/trazalab-logo-dark.svg') }}" alt="TrazaLab">
+      </a>
+      <nav class="landing-menu" aria-label="Secciones">
+        <a href="#funciones">Funciones</a>
+        <a href="#roles">Roles</a>
+        <a href="#reportes">Reportes</a>
+        <a href="#beneficios">Beneficios</a>
+      </nav>
+      <div class="landing-actions">
+        <button class="icon-button" data-theme-toggle type="button" aria-label="Cambiar tema">
+          <i data-lucide="moon"></i>
+        </button>
+        {% if current_user.is_authenticated %}
+          <a class="button small" href="{{ url_for('dashboard.index') }}">Ir al panel <i data-lucide="arrow-right"></i></a>
+        {% else %}
+          <a class="button small" href="{{ url_for('auth.login') }}">Iniciar sesión <i data-lucide="arrow-right"></i></a>
+        {% endif %}
       </div>
-      <div class="preview-status">
-        <span><i data-lucide="radio"></i> Seguimiento activo</span>
-        <span>Actualizado 08:45hs</span>
-      </div>
-      <div class="preview-top">
-        <div>
-          <span>Resumen de hoy</span>
-          <strong data-preview-title>32:45hs</strong>
+    </header>
+
+    <div class="landing-hero landing-container">
+      <div class="landing-copy">
+        <h1>Control real del trabajo. <span>Trazabilidad total</span> para tu empresa.</h1>
+        <p class="landing-lead">
+          TrazaLab te permite gestionar tareas, tiempos y actividades de tu equipo con precisión, orden y evidencia.
+          Información clara para decidir mejor.
+        </p>
+        <div class="landing-checks">
+          <span><i data-lucide="check-circle-2"></i>Registro automático de fecha y hora 24hs</span>
+          <span><i data-lucide="check-circle-2"></i>Trazabilidad por empleado, supervisor y cliente</span>
+          <span><i data-lucide="check-circle-2"></i>Reportes inteligentes y listos para usar</span>
         </div>
-        <small>Hora actual 08:45hs</small>
+        <div class="landing-cta">
+          {% if current_user.is_authenticated %}
+            <a class="button" href="{{ url_for('dashboard.index') }}">Ir al panel <i data-lucide="arrow-right"></i></a>
+          {% else %}
+            <a class="button" href="{{ url_for('auth.login') }}">Iniciar sesión <i data-lucide="arrow-right"></i></a>
+          {% endif %}
+          <a class="button ghost" href="#funciones">Ver cómo funciona <i data-lucide="play"></i></a>
+        </div>
       </div>
-      <div class="preview-tabs" role="tablist" aria-label="Vista previa">
-        <button class="active" type="button" data-preview-tab="tiempos">Tiempos</button>
-        <button type="button" data-preview-tab="supervision">Supervisión</button>
-        <button type="button" data-preview-tab="reportes">Reportes</button>
-      </div>
-      <div class="preview-stage">
-        <div class="preview-chart" data-preview-panel="tiempos">
+
+      <div class="hero-dashboard" aria-label="Vista resumen de TrazaLab">
+        <div class="hero-dashboard-head">
+          <strong>Resumen de hoy</strong>
+          <span>Hora actual 09:15hs</span>
+        </div>
+        <div class="hero-metrics">
+          <article><span>Total de horas</span><strong>32:45hs</strong><small>+8% vs ayer</small></article>
+          <article><span>Tareas activas</span><strong>6</strong><small>En progreso</small></article>
+          <article><span>Empleados activos</span><strong>12</strong><small>Conectados</small></article>
+        </div>
+        <div class="hero-chart">
+          <div class="chart-lines"></div>
           <span style="--bar: 78%"><b>Contable</b></span>
           <span style="--bar: 52%"><b>Impositiva</b></span>
           <span style="--bar: 66%"><b>Auditoría</b></span>
-          <span style="--bar: 38%"><b>Administrativa</b></span>
+          <span style="--bar: 42%"><b>Administrativa</b></span>
+          <span style="--bar: 50%"><b>Consultoría</b></span>
         </div>
-        <div class="preview-list hidden" data-preview-panel="supervision">
-          <span><i data-lucide="user-check"></i>Ana Perez completo conciliaciones <strong>02:35hs</strong></span>
-          <span><i data-lucide="user-check"></i>Luis Gomez trabaja en IVA mensual <strong>01:45hs</strong></span>
-          <span><i data-lucide="user-check"></i>Maria Fernandez carga datos <strong>01:15hs</strong></span>
-        </div>
-        <div class="preview-report hidden" data-preview-panel="reportes">
-          <div><span>Total mensual</span><strong>231:45hs</strong></div>
-          <div><span>Registros</span><strong>186</strong></div>
-          <div><span>Empleados</span><strong>8</strong></div>
-          <div><span>Clientes</span><strong>24</strong></div>
+        <div class="hero-activity">
+          <strong>Actividad reciente</strong>
+          <span><i data-lucide="user-check"></i>María López inició tarea "Liquidación IVA" <b>09:02hs</b></span>
+          <span><i data-lucide="check-circle-2"></i>Juan Pérez completó "Conciliación bancaria" <b>08:47hs</b></span>
+          <span><i data-lucide="edit-3"></i>Ana Gómez editó registro "Reunión con cliente" <b>08:31hs</b></span>
         </div>
       </div>
-      <p data-preview-copy>Horas registradas por área, con formato 24hs y trazabilidad por tarea.</p>
     </div>
   </section>
 
-  <section class="landing-section" id="funciones">
-    <div class="landing-section-title">
-      <h2>Como funciona</h2>
-      <p>Un flujo simple para registrar trabajo real y convertirlo en información útil.</p>
+  <section class="landing-demo landing-container" id="funciones">
+    <div class="center-title">
+      <h2>Un vistazo a <span>TrazaLab</span> en acción</h2>
+    </div>
+    <div class="demo-tabs" role="tablist" aria-label="Vista previa">
+      <button class="active" type="button" data-preview-tab="tiempos"><i data-lucide="clock-3"></i>Tiempos</button>
+      <button type="button" data-preview-tab="supervision"><i data-lucide="users"></i>Supervisión</button>
+      <button type="button" data-preview-tab="reportes"><i data-lucide="bar-chart-3"></i>Reportes</button>
+    </div>
+    <div class="demo-grid">
+      <aside>
+        <h3>Registrá tareas, tiempos y clientes de forma simple.</h3>
+        <p>Cada registro queda asociado al empleado y supervisor correspondiente, con fecha y hora automática.</p>
+        <div class="demo-points">
+          <span><i data-lucide="calendar-check"></i>Inicio y fin automáticos</span>
+          <span><i data-lucide="clock"></i>Formato 24hs</span>
+          <span><i data-lucide="shield-check"></i>Trazabilidad completa</span>
+        </div>
+      </aside>
+      <div class="demo-table-card">
+        <div class="demo-table-head">
+          <strong data-preview-title>Tareas en curso</strong>
+          <a class="button small" href="{{ url_for('auth.login') }}"><i data-lucide="plus"></i>Iniciar tarea</a>
+        </div>
+        <div class="demo-table-wrap" data-preview-panel="tiempos">
+          <table>
+            <thead><tr><th>Empleado</th><th>Tarea</th><th>Cliente</th><th>Inicio</th><th>Estado</th><th>Supervisor</th></tr></thead>
+            <tbody>
+              <tr><td>María López</td><td>Liquidación IVA</td><td>Estudio Contable SRL</td><td>09:02hs</td><td><span>En curso</span></td><td>Carlos Ruiz</td></tr>
+              <tr><td>Juan Pérez</td><td>Conciliación bancaria</td><td>Comercial del Sur SA</td><td>08:40hs</td><td><span>En curso</span></td><td>Carlos Ruiz</td></tr>
+              <tr><td>Ana Gómez</td><td>Reunión con cliente</td><td>Industrias ABC</td><td>08:15hs</td><td><span>En curso</span></td><td>Carlos Ruiz</td></tr>
+              <tr><td>Luis Martínez</td><td>Auditoría interna</td><td>Grupo Norte SA</td><td>09:10hs</td><td><span>En curso</span></td><td>Sofía Torres</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="demo-panel hidden" data-preview-panel="supervision">
+          <article><strong>Equipo Carlos Ruiz</strong><span>4 tareas activas · 12:30hs hoy</span></article>
+          <article><strong>Equipo Sofía Torres</strong><span>3 tareas activas · 08:15hs hoy</span></article>
+          <article><strong>Ediciones justificadas</strong><span>2 registros con observación esta semana</span></article>
+        </div>
+        <div class="demo-panel hidden" data-preview-panel="reportes">
+          <article><strong>Horas semanales</strong><span>156:20hs registradas</span></article>
+          <article><strong>Ranking mensual</strong><span>María López · 98:45hs</span></article>
+          <article><strong>Áreas y tareas</strong><span>12 áreas · 48 tareas activas</span></article>
+        </div>
+        <a class="demo-link" href="{{ url_for('auth.login') }}">Ver todos los registros <i data-lucide="arrow-right"></i></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="landing-section landing-container">
+    <div class="center-title">
+      <h2>Así de simple funciona</h2>
     </div>
     <div class="landing-steps">
-      <article>
-        <span>1</span>
-        <i data-lucide="clipboard-check"></i>
-        <h3>Se asignan tareas</h3>
-        <p>El equipo trabaja por cliente, área y actividad, con supervisor responsable cuando corresponde.</p>
-      </article>
-      <article>
-        <span>2</span>
-        <i data-lucide="clock-3"></i>
-        <h3>Se registra el tiempo</h3>
-        <p>La fecha y la hora se toman automáticamente para evitar cargas manuales.</p>
-      </article>
-      <article>
-        <span>3</span>
-        <i data-lucide="scan-search"></i>
-        <h3>Se supervisa</h3>
-        <p>Supervisores y dueños ven avances, ediciones justificadas y actividad según su rol.</p>
-      </article>
-      <article>
-        <span>4</span>
-        <i data-lucide="file-bar-chart"></i>
-        <h3>Se reporta</h3>
-        <p>La información queda lista para consultar horas por empleado, área, cliente y período.</p>
-      </article>
+      <article><span>1</span><i data-lucide="users"></i><h3>Asigná y organizá</h3><p>Creá empleados, definí áreas, tareas y asigná supervisores.</p></article>
+      <article><span>2</span><i data-lucide="clock-3"></i><h3>Registrá el trabajo</h3><p>El equipo inicia tareas. Fecha y hora se registran solas.</p></article>
+      <article><span>3</span><i data-lucide="clipboard-check"></i><h3>Supervisá y ajustá</h3><p>Supervisores validan, editan y dejan observaciones.</p></article>
+      <article><span>4</span><i data-lucide="trending-up"></i><h3>Analizá y decidí</h3><p>Reportes claros para entender los tiempos y resultados.</p></article>
     </div>
   </section>
 
-  <section class="landing-day">
-    <div class="landing-section-title">
-      <h2>Más orden en el día a día</h2>
-      <p>TrazaLab baja a tierra la operación diaria sin hacerla más pesada.</p>
-    </div>
-    <div class="day-grid">
-      <article>
-        <i data-lucide="list-checks"></i>
-        <div>
-          <h3>Menos planillas sueltas</h3>
-          <p>Las tareas quedan centralizadas por cliente, área y responsable.</p>
-        </div>
-      </article>
-      <article>
-        <i data-lucide="message-square-text"></i>
-        <div>
-          <h3>Más contexto para corregir</h3>
-          <p>Las ediciones pueden incluir observaciones para explicar cambios operativos.</p>
-        </div>
-      </article>
-      <article>
-        <i data-lucide="sparkles"></i>
-        <div>
-          <h3>Una experiencia más simple</h3>
-          <p>Cada usuario ve solo lo necesario para trabajar sin ruido.</p>
-        </div>
-      </article>
-    </div>
-  </section>
-
-  <section class="landing-section" id="roles">
-    <div class="landing-section-title">
-      <h2>Cada rol ve lo que necesita</h2>
-      <p>TrazaLab separa permisos para que el sistema sea claro y seguro.</p>
-    </div>
-    <div class="landing-features">
-      <article>
-        <i data-lucide="user"></i>
-        <h3>Empleado</h3>
-        <p>Registra tareas, consulta su historial y revisa sus propios reportes.</p>
-      </article>
-      <article>
-        <i data-lucide="users-round"></i>
-        <h3>Supervisor</h3>
-        <p>Controla empleados a cargo, edita registros con observación y analiza horas del equipo.</p>
-      </article>
-      <article>
-        <i data-lucide="crown"></i>
-        <h3>Dueño</h3>
-        <p>Tiene visión global de empresa, empleados, clientes, áreas, tareas y reportes mensuales.</p>
-      </article>
-    </div>
-  </section>
-
-  <section class="landing-evidence" id="evidencia">
-    <div>
-      <h2>Trazabilidad que genera confianza</h2>
-      <p>
-        Cada acción queda registrada para que la empresa pueda reconstruir qué pasó, cuándo pasó y quién intervino.
-        Es una base ordenada para informes, supervision y decisiones internas.
-      </p>
-      <div class="evidence-points">
-        <span><i data-lucide="shield-check"></i>Datos separados por empresa</span>
-        <span><i data-lucide="history"></i>Historial por usuario</span>
-        <span><i data-lucide="download"></i>Reportes exportables</span>
+  <section class="roles-band" id="roles">
+    <div class="landing-container">
+      <div class="center-title">
+        <h2>Para <span>cada rol</span>, lo que necesita</h2>
+      </div>
+      <div class="landing-features">
+        <article>
+          <i data-lucide="user"></i>
+          <h3>Empleado</h3>
+          <p>Registrá tus tareas de forma rápida y segura. Todo queda registrado.</p>
+          <ul><li>Inicio y fin de tareas</li><li>Mis tiempos y actividades</li><li>Mis reportes</li></ul>
+          <strong>Enfocado en su trabajo</strong>
+        </article>
+        <article>
+          <i data-lucide="users-round"></i>
+          <h3>Supervisor</h3>
+          <p>Supervisá a tu equipo en tiempo real y asegurá la calidad de la información.</p>
+          <ul><li>Horas del equipo</li><li>Edición con observación</li><li>Reportes por área y empleado</li></ul>
+          <strong>Control y seguimiento</strong>
+        </article>
+        <article>
+          <i data-lucide="crown"></i>
+          <h3>Dueño</h3>
+          <p>Visión global de la empresa para decidir con información confiable.</p>
+          <ul><li>Resumen general</li><li>Reportes ejecutivos</li><li>Trazabilidad completa</li></ul>
+          <strong>Decisiones con datos</strong>
+        </article>
       </div>
     </div>
-    <div class="evidence-card">
-      <div class="evidence-row"><span>Horas por área mensual</span><strong>120:45hs</strong></div>
-      <div class="evidence-bar"><span style="width: 92%"></span></div>
-      <div class="evidence-row"><span>Horas por empleado</span><strong>42:15hs</strong></div>
-      <div class="evidence-bar"><span style="width: 76%"></span></div>
-      <div class="evidence-row"><span>Registros del mes</span><strong>186</strong></div>
-      <div class="evidence-bar"><span style="width: 64%"></span></div>
+  </section>
+
+  <section class="landing-evidence landing-container" id="reportes">
+    <div>
+      <h2>Evidencia clara, <span>decisiones seguras</span></h2>
+      <p>TrazaLab convierte la actividad diaria en información valiosa y auditable. Todo queda registrado: quién, qué, cuándo y por cuánto tiempo.</p>
+      <div class="evidence-points">
+        <span><i data-lucide="user-check"></i>Trazabilidad completa</span>
+        <span><i data-lucide="shield-check"></i>Información confiable</span>
+        <span><i data-lucide="file-down"></i>Reportes listos para presentar</span>
+      </div>
+    </div>
+    <div class="evidence-dashboard">
+      <article>
+        <h3>Horas por área mensual</h3>
+        <div class="donut"></div>
+      </article>
+      <article>
+        <h3>Ranking de empleados</h3>
+        <div class="rank-row"><span>María López</span><b style="width: 92%"></b><strong>98:45hs</strong></div>
+        <div class="rank-row"><span>Juan Pérez</span><b style="width: 78%"></b><strong>86:30hs</strong></div>
+        <div class="rank-row"><span>Ana Gómez</span><b style="width: 64%"></b><strong>72:15hs</strong></div>
+      </article>
+      <article class="wide">
+        <h3>Resumen mensual general</h3>
+        <div class="summary-grid">
+          <span><i data-lucide="users"></i><strong>24</strong>Empleados</span>
+          <span><i data-lucide="briefcase-business"></i><strong>18</strong>Clientes</span>
+          <span><i data-lucide="clipboard-list"></i><strong>12 / 48</strong>Áreas / tareas</span>
+          <span><i data-lucide="file-text"></i><strong>1.256</strong>Registros</span>
+        </div>
+      </article>
     </div>
   </section>
 
-  <section class="landing-band">
-    <div>
-      <h2>Acceso privado para cada empresa</h2>
-      <p>La landing presenta el producto; el sistema real queda protegido por usuario y contraseña.</p>
+  <section class="final-cta landing-container" id="beneficios">
+    <div class="final-logo">
+      <img class="logo-light" src="{{ url_for('static', filename='img/trazalab-logo.svg') }}" alt="TrazaLab">
+      <img class="logo-dark" src="{{ url_for('static', filename='img/trazalab-logo-dark.svg') }}" alt="TrazaLab">
     </div>
-    {% if current_user.is_authenticated %}
-      <a class="button" href="{{ url_for('dashboard.index') }}">Continuar al panel</a>
-    {% else %}
-      <a class="button" href="{{ url_for('auth.login') }}">Entrar al sistema</a>
-    {% endif %}
+    <div>
+      <h2>Listo para llevar el control de tu equipo al siguiente nivel.</h2>
+      <p>Iniciá sesión y comenzá hoy mismo.</p>
+    </div>
+    <a class="button" href="{{ url_for('auth.login') }}">Iniciar sesión <i data-lucide="arrow-right"></i></a>
   </section>
+
+  <footer class="landing-footer landing-container">
+    <span><i data-lucide="lock"></i> Seguridad, privacidad y confianza.</span>
+    <nav>
+      <a href="#funciones">Funciones</a>
+      <a href="#roles">Roles</a>
+      <a href="#reportes">Reportes</a>
+      <a href="#beneficios">Beneficios</a>
+    </nav>
+    <span>© 2026 TrazaLab · Todos los derechos reservados.</span>
+  </footer>
 </section>
 {% endblock %}
