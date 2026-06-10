@@ -205,4 +205,4 @@ def select_company(company_id):
     company = Company.query.filter_by(id=company_id, deleted_at=None).first_or_404()
     session["active_company_id"] = company.id
     flash(f"Empresa activa: {company.name}", "success")
-    return redirect(url_for("dashboard.index"))
+    return redirect(url_for("platform.companies"))

@@ -31,7 +31,7 @@
     {% set current_path = request.path %}
     {% set company = active_company() %}
     <aside class="sidebar" aria-label="Navegacion principal">
-      <a class="brand" href="{{ url_for('dashboard.index') }}">
+      <a class="brand" href="{{ url_for('platform.companies') if is_platform_admin() else url_for('dashboard.index') }}">
         <span class="brand-logo-frame">
           <img class="logo-light" src="{{ url_for('static', filename='img/trazalab-logo.svg') }}" alt="TrazaLab">
           <img class="logo-dark" src="{{ url_for('static', filename='img/trazalab-logo-dark.svg') }}" alt="TrazaLab">
@@ -39,44 +39,39 @@
       </a>
 
       <nav class="nav-section">
-        <a class="nav-item {{ 'active' if current_path == url_for('dashboard.index') else '' }}" href="{{ url_for('dashboard.index') }}" aria-label="Dashboard">
-          <i data-lucide="layout-dashboard"></i><span>Dashboard</span>
-        </a>
-        <a class="nav-item {{ 'active' if current_path.startswith('/time-records') else '' }}" href="{{ url_for('time_records.index') }}" aria-label="Horas">
-          <i data-lucide="timer"></i><span>Horas</span>
-        </a>
-        {% if current_user.role in ['Owner', 'Supervisor'] or current_user.is_company_owner or is_platform_admin() %}
-          <a class="nav-item {{ 'active' if current_path.startswith('/employees') else '' }}" href="{{ url_for('employees.index') }}" aria-label="Empleados">
-            <i data-lucide="users"></i><span>Empleados</span>
-          </a>
-          <a class="nav-item {{ 'active' if current_path.startswith('/clients') else '' }}" href="{{ url_for('clients.index') }}" aria-label="Clientes">
-            <i data-lucide="briefcase-business"></i><span>Clientes</span>
-          </a>
-          <a class="nav-item {{ 'active' if current_path.startswith('/areas') else '' }}" href="{{ url_for('areas.index') }}" aria-label="Areas y tareas">
-            <i data-lucide="clipboard-list"></i><span>Areas y tareas</span>
-          </a>
-        {% endif %}
-        <a class="nav-item {{ 'active' if current_path.startswith('/reports') else '' }}" href="{{ url_for('reports.index') }}" aria-label="Reportes">
-          <i data-lucide="bar-chart-3"></i><span>Reportes</span>
-        </a>
         {% if is_platform_admin() %}
-          <a class="nav-item {{ 'active' if current_path.startswith('/audit') else '' }}" href="{{ url_for('audit.index') }}" aria-label="Actividad">
-            <i data-lucide="activity"></i><span>Actividad</span>
-          </a>
-        {% endif %}
-      </nav>
-
-      {% if is_platform_admin() %}
-        <p class="nav-label">Plataforma</p>
-        <nav class="nav-section secondary">
           <a class="nav-item {{ 'active' if current_path.startswith('/platform/companies') else '' }}" href="{{ url_for('platform.companies') }}" aria-label="Empresas">
             <i data-lucide="building-2"></i><span>Empresas</span>
           </a>
           <a class="nav-item {{ 'active' if current_path.startswith('/platform/users') else '' }}" href="{{ url_for('platform.users') }}" aria-label="Usuarios">
             <i data-lucide="user-cog"></i><span>Usuarios</span>
           </a>
-        </nav>
-      {% endif %}
+          <a class="nav-item {{ 'active' if current_path.startswith('/audit') else '' }}" href="{{ url_for('audit.index') }}" aria-label="Actividad">
+            <i data-lucide="activity"></i><span>Actividad</span>
+          </a>
+        {% else %}
+          <a class="nav-item {{ 'active' if current_path == url_for('dashboard.index') else '' }}" href="{{ url_for('dashboard.index') }}" aria-label="Dashboard">
+            <i data-lucide="layout-dashboard"></i><span>Dashboard</span>
+          </a>
+          <a class="nav-item {{ 'active' if current_path.startswith('/time-records') else '' }}" href="{{ url_for('time_records.index') }}" aria-label="Horas">
+            <i data-lucide="timer"></i><span>Horas</span>
+          </a>
+          {% if current_user.role in ['Owner', 'Supervisor'] or current_user.is_company_owner %}
+            <a class="nav-item {{ 'active' if current_path.startswith('/employees') else '' }}" href="{{ url_for('employees.index') }}" aria-label="Empleados">
+              <i data-lucide="users"></i><span>Empleados</span>
+            </a>
+            <a class="nav-item {{ 'active' if current_path.startswith('/clients') else '' }}" href="{{ url_for('clients.index') }}" aria-label="Clientes">
+              <i data-lucide="briefcase-business"></i><span>Clientes</span>
+            </a>
+            <a class="nav-item {{ 'active' if current_path.startswith('/areas') else '' }}" href="{{ url_for('areas.index') }}" aria-label="Areas y tareas">
+              <i data-lucide="clipboard-list"></i><span>Areas y tareas</span>
+            </a>
+          {% endif %}
+          <a class="nav-item {{ 'active' if current_path.startswith('/reports') else '' }}" href="{{ url_for('reports.index') }}" aria-label="Reportes">
+            <i data-lucide="bar-chart-3"></i><span>Reportes</span>
+          </a>
+        {% endif %}
+      </nav>
     </aside>
   {% endif %}
 

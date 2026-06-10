@@ -1,7 +1,7 @@
 import csv
 from io import BytesIO, StringIO
 
-from flask import Blueprint, Response, render_template, request, send_file
+from flask import Blueprint, Response, abort, render_template, request, send_file
 from flask_login import current_user, login_required
 from openpyxl import Workbook
 from sqlalchemy import func
@@ -22,6 +22,8 @@ reports_bp = Blueprint("reports", __name__, url_prefix="/reports")
 @reports_bp.route("/")
 @login_required
 def index():
+    if is_platform_admin():
+        abort(403)
     records = _filtered_records().all()
     can_filter_employee = not _is_employee_scope()
     if can_filter_employee:
@@ -50,6 +52,8 @@ def index():
 @reports_bp.route("/export.csv")
 @login_required
 def export_csv():
+    if is_platform_admin():
+        abort(403)
     records = _filtered_records().all()
     output = StringIO()
     writer = csv.writer(output, delimiter=";")
@@ -68,6 +72,8 @@ def export_csv():
 @reports_bp.route("/export.xlsx")
 @login_required
 def export_excel():
+    if is_platform_admin():
+        abort(403)
     records = _filtered_records().all()
     wb = Workbook()
     ws = wb.active

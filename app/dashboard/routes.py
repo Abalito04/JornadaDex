@@ -1,7 +1,7 @@
 from datetime import timedelta
 from decimal import Decimal
 
-from flask import Blueprint, render_template
+from flask import Blueprint, redirect, render_template, url_for
 from flask_login import current_user, login_required
 from sqlalchemy import func
 
@@ -17,6 +17,8 @@ dashboard_bp = Blueprint("dashboard", __name__)
 @dashboard_bp.route("/")
 @login_required
 def index():
+    if is_platform_admin():
+        return redirect(url_for("platform.companies"))
     today = argentina_now().date()
     week_start = today - timedelta(days=today.weekday())
     month_start = today.replace(day=1)

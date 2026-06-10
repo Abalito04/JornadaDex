@@ -11,7 +11,7 @@ def roles_required(*roles):
         @wraps(view)
         @login_required
         def inner(*args, **kwargs):
-            if getattr(current_user, "is_platform_admin", False) or current_user.role == ROLE_DEVELOPER:
+            if current_user.role == ROLE_DEVELOPER and ROLE_DEVELOPER in roles:
                 return view(*args, **kwargs)
             if current_user.role not in roles and not current_user.is_company_owner:
                 abort(403)
