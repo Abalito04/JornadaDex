@@ -37,9 +37,11 @@ def visible_users_query(query):
 
 
 def visible_time_records_query(query):
-    if not is_supervisor_scope(_current_user()):
+    current = _current_user()
+    if not is_supervisor_scope(current):
         return query
-    return _exclude_ids(query, TimeRecord.employee_id, _owner_employee_ids())
+    query = _exclude_ids(query, TimeRecord.employee_id, _owner_employee_ids())
+    return query.filter(TimeRecord.supervisor_id == current.id)
 
 
 def employee_is_visible(employee):

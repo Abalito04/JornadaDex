@@ -97,6 +97,8 @@ def _detail_text(values):
         parts.append(str(values["name"]))
     if values.get("employee_id"):
         parts.append(f"Empleado #{values['employee_id']}")
+    if values.get("supervisor_id"):
+        parts.append(f"Supervisor #{values['supervisor_id']}")
     if values.get("accounting_client_id"):
         parts.append(f"Cliente #{values['accounting_client_id']}")
     if values.get("format"):

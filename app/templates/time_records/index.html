@@ -25,6 +25,23 @@
         <input type="hidden" name="employee_id" value="{{ current_user.employee_id or '' }}">
       </div>
     {% endif %}
+    {% if can_choose_supervisor %}
+      <div>
+        <label>Supervisor responsable</label>
+        <select name="supervisor_id" required>
+          <option value="">Seleccionar supervisor</option>
+          {% for supervisor in supervisors %}
+            <option value="{{ supervisor.id }}">{{ supervisor.employee.full_name if supervisor.employee else supervisor.username }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    {% else %}
+      <div>
+        <label>Supervisor responsable</label>
+        <input value="{{ current_user.employee.full_name if current_user.employee else current_user.username }}" disabled>
+        <input type="hidden" name="supervisor_id" value="{{ current_user.id }}">
+      </div>
+    {% endif %}
     <div>
       <label>Cliente</label>
       <select name="accounting_client_id" required>
@@ -59,12 +76,13 @@
   <div class="table-wrap">
     <table>
       <thead>
-        <tr><th>Empleado</th><th>Cliente</th><th>Fecha</th><th>Inicio</th><th>Fin</th><th>Horas</th><th>Estado</th><th>Area</th><th>Tarea</th><th></th></tr>
+        <tr><th>Empleado</th><th>Supervisor</th><th>Cliente</th><th>Fecha</th><th>Inicio</th><th>Fin</th><th>Horas</th><th>Estado</th><th>Area</th><th>Tarea</th><th></th></tr>
       </thead>
       <tbody>
         {% for record in records %}
           <tr>
             <td>{{ record.employee.full_name }}</td>
+            <td>{{ record.supervisor.employee.full_name if record.supervisor and record.supervisor.employee else record.supervisor.username if record.supervisor else "Sin asignar" }}</td>
             <td>{{ record.accounting_client.name if record.accounting_client else "Sin cliente" }}</td>
             <td>{{ record.record_date }}</td>
             <td>{{ format_time_hs(record.start_time) }}</td>
@@ -94,7 +112,7 @@
           </tr>
         {% else %}
           <tr>
-            <td colspan="10">
+            <td colspan="11">
               <div class="empty-state compact">
                 <i data-lucide="clipboard-list"></i>
                 <strong>No hay registros cargados.</strong>

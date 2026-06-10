@@ -108,6 +108,9 @@ def ensure_runtime_schema():
         if "accounting_client_id" not in time_record_columns:
             db.session.execute(text("ALTER TABLE time_records ADD COLUMN accounting_client_id INTEGER"))
             db.session.commit()
+        if "supervisor_id" not in time_record_columns:
+            db.session.execute(text("ALTER TABLE time_records ADD COLUMN supervisor_id INTEGER"))
+            db.session.commit()
 
     if "accounting_clients" in inspector.get_table_names():
         client_columns = {column["name"] for column in inspector.get_columns("accounting_clients")}

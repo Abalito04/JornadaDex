@@ -30,7 +30,7 @@
           <article class="dashboard-row">
             <div>
               <strong>{{ record.task.name }}</strong>
-              <span>{{ record.area.name }}{% if record.accounting_client %} · {{ record.accounting_client.name }}{% endif %}</span>
+              <span>{{ record.area.name }}{% if record.accounting_client %} · {{ record.accounting_client.name }}{% endif %}{% if record.supervisor %} · Supervisor: {{ record.supervisor.employee.full_name if record.supervisor.employee else record.supervisor.username }}{% endif %}</span>
             </div>
             <span class="status-badge en-curso">{{ format_time_hs(record.start_time) }}</span>
           </article>

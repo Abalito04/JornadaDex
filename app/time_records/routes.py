@@ -3,7 +3,8 @@ from flask_login import current_user, login_required
 
 from app.context import current_company_id, is_platform_admin
 from app.extensions import db
-from app.models import AccountingClient, Area, Employee, TimeRecord
+from app.models import AccountingClient, Area, Employee, TimeRecord, User
+from app.roles import ROLE_EMPLOYEE, ROLE_SUPERVISOR
 from app.services.audit_service import write_audit
 from app.services.time_record_service import finish_time_record, start_time_record
 from app.services.visibility_service import employee_is_visible, visible_employees_query, visible_time_records_query
@@ -14,12 +15,16 @@ time_records_bp = Blueprint("time_records", __name__, url_prefix="/time-records"
 @time_records_bp.route("/", methods=["GET", "POST"])
 @login_required
 def index():
-    can_choose_employee = current_user.role != "Employee" or current_user.is_company_owner or is_platform_admin()
+    can_choose_employee = current_user.role != ROLE_EMPLOYEE or current_user.is_company_owner or is_platform_admin()
+    can_choose_supervisor = current_user.role != ROLE_SUPERVISOR or current_user.is_company_owner or is_platform_admin()
     if request.method == "POST":
         try:
             employee_id = int(request.form.get("employee_id") or 0)
             if not can_choose_employee:
                 employee_id = current_user.employee_id
+            supervisor_id = int(request.form.get("supervisor_id") or 0)
+            if not can_choose_supervisor:
+                supervisor_id = current_user.id
             selected_employee = Employee.query.filter_by(id=employee_id, company_id=current_company_id(), deleted_at=None).first()
             if not employee_is_visible(selected_employee):
                 return ("Forbidden", 403)
@@ -27,6 +32,7 @@ def index():
                 company_id=current_company_id(),
                 user_id=current_user.id,
                 employee_id=employee_id,
+                supervisor_id=supervisor_id,
                 accounting_client_id=int(request.form.get("accounting_client_id") or 0),
                 area_id=int(request.form.get("area_id") or 0),
                 task_id=int(request.form.get("task_id") or 0),
@@ -50,6 +56,11 @@ def index():
         .order_by(AccountingClient.name)
         .all()
     )
+    supervisors = (
+        User.query.filter_by(company_id=current_company_id(), role=ROLE_SUPERVISOR, is_active_flag=True, deleted_at=None)
+        .order_by(User.username)
+        .all()
+    )
     records_query = TimeRecord.query.filter_by(company_id=current_company_id(), deleted_at=None)
     if not can_choose_employee:
         records_query = records_query.filter(TimeRecord.employee_id == current_user.employee_id)
@@ -62,7 +73,9 @@ def index():
         clients=clients,
         areas=areas,
         records=records,
+        supervisors=supervisors,
         can_choose_employee=can_choose_employee,
+        can_choose_supervisor=can_choose_supervisor,
     )
 
 

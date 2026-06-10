@@ -158,6 +158,7 @@ class TimeRecord(db.Model, AuditMixin):
     id = db.Column(db.Integer, primary_key=True)
     company_id = db.Column(db.Integer, db.ForeignKey("companies.id"), nullable=False)
     employee_id = db.Column(db.Integer, db.ForeignKey("employees.id"), nullable=False)
+    supervisor_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
     accounting_client_id = db.Column(db.Integer, db.ForeignKey("accounting_clients.id"), nullable=True)
     area_id = db.Column(db.Integer, db.ForeignKey("areas.id"), nullable=False)
     task_id = db.Column(db.Integer, db.ForeignKey("tasks.id"), nullable=False)
@@ -168,6 +169,7 @@ class TimeRecord(db.Model, AuditMixin):
     observations = db.Column(db.Text, nullable=True)
 
     employee = db.relationship("Employee", back_populates="time_records")
+    supervisor = db.relationship("User", foreign_keys=[supervisor_id])
     accounting_client = db.relationship("AccountingClient", back_populates="time_records")
     area = db.relationship("Area")
     task = db.relationship("Task", back_populates="time_records")
