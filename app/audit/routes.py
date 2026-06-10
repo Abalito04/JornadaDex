@@ -1,26 +1,26 @@
-from flask import Blueprint, render_template, request
+from flask import Blueprint, abort, render_template, request
+from flask_login import login_required
 
 from app.context import current_company_id, is_platform_admin
 from app.models import AuditLog, User
-from app.permissions.decorators import roles_required
-from app.services.visibility_service import user_is_visible, visible_users_query
 
 audit_bp = Blueprint("audit", __name__, url_prefix="/audit")
 
 
 @audit_bp.route("/")
-@roles_required("Owner", "Supervisor")
+@login_required
 def index():
+    if not is_platform_admin():
+        abort(403)
     company_id = current_company_id()
     selected_user_id = request.args.get("user_id", type=int)
-    users_query = User.query.filter_by(company_id=company_id, deleted_at=None)
-    users = visible_users_query(users_query).order_by(User.username).all()
+    users = User.query.filter_by(company_id=company_id, deleted_at=None).order_by(User.username).all()
     selected_user = None
     events = []
 
     if selected_user_id:
         selected_user = User.query.filter_by(id=selected_user_id, company_id=company_id, deleted_at=None).first()
-        if selected_user and user_is_visible(selected_user):
+        if selected_user:
             logs = (
                 AuditLog.query.filter_by(company_id=company_id, user_id=selected_user.id)
                 .order_by(AuditLog.created_at.desc())
@@ -28,8 +28,6 @@ def index():
                 .all()
             )
             events = [_activity_event(log) for log in logs]
-        else:
-            selected_user = None
 
     return render_template(
         "audit/index.html",

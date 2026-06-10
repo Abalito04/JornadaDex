@@ -78,6 +78,7 @@ def index():
         can_choose_employee=can_choose_employee,
         can_choose_supervisor=can_choose_supervisor,
         can_edit_records=_can_edit_records(),
+        edit_note_for_record=_edit_note_for_record,
     )
 
 
@@ -215,3 +216,14 @@ def _append_edit_note(observations, edit_note):
         prefix = "Edicion gestion"
     text = f"{prefix}: {edit_note}"
     return f"{observations}\n{text}" if observations else text
+
+
+def _edit_note_for_record(record):
+    if not record.observations:
+        return ""
+    notes = [
+        line.strip()
+        for line in record.observations.splitlines()
+        if line.strip().lower().startswith("edicion ")
+    ]
+    return notes[-1] if notes else ""
