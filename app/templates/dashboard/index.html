@@ -2,56 +2,124 @@
 {% block title %}Dashboard{% endblock %}
 {% block content %}
 <section class="page-title">
-  <h1>Dashboard</h1>
-  <p>Indicadores de productividad de la empresa.</p>
+  {% if dashboard_role == "employee" %}
+    <h1>Mi dashboard</h1>
+    <p>Resumen personal de horas, tareas activas y ultimos registros.</p>
+  {% elif dashboard_role == "supervisor" %}
+    <h1>Dashboard de supervision</h1>
+    <p>Seguimiento operativo del equipo, sin datos del dueño.</p>
+  {% else %}
+    <h1>Dashboard del dueño</h1>
+    <p>Vision general de productividad, clientes y estructura de la empresa.</p>
+  {% endif %}
 </section>
 
-<section class="metric-grid">
-  <article><span>Empleados activos</span><strong>{{ metrics.active_employees }}</strong></article>
-  <article><span>Clientes activos</span><strong>{{ metrics.active_clients }}</strong></article>
-  <article><span>Tareas activas</span><strong>{{ metrics.active_tasks }}</strong></article>
-  <article><span>Horas hoy</span><strong>{{ format_duration_hs(metrics.total_hours_today) }}</strong></article>
-</section>
+{% if dashboard_role == "employee" %}
+  <section class="metric-grid">
+    <article><span>Horas hoy</span><strong>{{ format_duration_hs(metrics.total_hours_today) }}</strong></article>
+    <article><span>Horas semana</span><strong>{{ format_duration_hs(metrics.total_hours_week) }}</strong></article>
+    <article><span>Horas mes</span><strong>{{ format_duration_hs(metrics.total_hours_month) }}</strong></article>
+    <article><span>Tareas en curso</span><strong>{{ metrics.open_records }}</strong></article>
+  </section>
 
-<section class="two-columns">
-  <div class="panel">
-    <h2>Horas por cliente</h2>
-    <div class="bar-chart">
-      {% for row in client_chart %}
-        <div class="bar-row">
-          <div class="bar-label"><span>{{ row.label }}</span><strong>{{ format_duration_hs(row.value) }}</strong></div>
-          <div class="bar-track"><div class="bar-fill" style="width: {{ row.width }}%"></div></div>
-        </div>
-      {% else %}
-        <p class="empty-state">Sin datos para graficar.</p>
-      {% endfor %}
+  <section class="two-columns">
+    <div class="panel">
+      <h2>Mi tarea activa</h2>
+      <div class="dashboard-list">
+        {% for record in open_records %}
+          <article class="dashboard-row">
+            <div>
+              <strong>{{ record.task.name }}</strong>
+              <span>{{ record.area.name }}{% if record.accounting_client %} · {{ record.accounting_client.name }}{% endif %}</span>
+            </div>
+            <span class="status-badge en-curso">{{ format_time_hs(record.start_time) }}</span>
+          </article>
+        {% else %}
+          <div class="empty-state compact">
+            <i data-lucide="timer-off"></i>
+            <strong>No tenes tareas en curso.</strong>
+            <span>Cuando inicies una tarea va a aparecer aca.</span>
+          </div>
+        {% endfor %}
+      </div>
     </div>
-  </div>
-  <div class="panel">
-    <h2>Horas por area</h2>
-    <div class="bar-chart">
-      {% for row in area_chart %}
-        <div class="bar-row">
-          <div class="bar-label"><span>{{ row.label }}</span><strong>{{ format_duration_hs(row.value) }}</strong></div>
-          <div class="bar-track"><div class="bar-fill" style="width: {{ row.width }}%"></div></div>
-        </div>
-      {% else %}
-        <p class="empty-state">Sin datos para graficar.</p>
-      {% endfor %}
+
+    <div class="panel">
+      <h2>Mis horas por cliente</h2>
+      {% include "dashboard/_bar_chart.html" with context %}
     </div>
-  </div>
-  <div class="panel">
-    <h2>Ranking por empleado</h2>
-    <div class="bar-chart">
-      {% for row in employee_chart %}
-        <div class="bar-row">
-          <div class="bar-label"><span>{{ row.label }}</span><strong>{{ format_duration_hs(row.value) }}</strong></div>
-          <div class="bar-track"><div class="bar-fill secondary-fill" style="width: {{ row.width }}%"></div></div>
-        </div>
-      {% else %}
-        <p class="empty-state">Sin datos para graficar.</p>
-      {% endfor %}
+  </section>
+
+  <section class="panel">
+    <h2>Mis ultimos registros</h2>
+    {% include "dashboard/_recent_records.html" %}
+  </section>
+{% elif dashboard_role == "supervisor" %}
+  <section class="metric-grid">
+    <article><span>Empleados visibles</span><strong>{{ metrics.active_employees }}</strong></article>
+    <article><span>Horas hoy</span><strong>{{ format_duration_hs(metrics.total_hours_today) }}</strong></article>
+    <article><span>En curso</span><strong>{{ metrics.open_records }}</strong></article>
+    <article><span>Finalizadas hoy</span><strong>{{ metrics.finished_today }}</strong></article>
+  </section>
+
+  <section class="two-columns">
+    <div class="panel">
+      <h2>Equipo en curso</h2>
+      <div class="dashboard-list">
+        {% for record in open_records %}
+          <article class="dashboard-row">
+            <div>
+              <strong>{{ record.employee.full_name }}</strong>
+              <span>{{ record.task.name }} · {{ record.area.name }}</span>
+            </div>
+            <span class="status-badge en-curso">{{ format_time_hs(record.start_time) }}</span>
+          </article>
+        {% else %}
+          <div class="empty-state compact">
+            <i data-lucide="check-circle-2"></i>
+            <strong>No hay tareas en curso.</strong>
+            <span>El equipo no tiene registros abiertos en este momento.</span>
+          </div>
+        {% endfor %}
+      </div>
     </div>
-  </div>
-</section>
+
+    <div class="panel">
+      <h2>Ranking del equipo</h2>
+      {% set chart_rows = employee_chart %}
+      {% include "dashboard/_bar_chart.html" %}
+    </div>
+
+    <div class="panel">
+      <h2>Horas por area</h2>
+      {% set chart_rows = area_chart %}
+      {% include "dashboard/_bar_chart.html" %}
+    </div>
+  </section>
+{% else %}
+  <section class="metric-grid">
+    <article><span>Empleados activos</span><strong>{{ metrics.active_employees }}</strong></article>
+    <article><span>Clientes activos</span><strong>{{ metrics.active_clients }}</strong></article>
+    <article><span>Areas y tareas</span><strong>{{ metrics.active_areas }}/{{ metrics.active_tasks }}</strong></article>
+    <article><span>Horas mes</span><strong>{{ format_duration_hs(metrics.total_hours_month) }}</strong></article>
+  </section>
+
+  <section class="two-columns">
+    <div class="panel">
+      <h2>Horas por cliente</h2>
+      {% set chart_rows = client_chart %}
+      {% include "dashboard/_bar_chart.html" %}
+    </div>
+    <div class="panel">
+      <h2>Horas por area</h2>
+      {% set chart_rows = area_chart %}
+      {% include "dashboard/_bar_chart.html" %}
+    </div>
+    <div class="panel">
+      <h2>Ranking por empleado</h2>
+      {% set chart_rows = employee_chart %}
+      {% include "dashboard/_bar_chart.html" %}
+    </div>
+  </section>
+{% endif %}
 {% endblock %}

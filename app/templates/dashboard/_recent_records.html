@@ -1,0 +1,21 @@
+<div class="dashboard-list">
+  {% for record in recent_records %}
+    <article class="dashboard-row">
+      <div>
+        <strong>{{ record.task.name }}</strong>
+        <span>{{ record.record_date }} · {{ record.area.name }}{% if record.accounting_client %} · {{ record.accounting_client.name }}{% endif %}</span>
+      </div>
+      {% if record.end_time %}
+        <span class="status-badge finalizada">{{ format_duration_hs(record.hours) }}</span>
+      {% else %}
+        <span class="status-badge en-curso">En curso</span>
+      {% endif %}
+    </article>
+  {% else %}
+    <div class="empty-state compact">
+      <i data-lucide="clipboard-list"></i>
+      <strong>No hay registros todavia.</strong>
+      <span>Los movimientos recientes van a aparecer en esta lista.</span>
+    </div>
+  {% endfor %}
+</div>

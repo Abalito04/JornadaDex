@@ -7,6 +7,7 @@ from sqlalchemy import func
 
 from app.context import current_company_id, is_platform_admin
 from app.models import AccountingClient, Area, Employee, Task, TimeRecord
+from app.roles import ROLE_EMPLOYEE, ROLE_SUPERVISOR
 from app.services.visibility_service import visible_employees_query, visible_time_records_query
 from app.utils.datetime import argentina_now
 
@@ -21,12 +22,15 @@ def index():
     month_start = today.replace(day=1)
     company_id = current_company_id()
     base = TimeRecord.query.filter_by(company_id=company_id, deleted_at=None)
-    if current_user.role == "Employee" and not current_user.is_company_owner and not is_platform_admin():
+    dashboard_role = _dashboard_role()
+    if dashboard_role == "employee":
         base = base.filter(TimeRecord.employee_id == current_user.employee_id)
     else:
         base = visible_time_records_query(base)
 
     active_employees_query = Employee.query.filter_by(company_id=company_id, active=True, deleted_at=None)
+    open_records = base.filter(TimeRecord.end_time.is_(None)).order_by(TimeRecord.record_date.desc(), TimeRecord.start_time.desc()).limit(8).all()
+    recent_records = base.order_by(TimeRecord.record_date.desc(), TimeRecord.start_time.desc()).limit(8).all()
     metrics = {
         "active_employees": visible_employees_query(active_employees_query).count(),
         "active_clients": AccountingClient.query.filter_by(company_id=company_id, active=True, deleted_at=None).count(),
@@ -34,6 +38,8 @@ def index():
         "total_hours_week": _sum_hours(base.filter(TimeRecord.record_date >= week_start)),
         "total_hours_month": _sum_hours(base.filter(TimeRecord.record_date >= month_start)),
         "total_records": base.count(),
+        "open_records": base.filter(TimeRecord.end_time.is_(None)).count(),
+        "finished_today": base.filter(TimeRecord.record_date == today, TimeRecord.end_time.isnot(None)).count(),
         "active_areas": Area.query.filter_by(company_id=company_id, active=True, deleted_at=None).count(),
         "active_tasks": Task.query.join(Area).filter(Area.company_id == company_id, Task.active.is_(True), Task.deleted_at.is_(None)).count(),
     }
@@ -67,6 +73,7 @@ def index():
     employee_chart = _chart_rows([(f"{first} {last}", hours) for first, last, hours in by_employee])
     return render_template(
         "dashboard/index.html",
+        dashboard_role=dashboard_role,
         metrics=metrics,
         by_area=by_area,
         by_client=by_client,
@@ -74,6 +81,8 @@ def index():
         area_chart=area_chart,
         client_chart=client_chart,
         employee_chart=employee_chart,
+        open_records=open_records,
+        recent_records=recent_records,
     )
 
 
@@ -92,3 +101,13 @@ def _chart_rows(rows):
         }
         for label, value in normalized
     ]
+
+
+def _dashboard_role():
+    if is_platform_admin() or current_user.is_company_owner:
+        return "owner"
+    if current_user.role == ROLE_SUPERVISOR:
+        return "supervisor"
+    if current_user.role == ROLE_EMPLOYEE:
+        return "employee"
+    return "owner"
