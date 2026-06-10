@@ -1,5 +1,5 @@
 from flask import Blueprint, flash, redirect, render_template, request, session, url_for
-from flask_login import login_required
+from flask_login import current_user, login_required
 
 from app.extensions import db
 from app.context import is_platform_admin
@@ -166,6 +166,34 @@ def edit_user(user_id):
         return redirect(url_for("platform.users"))
 
     return render_template("platform/user_form.html", user=user, companies=companies)
+
+
+@platform_bp.route("/users/<int:user_id>/delete", methods=["POST"])
+@login_required
+def delete_user(user_id):
+    denied = require_platform_admin()
+    if denied:
+        return denied
+
+    user = User.query.filter_by(id=user_id, deleted_at=None).first_or_404()
+    if user.id == current_user.id:
+        flash("No podes eliminar tu propio usuario Developer.", "danger")
+        return redirect(url_for("platform.users"))
+
+    previous_values = {
+        "username": user.username,
+        "email": user.email,
+        "role": user.role,
+        "company_id": user.company_id,
+        "is_company_owner": user.is_company_owner,
+        "is_platform_admin": user.is_platform_admin,
+    }
+    user.soft_delete(current_user.id)
+    user.is_active_flag = False
+    write_audit("DELETE", "users", user.id, previous_values=previous_values, company_id=user.company_id)
+    db.session.commit()
+    flash("Usuario eliminado logicamente.", "success")
+    return redirect(url_for("platform.users"))
 
 
 @platform_bp.route("/companies/<int:company_id>/select", methods=["POST"])

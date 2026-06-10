@@ -20,7 +20,17 @@
             <td>{{ user.company.name if user.company else "" }}</td>
             <td>{{ role_label(user.role, user.is_company_owner, user.is_platform_admin) }}</td>
             <td><span class="status-badge {{ 'completed' if user.is_active else 'blocked' }}">{{ "Activo" if user.is_active else "Inactivo" }}</span></td>
-            <td><a class="button small secondary" href="{{ url_for('platform.edit_user', user_id=user.id) }}">Editar</a></td>
+            <td>
+              <div class="table-actions">
+                <a class="button small secondary" href="{{ url_for('platform.edit_user', user_id=user.id) }}">Editar</a>
+                {% if user.id != current_user.id %}
+                  <form method="post" action="{{ url_for('platform.delete_user', user_id=user.id) }}" onsubmit="return confirm('Eliminar usuario?')">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button class="danger small" type="submit">Eliminar</button>
+                  </form>
+                {% endif %}
+              </div>
+            </td>
           </tr>
         {% else %}
           <tr><td colspan="6">No hay usuarios.</td></tr>
