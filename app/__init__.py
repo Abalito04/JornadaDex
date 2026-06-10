@@ -94,6 +94,14 @@ def ensure_runtime_schema():
         db.session.commit()
     db.session.execute(text("UPDATE users SET role = 'Owner', is_company_owner = TRUE WHERE role = 'Administrator'"))
     db.session.commit()
+    if "companies" in inspector.get_table_names():
+        db.session.execute(
+            text(
+                "UPDATE users SET role = 'Owner', is_company_owner = TRUE "
+                "WHERE id IN (SELECT created_by FROM companies WHERE created_by IS NOT NULL)"
+            )
+        )
+        db.session.commit()
 
     if "time_records" in inspector.get_table_names():
         time_record_columns = {column["name"] for column in inspector.get_columns("time_records")}
