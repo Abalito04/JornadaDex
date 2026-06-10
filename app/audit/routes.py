@@ -1,8 +1,8 @@
-from flask import Blueprint, abort, render_template, request
+from flask import Blueprint, abort, render_template, request, session
 from flask_login import login_required
 
 from app.context import current_company_id, is_platform_admin
-from app.models import AuditLog, User
+from app.models import AuditLog, Company, User
 
 audit_bp = Blueprint("audit", __name__, url_prefix="/audit")
 
@@ -12,7 +12,14 @@ audit_bp = Blueprint("audit", __name__, url_prefix="/audit")
 def index():
     if not is_platform_admin():
         abort(403)
-    company_id = current_company_id()
+    companies = Company.query.filter(Company.deleted_at.is_(None)).order_by(Company.name).all()
+    requested_company_id = request.args.get("company_id", type=int)
+    company_id = requested_company_id or current_company_id()
+    if companies and not any(company.id == company_id for company in companies):
+        company_id = companies[0].id
+    if company_id:
+        session["active_company_id"] = company_id
+
     selected_user_id = request.args.get("user_id", type=int)
     users = User.query.filter_by(company_id=company_id, deleted_at=None).order_by(User.username).all()
     selected_user = None
@@ -32,6 +39,8 @@ def index():
     return render_template(
         "audit/index.html",
         events=events,
+        companies=companies,
+        selected_company_id=company_id,
         users=users,
         selected_user=selected_user,
         selected_user_id=selected_user_id,

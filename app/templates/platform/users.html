@@ -3,40 +3,64 @@
 {% block content %}
 <section class="page-title">
   <h1>Usuarios</h1>
-  <p>Administracion global de accesos para Developer.</p>
+  <p>Administracion global de accesos agrupada por empresa.</p>
 </section>
 
-<section class="panel">
-  <div class="table-wrap">
-    <table>
-      <thead>
-        <tr><th>Usuario</th><th>Email</th><th>Empresa</th><th>Rol</th><th>Estado</th><th></th></tr>
-      </thead>
-      <tbody>
-        {% for user in users %}
-          <tr>
-            <td>{{ user.username }}</td>
-            <td>{{ user.email }}</td>
-            <td>{{ user.company.name if user.company else "" }}</td>
-            <td>{{ role_label(user.role, user.is_company_owner, user.is_platform_admin) }}</td>
-            <td><span class="status-badge {{ 'completed' if user.is_active else 'blocked' }}">{{ "Activo" if user.is_active else "Inactivo" }}</span></td>
-            <td>
-              <div class="table-actions">
-                <a class="button small secondary" href="{{ url_for('platform.edit_user', user_id=user.id) }}">Editar</a>
-                {% if user.id != current_user.id %}
-                  <form method="post" action="{{ url_for('platform.delete_user', user_id=user.id) }}" onsubmit="return confirm('Eliminar usuario?')">
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                    <button class="danger small" type="submit">Eliminar</button>
-                  </form>
-                {% endif %}
-              </div>
-            </td>
-          </tr>
+<div class="company-group-list">
+  {% for group in company_groups %}
+    <details class="company-group" open>
+      <summary class="company-group-head">
+        <span>
+          <strong>{{ group.company.name }}</strong>
+          {% if group.company.tax_id %}<small>CUIT {{ group.company.tax_id }}</small>{% endif %}
+        </span>
+        <span class="status-badge active">{{ group.users|length }} usuarios</span>
+      </summary>
+      <section class="panel company-group-body">
+        {% if group.users %}
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>Usuario</th><th>Email</th><th>Rol</th><th>Estado</th><th></th></tr>
+              </thead>
+              <tbody>
+                {% for user in group.users %}
+                  <tr>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ role_label(user.role, user.is_company_owner, user.is_platform_admin) }}</td>
+                    <td><span class="status-badge {{ 'completed' if user.is_active else 'blocked' }}">{{ "Activo" if user.is_active else "Inactivo" }}</span></td>
+                    <td>
+                      <div class="table-actions">
+                        <a class="button small secondary" href="{{ url_for('platform.edit_user', user_id=user.id) }}">Editar</a>
+                        {% if user.id != current_user.id %}
+                          <form method="post" action="{{ url_for('platform.delete_user', user_id=user.id) }}" onsubmit="return confirm('Eliminar usuario?')">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button class="danger small" type="submit">Eliminar</button>
+                          </form>
+                        {% endif %}
+                      </div>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
         {% else %}
-          <tr><td colspan="6">No hay usuarios.</td></tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-</section>
+          <div class="empty-state compact">
+            <i data-lucide="users"></i>
+            <strong>Esta empresa todavia no tiene usuarios.</strong>
+          </div>
+        {% endif %}
+      </section>
+    </details>
+  {% else %}
+    <section class="panel">
+      <div class="empty-state compact">
+        <i data-lucide="building-2"></i>
+        <strong>No hay empresas creadas.</strong>
+      </div>
+    </section>
+  {% endfor %}
+</div>
 {% endblock %}

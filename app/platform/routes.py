@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 from flask import Blueprint, flash, redirect, render_template, request, session, url_for
 from flask_login import current_user, login_required
 
@@ -108,8 +110,26 @@ def users():
     denied = require_platform_admin()
     if denied:
         return denied
-    users = User.query.filter(User.deleted_at.is_(None)).order_by(User.username).all()
-    return render_template("platform/users.html", users=users)
+    companies = Company.query.filter(Company.deleted_at.is_(None)).order_by(Company.name).all()
+    users = (
+        User.query.filter(User.deleted_at.is_(None))
+        .join(Company, User.company_id == Company.id)
+        .filter(Company.deleted_at.is_(None))
+        .order_by(Company.name, User.username)
+        .all()
+    )
+    users_by_company = defaultdict(list)
+    for user in users:
+        users_by_company[user.company_id].append(user)
+
+    company_groups = [
+        {
+            "company": company,
+            "users": users_by_company.get(company.id, []),
+        }
+        for company in companies
+    ]
+    return render_template("platform/users.html", company_groups=company_groups)
 
 
 @platform_bp.route("/users/<int:user_id>/edit", methods=["GET", "POST"])

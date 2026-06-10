@@ -9,6 +9,16 @@
 <section class="panel activity-filter">
   <form method="get" class="filter-form">
     <div>
+      <label>Empresa</label>
+      <select name="company_id" required onchange="this.form.user_id.value=''; this.form.submit()">
+        {% for company in companies %}
+          <option value="{{ company.id }}" {% if selected_company_id == company.id %}selected{% endif %}>
+            {{ company.name }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+    <div>
       <label>Usuario</label>
       <select name="user_id" required>
         <option value="">Seleccionar usuario</option>
@@ -21,7 +31,7 @@
     </div>
     <button type="submit"><i data-lucide="search"></i>Ver actividad</button>
     {% if selected_user %}
-      <a class="button ghost" href="{{ url_for('audit.index') }}">Limpiar</a>
+      <a class="button ghost" href="{{ url_for('audit.index', company_id=selected_company_id) }}">Limpiar</a>
     {% endif %}
   </form>
 </section>
