@@ -1,6 +1,10 @@
 const areaSelect = document.getElementById("areaSelect");
 const taskSelect = document.getElementById("taskSelect");
 const themeToggles = document.querySelectorAll("[data-theme-toggle], #themeToggle");
+const previewTabs = document.querySelectorAll("[data-preview-tab]");
+const previewPanels = document.querySelectorAll("[data-preview-panel]");
+const previewTitle = document.querySelector("[data-preview-title]");
+const previewCopy = document.querySelector("[data-preview-copy]");
 const root = document.documentElement;
 const themeStorageKey = "trazalab-theme";
 
@@ -35,6 +39,42 @@ if (areaSelect && taskSelect) {
       option.value = task.id;
       option.textContent = task.name;
       taskSelect.appendChild(option);
+    });
+  });
+}
+
+if (previewTabs.length && previewPanels.length) {
+  const previewContent = {
+    tiempos: {
+      title: "32:45hs",
+      copy: "Horas registradas por area, con formato 24hs y trazabilidad por tarea.",
+    },
+    supervision: {
+      title: "3 equipos",
+      copy: "El supervisor ve avances del equipo y puede revisar registros con contexto.",
+    },
+    reportes: {
+      title: "186 registros",
+      copy: "Los reportes resumen empleados, clientes, areas y registros del periodo.",
+    },
+  };
+
+  previewTabs.forEach((tab) => {
+    tab.addEventListener("click", () => {
+      const selected = tab.dataset.previewTab;
+      previewTabs.forEach((item) => item.classList.toggle("active", item === tab));
+      previewPanels.forEach((panel) => {
+        panel.classList.toggle("hidden", panel.dataset.previewPanel !== selected);
+      });
+      if (previewTitle && previewContent[selected]) {
+        previewTitle.textContent = previewContent[selected].title;
+      }
+      if (previewCopy && previewContent[selected]) {
+        previewCopy.textContent = previewContent[selected].copy;
+      }
+      if (window.lucide) {
+        window.lucide.createIcons();
+      }
     });
   });
 }

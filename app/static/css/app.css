@@ -377,7 +377,7 @@ main.auth-main:has(.landing-page) {
 .landing-page {
   width: min(1180px, calc(100% - 40px));
   margin: 0 auto;
-  padding: var(--space-5) 0 var(--space-10);
+  padding: var(--space-4) 0 var(--space-10);
 }
 
 .landing-nav {
@@ -391,13 +391,34 @@ main.auth-main:has(.landing-page) {
 .landing-brand {
   display: inline-flex;
   align-items: center;
-  width: 184px;
-  height: 56px;
+  width: 164px;
+  height: 50px;
   padding: 6px 10px;
   border: 1px solid var(--color-divider);
   border-radius: var(--radius-lg);
   background: color-mix(in oklch, var(--color-surface) 92%, white);
   box-shadow: var(--shadow-sm);
+}
+
+.landing-menu {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--color-divider-soft);
+  border-radius: var(--radius-full);
+  background: color-mix(in oklch, var(--color-surface) 78%, transparent);
+  box-shadow: var(--shadow-sm);
+}
+
+.landing-menu a {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  font-weight: 700;
+}
+
+.landing-menu a:hover {
+  color: var(--color-primary);
 }
 
 [data-theme="dark"] .landing-brand {
@@ -421,24 +442,46 @@ main.auth-main:has(.landing-page) {
 
 .landing-hero {
   display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
+  grid-template-columns: minmax(0, 1fr) minmax(360px, 0.9fr);
   gap: var(--space-10);
   align-items: center;
-  min-height: calc(100vh - 156px);
-  padding: var(--space-8) 0 var(--space-10);
+  min-height: calc(100vh - 110px);
+  padding: var(--space-6) 0 var(--space-10);
 }
 
 .landing-copy {
   display: grid;
   gap: var(--space-5);
-  max-width: 660px;
+  max-width: 720px;
+}
+
+.landing-logo-hero {
+  display: inline-flex;
+  align-items: center;
+  width: min(520px, 100%);
+  min-height: 152px;
+  padding: var(--space-5) var(--space-6);
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-lg);
+  background: color-mix(in oklch, var(--color-surface) 90%, white);
+  box-shadow: var(--shadow-lg);
+}
+
+[data-theme="dark"] .landing-logo-hero {
+  background: color-mix(in oklch, var(--color-surface) 72%, transparent);
+}
+
+.landing-logo-hero img {
+  width: 100%;
+  max-height: 122px;
+  object-fit: contain;
 }
 
 .landing-copy h1 {
   font-family: var(--font-display);
-  font-size: clamp(4rem, 2.8rem + 5vw, 8rem);
+  font-size: clamp(3.25rem, 2.3rem + 3.8vw, 6.5rem);
   font-weight: 400;
-  line-height: 0.85;
+  line-height: 0.9;
   color: var(--color-text);
 }
 
@@ -453,14 +496,43 @@ main.auth-main:has(.landing-page) {
 .landing-copy p:not(.landing-lead),
 .landing-section-title p,
 .landing-features p,
+.landing-steps p,
+.landing-evidence p,
 .landing-band p {
   color: var(--color-text-muted);
+}
+
+.landing-checks {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+
+.landing-checks span {
+  display: flex;
+  gap: var(--space-2);
+  align-items: flex-start;
+  min-height: 56px;
+  padding: var(--space-3);
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-md);
+  background: color-mix(in oklch, var(--color-surface) 86%, transparent);
+  color: var(--color-text);
+  font-size: var(--text-sm);
+  font-weight: 700;
+}
+
+.landing-checks svg {
+  width: 17px;
+  height: 17px;
+  flex: 0 0 auto;
+  color: var(--color-primary);
 }
 
 .landing-preview {
   display: grid;
   gap: var(--space-5);
-  min-height: 440px;
+  min-height: 500px;
   padding: var(--space-6);
   border: 1px solid var(--color-divider);
   border-radius: var(--radius-lg);
@@ -478,6 +550,11 @@ main.auth-main:has(.landing-page) {
   gap: var(--space-4);
 }
 
+.preview-top div {
+  display: grid;
+  gap: var(--space-2);
+}
+
 .preview-top span {
   color: var(--color-text-muted);
   font-size: var(--text-sm);
@@ -488,6 +565,40 @@ main.auth-main:has(.landing-page) {
 .preview-top strong {
   font-size: var(--text-2xl);
   font-variant-numeric: tabular-nums;
+}
+
+.preview-top small {
+  color: var(--color-text-faint);
+  font-size: var(--text-xs);
+  font-weight: 700;
+}
+
+.preview-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-2);
+  padding: 4px;
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-md);
+  background: color-mix(in oklch, var(--color-surface) 74%, transparent);
+}
+
+.preview-tabs button {
+  min-height: 38px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text-muted);
+  box-shadow: none;
+}
+
+.preview-tabs button.active {
+  background: var(--gradient-accent);
+  color: white;
+}
+
+.preview-stage {
+  display: grid;
 }
 
 .preview-chart {
@@ -503,17 +614,28 @@ main.auth-main:has(.landing-page) {
 }
 
 .preview-chart span {
-  display: block;
+  display: flex;
+  align-items: end;
+  justify-content: center;
   height: var(--bar);
   min-height: 34px;
+  padding: var(--space-2);
   border-radius: var(--radius-sm);
   background: var(--gradient-accent);
   box-shadow: 0 12px 30px color-mix(in oklch, var(--color-primary) 18%, transparent);
 }
 
+.preview-chart b {
+  color: white;
+  font-size: var(--text-xs);
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+}
+
 .preview-list {
   display: grid;
   gap: var(--space-3);
+  min-height: 190px;
 }
 
 .preview-list span {
@@ -527,6 +649,49 @@ main.auth-main:has(.landing-page) {
   background: color-mix(in oklch, var(--color-surface) 84%, transparent);
   color: var(--color-text);
   font-weight: 700;
+}
+
+.preview-list strong {
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
+}
+
+.preview-report {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+  min-height: 190px;
+}
+
+.preview-report div {
+  display: grid;
+  align-content: center;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-md);
+  background: color-mix(in oklch, var(--color-surface) 84%, transparent);
+}
+
+.preview-report span {
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.preview-report strong {
+  font-size: var(--text-xl);
+  font-variant-numeric: tabular-nums;
+}
+
+.landing-preview p {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.hidden {
+  display: none !important;
 }
 
 .preview-list svg {
@@ -548,15 +713,141 @@ main.auth-main:has(.landing-page) {
 }
 
 .landing-section-title h2,
-.landing-band h2 {
+.landing-band h2,
+.landing-evidence h2 {
   font-size: clamp(2rem, 1.55rem + 1.5vw, 3.25rem);
   line-height: 1;
+}
+
+.landing-steps {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+.landing-steps article {
+  position: relative;
+  display: grid;
+  gap: var(--space-3);
+  min-height: 250px;
+  padding: var(--space-5);
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.landing-steps article::after {
+  position: absolute;
+  inset: auto var(--space-5) 0;
+  height: 3px;
+  border-radius: var(--radius-full);
+  background: var(--gradient-accent);
+  content: "";
+}
+
+.landing-steps span {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+  color: color-mix(in oklch, var(--color-primary) 24%, transparent);
+  font-size: 4.5rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.landing-steps svg {
+  width: 30px;
+  height: 30px;
+  color: var(--color-primary);
+}
+
+.landing-steps h3 {
+  margin: var(--space-6) 0 0;
+  font-size: var(--text-xl);
 }
 
 .landing-features {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--space-4);
+}
+
+.landing-evidence {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(320px, 0.75fr);
+  gap: var(--space-8);
+  align-items: center;
+  padding: var(--space-12) 0;
+}
+
+.landing-evidence > div:first-child {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.evidence-points {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.evidence-points span {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 38px;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-full);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: var(--text-sm);
+  font-weight: 700;
+}
+
+.evidence-points svg {
+  width: 16px;
+  height: 16px;
+  color: var(--color-primary);
+}
+
+.evidence-card {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-6);
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-lg);
+}
+
+.evidence-row {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
+  color: var(--color-text-muted);
+  font-weight: 700;
+}
+
+.evidence-row strong {
+  color: var(--color-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.evidence-bar {
+  height: 10px;
+  border-radius: var(--radius-full);
+  background: color-mix(in oklch, var(--color-primary) 12%, transparent);
+  overflow: hidden;
+}
+
+.evidence-bar span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--gradient-accent);
 }
 
 .landing-features article {
@@ -1728,6 +2019,16 @@ details.area-block:not([open]) .accordion-indicator::after { content: " tareas";
   .landing-preview {
     min-height: 360px;
   }
+
+  .landing-menu {
+    display: none;
+  }
+
+  .landing-checks,
+  .landing-steps,
+  .landing-evidence {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 @media (max-width: 720px) {
@@ -1819,6 +2120,15 @@ details.area-block:not([open]) .accordion-indicator::after { content: " tareas";
     font-size: 4.5rem;
   }
 
+  .landing-logo-hero {
+    min-height: 104px;
+    padding: var(--space-4);
+  }
+
+  .landing-logo-hero img {
+    max-height: 82px;
+  }
+
   .landing-cta,
   .landing-band {
     align-items: stretch;
@@ -1833,6 +2143,17 @@ details.area-block:not([open]) .accordion-indicator::after { content: " tareas";
   .landing-preview {
     min-height: 320px;
     padding: var(--space-4);
+  }
+
+  .landing-checks,
+  .landing-steps,
+  .landing-evidence,
+  .preview-report {
+    grid-template-columns: 1fr;
+  }
+
+  .landing-steps article {
+    min-height: 210px;
   }
 
   .preview-chart {
