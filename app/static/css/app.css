@@ -2773,19 +2773,12 @@ details.area-block:not([open]) .accordion-indicator::after { content: " tareas";
   position: relative;
   overflow: hidden;
   background:
-    radial-gradient(circle at 50% 0%, color-mix(in oklch, var(--color-primary) 9%, transparent), transparent 34rem),
-    linear-gradient(180deg, color-mix(in oklch, var(--color-surface) 98%, transparent), var(--color-bg));
+    radial-gradient(ellipse at 50% 8%, color-mix(in oklch, var(--color-primary) 10%, transparent), transparent 36rem),
+    linear-gradient(180deg, var(--color-bg), color-mix(in oklch, var(--color-surface) 76%, var(--color-bg)) 46%, var(--color-bg));
 }
 
 .landing-demo::before {
-  position: absolute;
-  inset: 0 calc(50% - 50vw);
-  z-index: 0;
-  pointer-events: none;
-  background:
-    radial-gradient(circle at 50% 0%, color-mix(in oklch, var(--color-primary) 10%, transparent), transparent 38rem),
-    linear-gradient(90deg, transparent, color-mix(in oklch, var(--color-surface) 88%, transparent) 18%, color-mix(in oklch, var(--color-surface) 88%, transparent) 82%, transparent);
-  content: "";
+  content: none;
 }
 
 .landing-demo > * {
@@ -2978,6 +2971,7 @@ details.area-block:not([open]) .accordion-indicator::after { content: " tareas";
   display: grid;
   gap: var(--space-4);
   padding: var(--space-5);
+  min-width: 0;
 }
 
 .evidence-dashboard .wide {
@@ -2994,7 +2988,7 @@ details.area-block:not([open]) .accordion-indicator::after { content: " tareas";
 
 .donut-wrap {
   display: grid;
-  grid-template-columns: 150px minmax(0, 1fr);
+  grid-template-columns: 132px minmax(0, 1fr);
   gap: var(--space-4);
   align-items: center;
 }
@@ -3006,7 +3000,7 @@ details.area-block:not([open]) .accordion-indicator::after { content: " tareas";
 
 .donut-legend span {
   display: grid;
-  grid-template-columns: 12px minmax(92px, 1fr) minmax(64px, auto);
+  grid-template-columns: 12px minmax(0, 1fr) auto;
   column-gap: var(--space-2);
   align-items: center;
   color: var(--color-text-muted);
@@ -3086,16 +3080,10 @@ details.area-block:not([open]) .accordion-indicator::after { content: " tareas";
 }
 
 .final-logo {
-  display: grid;
-  place-items: center;
-  width: 260px;
+  width: 240px;
   min-width: 180px;
-  min-height: 104px;
-  padding: var(--space-4);
-  border: 1px solid rgba(255, 255, 255, 0.28);
-  border-radius: var(--radius-lg);
-  background: rgba(255, 255, 255, 0.88);
-  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.18);
+  padding: 0;
+  filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.24));
 }
 
 .final-logo img {
@@ -3214,14 +3202,12 @@ details.area-block:not([open]) .accordion-indicator::after { content: " tareas";
 
 [data-theme="dark"] .landing-demo {
   background:
-    radial-gradient(circle at 50% 0%, color-mix(in oklch, var(--color-primary) 12%, transparent), transparent 35rem),
-    linear-gradient(180deg, color-mix(in oklch, var(--color-bg) 92%, #0f1d20), var(--color-bg));
+    radial-gradient(ellipse at 50% 8%, color-mix(in oklch, var(--color-primary) 13%, transparent), transparent 36rem),
+    linear-gradient(180deg, var(--color-bg), color-mix(in oklch, var(--color-surface) 42%, var(--color-bg)) 48%, var(--color-bg));
 }
 
 [data-theme="dark"] .landing-demo::before {
-  background:
-    radial-gradient(circle at 50% 0%, color-mix(in oklch, var(--color-primary) 12%, transparent), transparent 38rem),
-    linear-gradient(90deg, transparent, color-mix(in oklch, var(--color-surface) 48%, transparent) 22%, color-mix(in oklch, var(--color-surface) 48%, transparent) 78%, transparent);
+  content: none;
 }
 
 [data-theme="dark"] .demo-tabs,
@@ -3267,6 +3253,15 @@ details.area-block:not([open]) .accordion-indicator::after { content: " tareas";
 
   .hero-dashboard {
     max-width: 100%;
+  }
+
+  .donut-wrap {
+    grid-template-columns: 1fr;
+    justify-items: center;
+  }
+
+  .donut-legend {
+    width: 100%;
   }
 }
 
@@ -3368,7 +3363,5 @@ details.area-block:not([open]) .accordion-indicator::after { content: " tareas";
 
   .final-logo {
     width: 210px;
-    min-height: 86px;
-    padding: var(--space-3);
   }
 }
