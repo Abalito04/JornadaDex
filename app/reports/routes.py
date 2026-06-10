@@ -8,9 +8,10 @@ from sqlalchemy import func
 
 from app.context import current_company_id, is_platform_admin
 from app.extensions import db
-from app.models import AccountingClient, Area, Employee, Task, TimeRecord, User
-from app.roles import ROLE_EMPLOYEE, ROLE_SUPERVISOR
+from app.models import AccountingClient, Area, Employee, Task, TimeRecord
+from app.roles import ROLE_EMPLOYEE
 from app.services.audit_service import write_audit
+from app.services.supervisor_service import supervisors_for_company
 from app.services.time_record_service import parse_date
 from app.services.visibility_service import employee_is_visible, visible_employees_query, visible_time_records_query
 from app.utils.datetime import format_duration_hs, format_time_hs
@@ -29,11 +30,7 @@ def index():
     else:
         employees = [current_user.employee] if current_user.employee else []
     can_filter_supervisor = not _is_employee_scope() and (current_user.is_company_owner or is_platform_admin())
-    supervisors = (
-        User.query.filter_by(company_id=current_company_id(), role=ROLE_SUPERVISOR, is_active_flag=True, deleted_at=None)
-        .order_by(User.username)
-        .all()
-    )
+    supervisors = supervisors_for_company(current_company_id())
     clients = AccountingClient.query.filter_by(company_id=current_company_id(), deleted_at=None).order_by(AccountingClient.name).all()
     areas = Area.query.filter_by(company_id=current_company_id(), deleted_at=None).order_by(Area.name).all()
     total_hours = sum(float(record.hours) for record in records)

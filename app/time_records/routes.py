@@ -3,9 +3,10 @@ from flask_login import current_user, login_required
 
 from app.context import current_company_id, is_platform_admin
 from app.extensions import db
-from app.models import AccountingClient, Area, Employee, TimeRecord, User
+from app.models import AccountingClient, Area, Employee, TimeRecord
 from app.roles import ROLE_EMPLOYEE, ROLE_SUPERVISOR
 from app.services.audit_service import write_audit
+from app.services.supervisor_service import supervisors_for_company
 from app.services.time_record_service import finish_time_record, start_time_record
 from app.services.visibility_service import employee_is_visible, visible_employees_query, visible_time_records_query
 
@@ -56,11 +57,7 @@ def index():
         .order_by(AccountingClient.name)
         .all()
     )
-    supervisors = (
-        User.query.filter_by(company_id=current_company_id(), role=ROLE_SUPERVISOR, is_active_flag=True, deleted_at=None)
-        .order_by(User.username)
-        .all()
-    )
+    supervisors = supervisors_for_company(current_company_id())
     records_query = TimeRecord.query.filter_by(company_id=current_company_id(), deleted_at=None)
     if not can_choose_employee:
         records_query = records_query.filter(TimeRecord.employee_id == current_user.employee_id)

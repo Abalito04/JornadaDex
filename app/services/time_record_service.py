@@ -2,9 +2,9 @@ from datetime import datetime, timedelta
 from decimal import Decimal
 
 from app.extensions import db
-from app.models import AccountingClient, Area, Employee, Task, TimeRecord, User
-from app.roles import ROLE_SUPERVISOR
+from app.models import AccountingClient, Area, Employee, Task, TimeRecord
 from app.services.audit_service import write_audit
+from app.services.supervisor_service import supervisor_for_company
 from app.utils.datetime import argentina_now
 
 
@@ -34,13 +34,7 @@ def start_time_record(company_id, user_id, employee_id, supervisor_id, accountin
     if not employee:
         raise ValueError("Empleado invalido.")
 
-    supervisor = User.query.filter_by(
-        id=supervisor_id,
-        company_id=company_id,
-        role=ROLE_SUPERVISOR,
-        is_active_flag=True,
-        deleted_at=None,
-    ).first()
+    supervisor = supervisor_for_company(company_id, supervisor_id)
     if not supervisor:
         raise ValueError("Supervisor invalido.")
 
