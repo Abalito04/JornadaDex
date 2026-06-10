@@ -7,6 +7,7 @@ from sqlalchemy import func
 
 from app.context import current_company_id, is_platform_admin
 from app.models import AccountingClient, Area, Employee, Task, TimeRecord
+from app.services.visibility_service import visible_employees_query, visible_time_records_query
 from app.utils.datetime import argentina_now
 
 dashboard_bp = Blueprint("dashboard", __name__)
@@ -22,9 +23,12 @@ def index():
     base = TimeRecord.query.filter_by(company_id=company_id, deleted_at=None)
     if current_user.role == "Employee" and not current_user.is_company_owner and not is_platform_admin():
         base = base.filter(TimeRecord.employee_id == current_user.employee_id)
+    else:
+        base = visible_time_records_query(base)
 
+    active_employees_query = Employee.query.filter_by(company_id=company_id, active=True, deleted_at=None)
     metrics = {
-        "active_employees": Employee.query.filter_by(company_id=company_id, active=True, deleted_at=None).count(),
+        "active_employees": visible_employees_query(active_employees_query).count(),
         "active_clients": AccountingClient.query.filter_by(company_id=company_id, active=True, deleted_at=None).count(),
         "total_hours_today": _sum_hours(base.filter(TimeRecord.record_date == today)),
         "total_hours_week": _sum_hours(base.filter(TimeRecord.record_date >= week_start)),

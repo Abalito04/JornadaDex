@@ -6,6 +6,7 @@ from app.extensions import db
 from app.models import AccountingClient, Area, Employee, TimeRecord
 from app.services.audit_service import write_audit
 from app.services.time_record_service import finish_time_record, start_time_record
+from app.services.visibility_service import employee_is_visible, visible_employees_query, visible_time_records_query
 
 time_records_bp = Blueprint("time_records", __name__, url_prefix="/time-records")
 
@@ -19,6 +20,9 @@ def index():
             employee_id = int(request.form.get("employee_id") or 0)
             if not can_choose_employee:
                 employee_id = current_user.employee_id
+            selected_employee = Employee.query.filter_by(id=employee_id, company_id=current_company_id(), deleted_at=None).first()
+            if not employee_is_visible(selected_employee):
+                return ("Forbidden", 403)
             start_time_record(
                 company_id=current_company_id(),
                 user_id=current_user.id,
@@ -35,7 +39,8 @@ def index():
             db.session.rollback()
             flash(str(exc), "danger")
 
-    employees = Employee.query.filter_by(company_id=current_company_id(), active=True, deleted_at=None).order_by(Employee.last_name).all()
+    employees_query = Employee.query.filter_by(company_id=current_company_id(), active=True, deleted_at=None)
+    employees = visible_employees_query(employees_query).order_by(Employee.last_name).all()
     if not can_choose_employee:
         employees = [current_user.employee] if current_user.employee else []
 
@@ -48,6 +53,8 @@ def index():
     records_query = TimeRecord.query.filter_by(company_id=current_company_id(), deleted_at=None)
     if not can_choose_employee:
         records_query = records_query.filter(TimeRecord.employee_id == current_user.employee_id)
+    else:
+        records_query = visible_time_records_query(records_query)
     records = records_query.order_by(TimeRecord.record_date.desc(), TimeRecord.start_time.desc()).limit(100).all()
     return render_template(
         "time_records/index.html",
@@ -63,6 +70,8 @@ def index():
 @login_required
 def finish(record_id):
     record = TimeRecord.query.filter_by(id=record_id, company_id=current_company_id(), deleted_at=None).first_or_404()
+    if not employee_is_visible(record.employee):
+        return ("Forbidden", 403)
     if current_user.role == "Employee" and not current_user.is_company_owner and not is_platform_admin() and record.employee_id != current_user.employee_id:
         return ("Forbidden", 403)
     try:
@@ -79,6 +88,8 @@ def finish(record_id):
 @login_required
 def delete(record_id):
     record = TimeRecord.query.filter_by(id=record_id, company_id=current_company_id(), deleted_at=None).first_or_404()
+    if not employee_is_visible(record.employee):
+        return ("Forbidden", 403)
     if current_user.role == "Employee" and not current_user.is_company_owner and not is_platform_admin() and record.employee_id != current_user.employee_id:
         return ("Forbidden", 403)
     record.soft_delete(current_user.id)

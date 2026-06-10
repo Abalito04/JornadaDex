@@ -8,6 +8,7 @@ from app.models import Employee, User
 from app.permissions.decorators import manager_required
 from app.roles import ROLE_EMPLOYEE, ROLE_SUPERVISOR
 from app.services.audit_service import write_audit
+from app.services.visibility_service import employee_is_visible, visible_employees_query
 
 employees_bp = Blueprint("employees", __name__, url_prefix="/employees")
 
@@ -15,7 +16,8 @@ employees_bp = Blueprint("employees", __name__, url_prefix="/employees")
 @employees_bp.route("/")
 @manager_required
 def index():
-    employees = Employee.query.filter_by(company_id=current_company_id(), deleted_at=None).order_by(Employee.last_name).all()
+    employees_query = Employee.query.filter_by(company_id=current_company_id(), deleted_at=None)
+    employees = visible_employees_query(employees_query).order_by(Employee.last_name).all()
     return render_template("employees/index.html", employees=employees)
 
 
@@ -80,6 +82,8 @@ def edit(employee_id):
     ).first_or_404()
 
     if employee.user and employee.user.is_company_owner and not current_user.is_company_owner and not is_platform_admin():
+        return ("Forbidden", 403)
+    if not employee_is_visible(employee):
         return ("Forbidden", 403)
 
     if request.method == "POST":
@@ -147,6 +151,8 @@ def edit(employee_id):
 def delete(employee_id):
     employee = Employee.query.filter_by(id=employee_id, company_id=current_company_id(), deleted_at=None).first_or_404()
     if employee.user and employee.user.is_company_owner and not current_user.is_company_owner and not is_platform_admin():
+        return ("Forbidden", 403)
+    if not employee_is_visible(employee):
         return ("Forbidden", 403)
 
     employee.soft_delete(current_user.id)

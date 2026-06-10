@@ -11,6 +11,7 @@ from app.extensions import db
 from app.models import AccountingClient, Area, Employee, Task, TimeRecord
 from app.services.audit_service import write_audit
 from app.services.time_record_service import parse_date
+from app.services.visibility_service import employee_is_visible, visible_employees_query, visible_time_records_query
 from app.utils.datetime import format_duration_hs, format_time_hs
 
 reports_bp = Blueprint("reports", __name__, url_prefix="/reports")
@@ -20,7 +21,8 @@ reports_bp = Blueprint("reports", __name__, url_prefix="/reports")
 @login_required
 def index():
     records = _filtered_records().all()
-    employees = Employee.query.filter_by(company_id=current_company_id(), deleted_at=None).order_by(Employee.last_name).all()
+    employees_query = Employee.query.filter_by(company_id=current_company_id(), deleted_at=None)
+    employees = visible_employees_query(employees_query).order_by(Employee.last_name).all()
     clients = AccountingClient.query.filter_by(company_id=current_company_id(), deleted_at=None).order_by(AccountingClient.name).all()
     areas = Area.query.filter_by(company_id=current_company_id(), deleted_at=None).order_by(Area.name).all()
     total_hours = sum(float(record.hours) for record in records)
@@ -72,6 +74,8 @@ def _filtered_records():
     query = TimeRecord.query.filter_by(company_id=current_company_id(), deleted_at=None)
     if current_user.role == "Employee" and not current_user.is_company_owner and not is_platform_admin():
         query = query.filter(TimeRecord.employee_id == current_user.employee_id)
+    else:
+        query = visible_time_records_query(query)
 
     employee_id = request.args.get("employee_id")
     accounting_client_id = request.args.get("accounting_client_id")
@@ -79,7 +83,11 @@ def _filtered_records():
     date_from = request.args.get("date_from")
     date_to = request.args.get("date_to")
     if employee_id:
-        query = query.filter(TimeRecord.employee_id == int(employee_id))
+        employee = Employee.query.filter_by(id=int(employee_id), company_id=current_company_id(), deleted_at=None).first()
+        if not employee_is_visible(employee):
+            query = query.filter(TimeRecord.employee_id == 0)
+        else:
+            query = query.filter(TimeRecord.employee_id == employee.id)
     if accounting_client_id:
         query = query.filter(TimeRecord.accounting_client_id == int(accounting_client_id))
     if area_id:
