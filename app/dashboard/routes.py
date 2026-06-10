@@ -15,6 +15,11 @@ dashboard_bp = Blueprint("dashboard", __name__)
 
 
 @dashboard_bp.route("/")
+def landing():
+    return render_template("landing.html")
+
+
+@dashboard_bp.route("/dashboard")
 @login_required
 def index():
     if is_platform_admin():

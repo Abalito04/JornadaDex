@@ -21,8 +21,8 @@
   <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
-  {% if not current_user.is_authenticated %}
-    <button class="icon-button auth-theme-toggle" id="themeToggle" type="button" aria-label="Cambiar tema">
+  {% if not current_user.is_authenticated and request.endpoint != 'dashboard.landing' %}
+    <button class="icon-button auth-theme-toggle" id="themeToggle" data-theme-toggle type="button" aria-label="Cambiar tema">
       <i data-lucide="moon"></i>
     </button>
   {% endif %}
@@ -86,7 +86,7 @@
           </div>
         </div>
         <div class="top-actions">
-          <button class="icon-button" id="themeToggle" type="button" aria-label="Cambiar tema">
+          <button class="icon-button" id="themeToggle" data-theme-toggle type="button" aria-label="Cambiar tema">
             <i data-lucide="moon"></i>
           </button>
           <div class="user-chip">

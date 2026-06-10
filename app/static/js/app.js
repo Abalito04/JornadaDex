@@ -1,6 +1,6 @@
 const areaSelect = document.getElementById("areaSelect");
 const taskSelect = document.getElementById("taskSelect");
-const themeToggle = document.getElementById("themeToggle");
+const themeToggles = document.querySelectorAll("[data-theme-toggle], #themeToggle");
 const root = document.documentElement;
 const themeStorageKey = "trazalab-theme";
 
@@ -11,9 +11,9 @@ function applyTheme() {
   const resolvedTheme = themePreference === "system" ? (prefersDark ? "dark" : "light") : themePreference;
   root.dataset.theme = resolvedTheme;
 
-  if (themeToggle) {
+  themeToggles.forEach((themeToggle) => {
     themeToggle.innerHTML = resolvedTheme === "dark" ? '<i data-lucide="sun"></i>' : '<i data-lucide="moon"></i>';
-  }
+  });
 
   if (window.lucide) {
     window.lucide.createIcons();
@@ -39,14 +39,14 @@ if (areaSelect && taskSelect) {
   });
 }
 
-if (themeToggle) {
+themeToggles.forEach((themeToggle) => {
   themeToggle.addEventListener("click", () => {
     const currentTheme = root.dataset.theme || "light";
     themePreference = currentTheme === "dark" ? "light" : "dark";
     localStorage.setItem(themeStorageKey, themePreference);
     applyTheme();
   });
-}
+});
 
 window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
   if (themePreference === "system") {
