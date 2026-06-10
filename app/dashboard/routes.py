@@ -40,6 +40,7 @@ def index():
         "total_hours_week": _sum_hours(base.filter(TimeRecord.record_date >= week_start)),
         "total_hours_month": _sum_hours(base.filter(TimeRecord.record_date >= month_start)),
         "total_records": base.count(),
+        "total_records_month": base.filter(TimeRecord.record_date >= month_start).count(),
         "open_records": base.filter(TimeRecord.end_time.is_(None)).count(),
         "finished_today": base.filter(TimeRecord.record_date == today, TimeRecord.end_time.isnot(None)).count(),
         "active_areas": Area.query.filter_by(company_id=company_id, active=True, deleted_at=None).count(),

@@ -618,6 +618,15 @@ main.auth-main {
   font-variant-numeric: tabular-nums;
 }
 
+.metric-grid.compact-metrics {
+  margin: var(--space-4) 0 0;
+}
+
+.metric-grid.compact-metrics article {
+  min-height: 96px;
+  padding: var(--space-4);
+}
+
 .two-columns {
   display: grid;
   grid-template-columns: repeat(2, minmax(320px, 1fr));
