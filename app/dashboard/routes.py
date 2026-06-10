@@ -8,7 +8,7 @@ from sqlalchemy import func
 from app.context import current_company_id, is_platform_admin
 from app.models import AccountingClient, Area, Employee, Task, TimeRecord
 from app.roles import ROLE_EMPLOYEE, ROLE_SUPERVISOR
-from app.services.visibility_service import visible_employees_query, visible_time_records_query
+from app.services.visibility_service import visible_company_time_records_query, visible_employees_query, visible_time_records_query
 from app.utils.datetime import argentina_now
 
 dashboard_bp = Blueprint("dashboard", __name__)
@@ -25,6 +25,8 @@ def index():
     dashboard_role = _dashboard_role()
     if dashboard_role == "employee":
         base = base.filter(TimeRecord.employee_id == current_user.employee_id)
+    elif dashboard_role == "supervisor":
+        base = visible_company_time_records_query(base)
     else:
         base = visible_time_records_query(base)
 
@@ -52,6 +54,24 @@ def index():
         .limit(6)
         .all()
     )
+    by_area_week = (
+        base.filter(TimeRecord.record_date >= week_start)
+        .join(Area, TimeRecord.area_id == Area.id)
+        .with_entities(Area.name, func.sum(TimeRecord.hours))
+        .group_by(Area.name)
+        .order_by(func.sum(TimeRecord.hours).desc())
+        .limit(8)
+        .all()
+    )
+    by_area_month = (
+        base.filter(TimeRecord.record_date >= month_start)
+        .join(Area, TimeRecord.area_id == Area.id)
+        .with_entities(Area.name, func.sum(TimeRecord.hours))
+        .group_by(Area.name)
+        .order_by(func.sum(TimeRecord.hours).desc())
+        .limit(8)
+        .all()
+    )
     by_client = (
         base.join(AccountingClient, TimeRecord.accounting_client_id == AccountingClient.id)
         .with_entities(AccountingClient.name, func.sum(TimeRecord.hours))
@@ -61,14 +81,17 @@ def index():
         .all()
     )
     by_employee = (
-        base.join(Employee, TimeRecord.employee_id == Employee.id)
+        base.filter(TimeRecord.record_date >= month_start)
+        .join(Employee, TimeRecord.employee_id == Employee.id)
         .with_entities(Employee.first_name, Employee.last_name, func.sum(TimeRecord.hours))
         .group_by(Employee.id)
         .order_by(func.sum(TimeRecord.hours).desc())
-        .limit(6)
+        .limit(10)
         .all()
     )
     area_chart = _chart_rows([(name, hours) for name, hours in by_area])
+    area_week_chart = _chart_rows([(name, hours) for name, hours in by_area_week])
+    area_month_chart = _chart_rows([(name, hours) for name, hours in by_area_month])
     client_chart = _chart_rows([(name, hours) for name, hours in by_client])
     employee_chart = _chart_rows([(f"{first} {last}", hours) for first, last, hours in by_employee])
     return render_template(
@@ -79,6 +102,8 @@ def index():
         by_client=by_client,
         by_employee=by_employee,
         area_chart=area_chart,
+        area_week_chart=area_week_chart,
+        area_month_chart=area_month_chart,
         client_chart=client_chart,
         employee_chart=employee_chart,
         open_records=open_records,

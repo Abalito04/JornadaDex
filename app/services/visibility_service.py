@@ -1,6 +1,6 @@
 from app.context import current_company_id, is_platform_admin
 from app.extensions import db
-from app.models import Company, Employee, TimeRecord, User
+from app.models import Employee, TimeRecord, User
 from app.roles import LEGACY_ADMIN, ROLE_OWNER, ROLE_SUPERVISOR
 
 
@@ -44,6 +44,12 @@ def visible_time_records_query(query):
     return query.filter(TimeRecord.supervisor_id == current.id)
 
 
+def visible_company_time_records_query(query):
+    if not is_supervisor_scope(_current_user()):
+        return query
+    return _exclude_ids(query, TimeRecord.employee_id, _owner_employee_ids())
+
+
 def employee_is_visible(employee):
     if not is_supervisor_scope(_current_user()):
         return True
@@ -62,12 +68,6 @@ def _owner_user_ids():
     company_id = current_company_id()
     if not company_id:
         return []
-    company_owner_ids = [
-        owner_id
-        for (owner_id,) in db.session.query(Company.created_by)
-        .filter(Company.id == company_id, Company.created_by.isnot(None))
-        .all()
-    ]
     explicit_owner_ids = [
         user_id
         for (user_id,) in db.session.query(User.id)
@@ -78,7 +78,7 @@ def _owner_user_ids():
         )
         .all()
     ]
-    return sorted(set(company_owner_ids + explicit_owner_ids))
+    return sorted(set(explicit_owner_ids))
 
 
 def _owner_employee_ids():

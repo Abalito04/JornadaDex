@@ -94,11 +94,17 @@ def ensure_runtime_schema():
         db.session.commit()
     db.session.execute(text("UPDATE users SET role = 'Owner', is_company_owner = TRUE WHERE role = 'Administrator'"))
     db.session.commit()
-    if "companies" in inspector.get_table_names():
+    if "employees" in inspector.get_table_names():
         db.session.execute(
             text(
-                "UPDATE users SET role = 'Owner', is_company_owner = TRUE "
-                "WHERE id IN (SELECT created_by FROM companies WHERE created_by IS NOT NULL)"
+                "UPDATE users SET role = 'Supervisor', is_company_owner = FALSE "
+                "WHERE is_platform_admin = FALSE "
+                "AND id IN ("
+                "  SELECT users.id FROM users "
+                "  JOIN employees ON users.employee_id = employees.id "
+                "  WHERE LOWER(COALESCE(employees.position, '')) LIKE '%supervisor%' "
+                "  AND LOWER(COALESCE(employees.document_number, '')) NOT LIKE 'owner-%'"
+                ")"
             )
         )
         db.session.commit()
