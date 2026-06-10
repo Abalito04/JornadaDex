@@ -6,6 +6,7 @@ const previewPanels = document.querySelectorAll("[data-preview-panel]");
 const previewTitle = document.querySelector("[data-preview-title]");
 const previewCopy = document.querySelector("[data-preview-copy]");
 const smoothLinks = document.querySelectorAll(".landing-menu a[href^='#'], .landing-cta a[href^='#']");
+const revealItems = document.querySelectorAll(".landing-copy, .landing-preview, .landing-section, .landing-day, .landing-evidence, .landing-band");
 const root = document.documentElement;
 const themeStorageKey = "trazalab-theme";
 
@@ -60,24 +61,43 @@ if (previewTabs.length && previewPanels.length) {
     },
   };
 
+  const selectPreviewTab = (tab, shouldRefreshIcons = true) => {
+    const selected = tab.dataset.previewTab;
+    previewTabs.forEach((item) => item.classList.toggle("active", item === tab));
+    previewPanels.forEach((panel) => {
+      panel.classList.toggle("hidden", panel.dataset.previewPanel !== selected);
+    });
+    if (previewTitle && previewContent[selected]) {
+      previewTitle.textContent = previewContent[selected].title;
+    }
+    if (previewCopy && previewContent[selected]) {
+      previewCopy.textContent = previewContent[selected].copy;
+    }
+    if (shouldRefreshIcons && window.lucide) {
+      window.lucide.createIcons();
+    }
+  };
+
+  let previewAutoIndex = 0;
+  let previewAutoTimer = null;
+  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
   previewTabs.forEach((tab) => {
     tab.addEventListener("click", () => {
-      const selected = tab.dataset.previewTab;
-      previewTabs.forEach((item) => item.classList.toggle("active", item === tab));
-      previewPanels.forEach((panel) => {
-        panel.classList.toggle("hidden", panel.dataset.previewPanel !== selected);
-      });
-      if (previewTitle && previewContent[selected]) {
-        previewTitle.textContent = previewContent[selected].title;
+      if (previewAutoTimer) {
+        window.clearInterval(previewAutoTimer);
       }
-      if (previewCopy && previewContent[selected]) {
-        previewCopy.textContent = previewContent[selected].copy;
-      }
-      if (window.lucide) {
-        window.lucide.createIcons();
-      }
+      previewAutoIndex = Array.from(previewTabs).indexOf(tab);
+      selectPreviewTab(tab);
     });
   });
+
+  if (!prefersReducedMotion) {
+    previewAutoTimer = window.setInterval(() => {
+      previewAutoIndex = (previewAutoIndex + 1) % previewTabs.length;
+      selectPreviewTab(previewTabs[previewAutoIndex], false);
+    }, 4200);
+  }
 }
 
 smoothLinks.forEach((link) => {
@@ -90,6 +110,23 @@ smoothLinks.forEach((link) => {
     target.scrollIntoView({ behavior: "smooth", block: "start" });
   });
 });
+
+if (revealItems.length) {
+  if ("IntersectionObserver" in window) {
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("in-view");
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.14 });
+
+    revealItems.forEach((item) => revealObserver.observe(item));
+  } else {
+    revealItems.forEach((item) => item.classList.add("in-view"));
+  }
+}
 
 themeToggles.forEach((themeToggle) => {
   themeToggle.addEventListener("click", () => {

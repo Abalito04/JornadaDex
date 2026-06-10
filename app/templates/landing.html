@@ -30,6 +30,10 @@
       <p class="landing-lead">
         Control de tareas, tiempos y trazabilidad para equipos contables y administrativos.
       </p>
+      <div class="landing-live-note">
+        <span class="live-dot"></span>
+        <span>Una vista clara para saber qué se hizo, cuándo y bajo qué supervisión.</span>
+      </div>
       <p>
         Cada tarea queda asociada a un empleado, supervisor, cliente, área y horario real. La empresa gana evidencia
         para supervisar trabajo diario, medir tiempos y consultar reportes sin depender de planillas sueltas.
@@ -47,12 +51,30 @@
         {% endif %}
         <a class="button ghost" href="#funciones">Ver funciones</a>
       </div>
+      <div class="landing-proof">
+        <article>
+          <strong>24hs</strong>
+          <span>Formato horario unificado</span>
+        </article>
+        <article>
+          <strong>3 roles</strong>
+          <span>Empleado, supervisor y dueño</span>
+        </article>
+        <article>
+          <strong>100%</strong>
+          <span>Registros con trazabilidad</span>
+        </article>
+      </div>
     </div>
 
     <div class="landing-preview" aria-label="Resumen visual de TrazaLab">
       <div class="landing-logo-hero">
         <img class="logo-light" src="{{ url_for('static', filename='img/trazalab-logo.svg') }}" alt="TrazaLab">
         <img class="logo-dark" src="{{ url_for('static', filename='img/trazalab-logo-dark.svg') }}" alt="TrazaLab">
+      </div>
+      <div class="preview-status">
+        <span><i data-lucide="radio"></i> Seguimiento activo</span>
+        <span>Actualizado 08:45hs</span>
       </div>
       <div class="preview-top">
         <div>
@@ -118,6 +140,36 @@
         <i data-lucide="file-bar-chart"></i>
         <h3>Se reporta</h3>
         <p>La información queda lista para consultar horas por empleado, área, cliente y período.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="landing-day">
+    <div class="landing-section-title">
+      <h2>Más orden en el día a día</h2>
+      <p>TrazaLab baja a tierra la operación diaria sin hacerla más pesada.</p>
+    </div>
+    <div class="day-grid">
+      <article>
+        <i data-lucide="list-checks"></i>
+        <div>
+          <h3>Menos planillas sueltas</h3>
+          <p>Las tareas quedan centralizadas por cliente, área y responsable.</p>
+        </div>
+      </article>
+      <article>
+        <i data-lucide="message-square-text"></i>
+        <div>
+          <h3>Más contexto para corregir</h3>
+          <p>Las ediciones pueden incluir observaciones para explicar cambios operativos.</p>
+        </div>
+      </article>
+      <article>
+        <i data-lucide="sparkles"></i>
+        <div>
+          <h3>Una experiencia más simple</h3>
+          <p>Cada usuario ve solo lo necesario para trabajar sin ruido.</p>
+        </div>
       </article>
     </div>
   </section>
