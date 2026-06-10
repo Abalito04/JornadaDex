@@ -21,14 +21,15 @@ def signup():
         try:
             company, user = create_company_with_owner(
                 company_name=request.form.get("company_name", "").strip(),
+                tax_id=request.form.get("tax_id", "").strip(),
                 owner_name=request.form.get("owner_name", "").strip(),
                 email=request.form.get("email", "").strip().lower(),
                 username=request.form.get("username", "").strip().lower(),
                 password=request.form.get("password", ""),
             )
-            if not company.name or not user.email or not user.username or not request.form.get("password"):
-                raise ValueError("Completá empresa, jefe, email, usuario y clave.")
-            write_audit("CREATE", "companies", company.id, new_values={"name": company.name}, company_id=company.id)
+            if not company.name or not company.tax_id or not user.email or not user.username or not request.form.get("password"):
+                raise ValueError("Completá nombre de la empresa, CUIT, jefe, email, usuario y clave.")
+            write_audit("CREATE", "companies", company.id, new_values={"name": company.name, "tax_id": company.tax_id}, company_id=company.id)
             db.session.commit()
             flash("Empresa creada. Ya podés iniciar sesión.", "success")
             return redirect(url_for("auth.login"))

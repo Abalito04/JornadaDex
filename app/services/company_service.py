@@ -13,10 +13,10 @@ def seed_company_catalog(company_id, user_id=None):
             db.session.add(Task(area_id=area.id, name=task_name, created_by=user_id))
 
 
-def create_company_with_owner(company_name, owner_name, email, username, password):
+def create_company_with_owner(company_name, tax_id, owner_name, email, username, password):
     from app.models import Employee, User
 
-    company = Company(name=company_name)
+    company = Company(name=company_name, tax_id=tax_id)
     db.session.add(company)
     db.session.flush()
 

@@ -18,8 +18,12 @@
     <form method="post" class="grid-form">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <div>
-        <label>Empresa</label>
+        <label>Nombre de la Empresa</label>
         <input name="company_name" required>
+      </div>
+      <div>
+        <label>CUIT</label>
+        <input name="tax_id" inputmode="numeric" placeholder="20-12345678-9" required>
       </div>
       <div>
         <label>Nombre del jefe</label>
