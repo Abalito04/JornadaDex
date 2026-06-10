@@ -5,6 +5,7 @@ const previewTabs = document.querySelectorAll("[data-preview-tab]");
 const previewPanels = document.querySelectorAll("[data-preview-panel]");
 const previewTitle = document.querySelector("[data-preview-title]");
 const previewCopy = document.querySelector("[data-preview-copy]");
+const smoothLinks = document.querySelectorAll(".landing-menu a[href^='#'], .landing-cta a[href^='#']");
 const root = document.documentElement;
 const themeStorageKey = "trazalab-theme";
 
@@ -78,6 +79,17 @@ if (previewTabs.length && previewPanels.length) {
     });
   });
 }
+
+smoothLinks.forEach((link) => {
+  link.addEventListener("click", (event) => {
+    const target = document.querySelector(link.getAttribute("href"));
+    if (!target) {
+      return;
+    }
+    event.preventDefault();
+    target.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+});
 
 themeToggles.forEach((themeToggle) => {
   themeToggle.addEventListener("click", () => {

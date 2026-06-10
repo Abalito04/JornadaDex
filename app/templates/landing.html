@@ -26,10 +26,6 @@
 
   <section class="landing-hero">
     <div class="landing-copy">
-      <div class="landing-logo-hero">
-        <img class="logo-light" src="{{ url_for('static', filename='img/trazalab-logo.svg') }}" alt="TrazaLab">
-        <img class="logo-dark" src="{{ url_for('static', filename='img/trazalab-logo-dark.svg') }}" alt="TrazaLab">
-      </div>
       <h1>TrazaLab</h1>
       <p class="landing-lead">
         Control de tareas, tiempos y trazabilidad para equipos contables y administrativos.
@@ -54,6 +50,10 @@
     </div>
 
     <div class="landing-preview" aria-label="Resumen visual de TrazaLab">
+      <div class="landing-logo-hero">
+        <img class="logo-light" src="{{ url_for('static', filename='img/trazalab-logo.svg') }}" alt="TrazaLab">
+        <img class="logo-dark" src="{{ url_for('static', filename='img/trazalab-logo-dark.svg') }}" alt="TrazaLab">
+      </div>
       <div class="preview-top">
         <div>
           <span>Resumen de hoy</span>
