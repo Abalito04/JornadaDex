@@ -98,6 +98,9 @@
             <td>{{ record.area.name }}</td>
             <td>{{ record.task.name }}</td>
             <td>
+              {% if can_edit_records %}
+                <a class="button small secondary" href="{{ url_for('time_records.edit', record_id=record.id) }}">Editar</a>
+              {% endif %}
               {% if not record.end_time %}
                 <form method="post" action="{{ url_for('time_records.finish', record_id=record.id) }}">
                   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
