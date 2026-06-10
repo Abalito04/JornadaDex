@@ -50,15 +50,6 @@ def start_time_record(company_id, user_id, employee_id, accounting_client_id, ar
     if not task:
         raise ValueError("Tarea invalida para el area seleccionada.")
 
-    open_record = TimeRecord.query.filter(
-        TimeRecord.company_id == company_id,
-        TimeRecord.employee_id == employee_id,
-        TimeRecord.deleted_at.is_(None),
-        TimeRecord.end_time.is_(None),
-    ).first()
-    if open_record:
-        raise ValueError("Ese empleado ya tiene una tarea en curso. Finalizala antes de iniciar otra.")
-
     now = argentina_now()
     record = TimeRecord(
         company_id=company_id,

@@ -9,6 +9,7 @@ from sqlalchemy import func
 from app.context import current_company_id, is_platform_admin
 from app.extensions import db
 from app.models import AccountingClient, Area, Employee, Task, TimeRecord
+from app.roles import ROLE_EMPLOYEE
 from app.services.audit_service import write_audit
 from app.services.time_record_service import parse_date
 from app.services.visibility_service import employee_is_visible, visible_employees_query, visible_time_records_query
@@ -21,12 +22,24 @@ reports_bp = Blueprint("reports", __name__, url_prefix="/reports")
 @login_required
 def index():
     records = _filtered_records().all()
-    employees_query = Employee.query.filter_by(company_id=current_company_id(), deleted_at=None)
-    employees = visible_employees_query(employees_query).order_by(Employee.last_name).all()
+    can_filter_employee = not _is_employee_scope()
+    if can_filter_employee:
+        employees_query = Employee.query.filter_by(company_id=current_company_id(), deleted_at=None)
+        employees = visible_employees_query(employees_query).order_by(Employee.last_name).all()
+    else:
+        employees = [current_user.employee] if current_user.employee else []
     clients = AccountingClient.query.filter_by(company_id=current_company_id(), deleted_at=None).order_by(AccountingClient.name).all()
     areas = Area.query.filter_by(company_id=current_company_id(), deleted_at=None).order_by(Area.name).all()
     total_hours = sum(float(record.hours) for record in records)
-    return render_template("reports/index.html", records=records, employees=employees, clients=clients, areas=areas, total_hours=total_hours)
+    return render_template(
+        "reports/index.html",
+        records=records,
+        employees=employees,
+        clients=clients,
+        areas=areas,
+        total_hours=total_hours,
+        can_filter_employee=can_filter_employee,
+    )
 
 
 @reports_bp.route("/export.csv")
@@ -72,7 +85,8 @@ def export_excel():
 
 def _filtered_records():
     query = TimeRecord.query.filter_by(company_id=current_company_id(), deleted_at=None)
-    if current_user.role == "Employee" and not current_user.is_company_owner and not is_platform_admin():
+    can_filter_employee = not _is_employee_scope()
+    if not can_filter_employee:
         query = query.filter(TimeRecord.employee_id == current_user.employee_id)
     else:
         query = visible_time_records_query(query)
@@ -82,7 +96,7 @@ def _filtered_records():
     area_id = request.args.get("area_id")
     date_from = request.args.get("date_from")
     date_to = request.args.get("date_to")
-    if employee_id:
+    if employee_id and can_filter_employee:
         employee = Employee.query.filter_by(id=int(employee_id), company_id=current_company_id(), deleted_at=None).first()
         if not employee_is_visible(employee):
             query = query.filter(TimeRecord.employee_id == 0)
@@ -97,6 +111,10 @@ def _filtered_records():
     if date_to:
         query = query.filter(TimeRecord.record_date <= parse_date(date_to))
     return query.order_by(TimeRecord.record_date.desc(), TimeRecord.start_time.desc())
+
+
+def _is_employee_scope():
+    return current_user.role == ROLE_EMPLOYEE and not current_user.is_company_owner and not is_platform_admin()
 
 
 def _record_row(record):

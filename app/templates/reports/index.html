@@ -8,12 +8,14 @@
 
 <section class="panel">
   <form method="get" class="filter-form">
-    <select name="employee_id">
-      <option value="">Todos los empleados</option>
-      {% for employee in employees %}
-        <option value="{{ employee.id }}" {% if request.args.get('employee_id') == employee.id|string %}selected{% endif %}>{{ employee.full_name }}</option>
-      {% endfor %}
-    </select>
+    {% if can_filter_employee %}
+      <select name="employee_id">
+        <option value="">Todos los empleados</option>
+        {% for employee in employees %}
+          <option value="{{ employee.id }}" {% if request.args.get('employee_id') == employee.id|string %}selected{% endif %}>{{ employee.full_name }}</option>
+        {% endfor %}
+      </select>
+    {% endif %}
     <select name="accounting_client_id">
       <option value="">Todos los clientes</option>
       {% for client in clients %}
@@ -38,12 +40,12 @@
   <div class="table-wrap">
     <table>
       <thead>
-        <tr><th>Empleado</th><th>Cliente</th><th>Fecha</th><th>Inicio</th><th>Fin</th><th>Horas</th><th>Estado</th><th>Area</th><th>Tarea</th></tr>
+        <tr>{% if can_filter_employee %}<th>Empleado</th>{% endif %}<th>Cliente</th><th>Fecha</th><th>Inicio</th><th>Fin</th><th>Horas</th><th>Estado</th><th>Area</th><th>Tarea</th></tr>
       </thead>
       <tbody>
         {% for record in records %}
           <tr>
-            <td>{{ record.employee.full_name }}</td>
+            {% if can_filter_employee %}<td>{{ record.employee.full_name }}</td>{% endif %}
             <td>{{ record.accounting_client.name if record.accounting_client else "Sin cliente" }}</td>
             <td>{{ record.record_date }}</td>
             <td>{{ format_time_hs(record.start_time) }}</td>
@@ -61,7 +63,7 @@
           </tr>
         {% else %}
           <tr>
-            <td colspan="9">
+            <td colspan="{{ 9 if can_filter_employee else 8 }}">
               <div class="empty-state compact">
                 <i data-lucide="bar-chart-3"></i>
                 <strong>Sin registros para los filtros elegidos.</strong>
