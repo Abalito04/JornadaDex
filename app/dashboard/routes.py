@@ -80,6 +80,15 @@ def index():
         .limit(6)
         .all()
     )
+    by_employee_week = (
+        base.filter(TimeRecord.record_date >= week_start)
+        .join(Employee, TimeRecord.employee_id == Employee.id)
+        .with_entities(Employee.first_name, Employee.last_name, func.sum(TimeRecord.hours))
+        .group_by(Employee.id)
+        .order_by(func.sum(TimeRecord.hours).desc())
+        .limit(10)
+        .all()
+    )
     by_employee = (
         base.filter(TimeRecord.record_date >= month_start)
         .join(Employee, TimeRecord.employee_id == Employee.id)
@@ -93,6 +102,7 @@ def index():
     area_week_chart = _chart_rows([(name, hours) for name, hours in by_area_week])
     area_month_chart = _chart_rows([(name, hours) for name, hours in by_area_month])
     client_chart = _chart_rows([(name, hours) for name, hours in by_client])
+    employee_week_chart = _chart_rows([(f"{first} {last}", hours) for first, last, hours in by_employee_week])
     employee_chart = _chart_rows([(f"{first} {last}", hours) for first, last, hours in by_employee])
     return render_template(
         "dashboard/index.html",
@@ -105,6 +115,7 @@ def index():
         area_week_chart=area_week_chart,
         area_month_chart=area_month_chart,
         client_chart=client_chart,
+        employee_week_chart=employee_week_chart,
         employee_chart=employee_chart,
         open_records=open_records,
         recent_records=recent_records,

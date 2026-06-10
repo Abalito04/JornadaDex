@@ -59,10 +59,16 @@
     <article><span>Horas hoy</span><strong>{{ format_duration_hs(metrics.total_hours_today) }}</strong></article>
     <article><span>Horas semana</span><strong>{{ format_duration_hs(metrics.total_hours_week) }}</strong></article>
     <article><span>Horas mes</span><strong>{{ format_duration_hs(metrics.total_hours_month) }}</strong></article>
-    <article><span>Empleados visibles</span><strong>{{ metrics.active_employees }}</strong></article>
+    <article><span>Tareas en curso</span><strong>{{ metrics.open_records }}</strong></article>
   </section>
 
   <section class="two-columns">
+    <div class="panel">
+      <h2>Ranking semanal por empleado</h2>
+      {% set chart_rows = employee_week_chart %}
+      {% include "dashboard/_bar_chart.html" %}
+    </div>
+
     <div class="panel">
       <h2>Ranking mensual por empleado</h2>
       {% set chart_rows = employee_chart %}
