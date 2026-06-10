@@ -2502,6 +2502,8 @@ details.area-block:not([open]) .accordion-indicator::after { content: " tareas";
   width: 100%;
   margin: 0;
   padding: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
 }
 
 .landing-v2 .landing-container {
@@ -2547,6 +2549,16 @@ details.area-block:not([open]) .accordion-indicator::after { content: " tareas";
   box-shadow: none;
 }
 
+.landing-v2 .landing-brand .logo-light,
+.landing-v2 .final-logo .logo-light {
+  display: none !important;
+}
+
+.landing-v2 .landing-brand .logo-dark,
+.landing-v2 .final-logo .logo-dark {
+  display: block !important;
+}
+
 .landing-v2 .landing-menu {
   border: 0;
   background: transparent;
@@ -2584,20 +2596,28 @@ details.area-block:not([open]) .accordion-indicator::after { content: " tareas";
 
 .landing-v2 .landing-copy h1 {
   color: white;
-  font-family: var(--font-body);
-  font-size: clamp(2.9rem, 1.7rem + 4.2vw, 5.25rem);
-  font-weight: 800;
-  line-height: 1.03;
+  font-family: var(--font-display);
+  font-size: clamp(4.25rem, 2.6rem + 6vw, 8rem);
+  font-weight: 400;
+  line-height: 0.84;
 }
 
-.landing-v2 .landing-copy h1 span,
+.hero-subtitle {
+  margin: 0;
+  color: white;
+  font-size: clamp(2rem, 1.25rem + 2.4vw, 3.6rem);
+  font-weight: 800;
+  line-height: 1.05;
+}
+
+.hero-subtitle span,
 .landing-v2 .center-title span,
 .landing-v2 .landing-evidence h2 span {
   color: var(--color-primary);
 }
 
 .landing-v2 .landing-lead,
-.landing-v2 .landing-copy p:not(.landing-lead) {
+.landing-v2 .landing-copy p:not(.landing-lead):not(.hero-subtitle) {
   color: rgba(255, 255, 255, 0.78);
 }
 
@@ -2747,6 +2767,11 @@ details.area-block:not([open]) .accordion-indicator::after { content: " tareas";
 .landing-v2 .landing-section,
 .landing-v2 .landing-evidence {
   padding: var(--space-12) 0;
+}
+
+.landing-demo {
+  background:
+    linear-gradient(180deg, color-mix(in oklch, var(--color-surface) 96%, transparent), var(--color-bg));
 }
 
 .center-title {
@@ -2917,6 +2942,7 @@ details.area-block:not([open]) .accordion-indicator::after { content: " tareas";
 
 .landing-v2 .landing-evidence {
   grid-template-columns: 0.68fr 1.1fr;
+  background: var(--color-bg);
 }
 
 .evidence-dashboard {
@@ -3016,6 +3042,39 @@ details.area-block:not([open]) .accordion-indicator::after { content: " tareas";
   font-size: var(--text-xs);
 }
 
+[data-theme="dark"] .landing-v2 {
+  background: var(--color-bg);
+}
+
+[data-theme="dark"] .landing-demo {
+  background:
+    linear-gradient(180deg, color-mix(in oklch, var(--color-surface) 76%, transparent), var(--color-bg));
+}
+
+[data-theme="dark"] .demo-tabs,
+[data-theme="dark"] .demo-table-card,
+[data-theme="dark"] .evidence-dashboard article,
+[data-theme="dark"] .demo-points span {
+  background: color-mix(in oklch, var(--color-surface) 92%, transparent);
+}
+
+[data-theme="dark"] .demo-panel article {
+  background: color-mix(in oklch, var(--color-surface-2) 88%, transparent);
+}
+
+[data-theme="dark"] .demo-table-card table th,
+[data-theme="dark"] .demo-table-card table td {
+  color: var(--color-text);
+}
+
+[data-theme="dark"] .demo-table-card table th {
+  color: var(--color-text-muted);
+}
+
+[data-theme="dark"] .final-cta {
+  border-color: color-mix(in oklch, var(--color-primary) 26%, var(--color-divider));
+}
+
 .landing-footer nav {
   display: flex;
   gap: var(--space-5);
@@ -3061,7 +3120,11 @@ details.area-block:not([open]) .accordion-indicator::after { content: " tareas";
   }
 
   .landing-v2 .landing-copy h1 {
-    font-size: clamp(2.55rem, 12vw, 3.75rem);
+    font-size: clamp(4rem, 18vw, 5.4rem);
+  }
+
+  .hero-subtitle {
+    font-size: clamp(1.8rem, 8vw, 2.7rem);
   }
 
   .hero-dashboard,
