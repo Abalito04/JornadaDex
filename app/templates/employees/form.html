@@ -3,7 +3,7 @@
 {% block content %}
 <section class="page-title">
   <h1>{{ "Editar empleado" if employee else "Nuevo empleado" }}</h1>
-  <p>{% if employee %}Modifica datos y, si hace falta, resetea la clave del usuario.{% else %}Tambien podes crearle usuario para que cargue sus horas.{% endif %}</p>
+  <p>{% if employee %}Modificá datos y, si hace falta, reseteá la clave del usuario.{% else %}También podés crearle usuario para que cargue sus horas.{% endif %}</p>
 </section>
 
 <section class="panel">
@@ -13,7 +13,7 @@
     <div><label>Apellido</label><input name="last_name" value="{{ employee.last_name if employee else '' }}" required></div>
     <div><label>Documento</label><input name="document_number" value="{{ employee.document_number if employee else '' }}" required></div>
     <div><label>Email</label><input name="email" type="email" value="{{ employee.email if employee and employee.email else '' }}"></div>
-    <div><label>Telefono</label><input name="phone" value="{{ employee.phone if employee and employee.phone else '' }}"></div>
+    <div><label>Teléfono</label><input name="phone" value="{{ employee.phone if employee and employee.phone else '' }}"></div>
     <div><label>Puesto</label><input name="position" value="{{ employee.position if employee and employee.position else '' }}"></div>
     <div class="full"><label>Notas</label><textarea name="notes" rows="2">{{ employee.notes if employee and employee.notes else '' }}</textarea></div>
 
@@ -25,7 +25,7 @@
       {% if employee.user %}
         <div>
           <label>Nueva clave</label>
-          <input name="password" type="password" placeholder="Dejar vacio para no cambiar">
+          <input name="password" type="password" placeholder="Dejar vacío para no cambiar">
         </div>
       {% endif %}
     {% else %}

@@ -29,7 +29,7 @@ if (areaSelect && taskSelect) {
   areaSelect.addEventListener("change", async () => {
     taskSelect.innerHTML = '<option value="">Cargando...</option>';
     if (!areaSelect.value) {
-      taskSelect.innerHTML = '<option value="">Seleccionar area primero</option>';
+      taskSelect.innerHTML = '<option value="">Seleccionar área primero</option>';
       return;
     }
     const response = await fetch(`/areas/${areaSelect.value}/tasks.json`);
@@ -48,7 +48,7 @@ if (previewTabs.length && previewPanels.length) {
   const previewContent = {
     tiempos: {
       title: "32:45hs",
-      copy: "Horas registradas por area, con formato 24hs y trazabilidad por tarea.",
+      copy: "Horas registradas por área, con formato 24hs y trazabilidad por tarea.",
     },
     supervision: {
       title: "3 equipos",
@@ -56,7 +56,7 @@ if (previewTabs.length && previewPanels.length) {
     },
     reportes: {
       title: "186 registros",
-      copy: "Los reportes resumen empleados, clientes, areas y registros del periodo.",
+      copy: "Los reportes resumen empleados, clientes, áreas y registros del período.",
     },
   };
 

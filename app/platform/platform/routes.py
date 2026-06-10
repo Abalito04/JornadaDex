@@ -1,9 +1,12 @@
+from collections import defaultdict
+
 from flask import Blueprint, flash, redirect, render_template, request, session, url_for
-from flask_login import login_required
+from flask_login import current_user, login_required
 
 from app.extensions import db
 from app.context import is_platform_admin
 from app.models import Company, User
+from app.roles import ROLE_DEVELOPER, ROLE_OWNER, normalize_role
 from app.services.audit_service import write_audit
 
 platform_bp = Blueprint("platform", __name__, url_prefix="/platform")
@@ -97,7 +100,7 @@ def delete_company(company_id):
     db.session.commit()
     if session.get("active_company_id") == company.id:
         session.pop("active_company_id", None)
-    flash("Empresa eliminada logicamente.", "success")
+    flash("Empresa eliminada lógicamente.", "success")
     return redirect(url_for("platform.companies"))
 
 
@@ -107,8 +110,26 @@ def users():
     denied = require_platform_admin()
     if denied:
         return denied
-    users = User.query.filter(User.deleted_at.is_(None)).order_by(User.username).all()
-    return render_template("platform/users.html", users=users)
+    companies = Company.query.filter(Company.deleted_at.is_(None)).order_by(Company.name).all()
+    users = (
+        User.query.filter(User.deleted_at.is_(None))
+        .join(Company, User.company_id == Company.id)
+        .filter(Company.deleted_at.is_(None))
+        .order_by(Company.name, User.username)
+        .all()
+    )
+    users_by_company = defaultdict(list)
+    for user in users:
+        users_by_company[user.company_id].append(user)
+
+    company_groups = [
+        {
+            "company": company,
+            "users": users_by_company.get(company.id, []),
+        }
+        for company in companies
+    ]
+    return render_template("platform/users.html", company_groups=company_groups)
 
 
 @platform_bp.route("/users/<int:user_id>/edit", methods=["GET", "POST"])
@@ -132,11 +153,11 @@ def edit_user(user_id):
         }
         user.username = request.form.get("username", "").strip().lower()
         user.email = request.form.get("email", "").strip().lower()
-        user.role = request.form.get("role", "Employee")
+        user.role = normalize_role(request.form.get("role", "Employee"), allow_developer=True)
         user.company_id = int(request.form.get("company_id") or user.company_id)
         user.is_active_flag = request.form.get("is_active") == "on"
-        user.is_company_owner = request.form.get("is_company_owner") == "on"
-        user.is_platform_admin = request.form.get("is_platform_admin") == "on"
+        user.is_platform_admin = user.role == ROLE_DEVELOPER
+        user.is_company_owner = user.role == ROLE_OWNER and not user.is_platform_admin
         password = request.form.get("password", "")
         if password:
             user.set_password(password)
@@ -167,6 +188,34 @@ def edit_user(user_id):
     return render_template("platform/user_form.html", user=user, companies=companies)
 
 
+@platform_bp.route("/users/<int:user_id>/delete", methods=["POST"])
+@login_required
+def delete_user(user_id):
+    denied = require_platform_admin()
+    if denied:
+        return denied
+
+    user = User.query.filter_by(id=user_id, deleted_at=None).first_or_404()
+    if user.id == current_user.id:
+        flash("No podés eliminar tu propio usuario Developer.", "danger")
+        return redirect(url_for("platform.users"))
+
+    previous_values = {
+        "username": user.username,
+        "email": user.email,
+        "role": user.role,
+        "company_id": user.company_id,
+        "is_company_owner": user.is_company_owner,
+        "is_platform_admin": user.is_platform_admin,
+    }
+    user.soft_delete(current_user.id)
+    user.is_active_flag = False
+    write_audit("DELETE", "users", user.id, previous_values=previous_values, company_id=user.company_id)
+    db.session.commit()
+    flash("Usuario eliminado lógicamente.", "success")
+    return redirect(url_for("platform.users"))
+
+
 @platform_bp.route("/companies/<int:company_id>/select", methods=["POST"])
 @login_required
 def select_company(company_id):
@@ -176,4 +225,4 @@ def select_company(company_id):
     company = Company.query.filter_by(id=company_id, deleted_at=None).first_or_404()
     session["active_company_id"] = company.id
     flash(f"Empresa activa: {company.name}", "success")
-    return redirect(url_for("dashboard.index"))
+    return redirect(url_for("platform.companies"))

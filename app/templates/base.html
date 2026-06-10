@@ -63,8 +63,8 @@
             <a class="nav-item {{ 'active' if current_path.startswith('/clients') else '' }}" href="{{ url_for('clients.index') }}" aria-label="Clientes">
               <i data-lucide="briefcase-business"></i><span>Clientes</span>
             </a>
-            <a class="nav-item {{ 'active' if current_path.startswith('/areas') else '' }}" href="{{ url_for('areas.index') }}" aria-label="Areas y tareas">
-              <i data-lucide="clipboard-list"></i><span>Areas y tareas</span>
+            <a class="nav-item {{ 'active' if current_path.startswith('/areas') else '' }}" href="{{ url_for('areas.index') }}" aria-label="Áreas y tareas">
+              <i data-lucide="clipboard-list"></i><span>Áreas y tareas</span>
             </a>
           {% endif %}
           <a class="nav-item {{ 'active' if current_path.startswith('/reports') else '' }}" href="{{ url_for('reports.index') }}" aria-label="Reportes">

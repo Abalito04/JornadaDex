@@ -33,7 +33,7 @@
       {% endfor %}
     </select>
     <select name="area_id">
-      <option value="">Todas las areas</option>
+      <option value="">Todas las áreas</option>
       {% for area in areas %}
         <option value="{{ area.id }}" {% if request.args.get('area_id') == area.id|string %}selected{% endif %}>{{ area.name }}</option>
       {% endfor %}
@@ -50,7 +50,7 @@
   <div class="table-wrap">
     <table>
       <thead>
-        <tr>{% if can_filter_employee %}<th>Empleado</th>{% endif %}<th>Supervisor</th><th>Cliente</th><th>Fecha</th><th>Inicio</th><th>Fin</th><th>Horas</th><th>Estado</th><th>Area</th><th>Tarea</th></tr>
+        <tr>{% if can_filter_employee %}<th>Empleado</th>{% endif %}<th>Supervisor</th><th>Cliente</th><th>Fecha</th><th>Inicio</th><th>Fin</th><th>Horas</th><th>Estado</th><th>Área</th><th>Tarea</th></tr>
       </thead>
       <tbody>
         {% for record in records %}
@@ -78,7 +78,7 @@
               <div class="empty-state compact">
                 <i data-lucide="bar-chart-3"></i>
                 <strong>Sin registros para los filtros elegidos.</strong>
-                <span>Modifica el rango o los filtros para consultar otros movimientos.</span>
+                <span>Modificá el rango o los filtros para consultar otros movimientos.</span>
               </div>
             </td>
           </tr>

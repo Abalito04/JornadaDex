@@ -56,7 +56,7 @@ def delete(client_id):
     client.active = False
     write_audit("DELETE", "accounting_clients", client.id, previous_values={"name": client.name})
     db.session.commit()
-    flash("Cliente contable eliminado logicamente.", "success")
+    flash("Cliente contable eliminado lógicamente.", "success")
     return redirect(url_for("clients.index"))
 
 

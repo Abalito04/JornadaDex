@@ -56,8 +56,8 @@ def _activity_event(log):
     detail = _detail_text(values)
 
     action_labels = {
-        "LOGIN": (f"{user} inicio sesion", "Acceso"),
-        "LOGOUT": (f"{user} cerro sesion", "Acceso"),
+        "LOGIN": (f"{user} inició sesión", "Acceso"),
+        "LOGOUT": (f"{user} cerró sesión", "Acceso"),
         "CREATE": (f"{user} creo {target}", "Alta"),
         "UPDATE": (f"{user} actualizo {target}", "Cambio"),
         "DELETE": (f"{user} elimino {target}", "Baja"),
@@ -88,7 +88,7 @@ def _target_label(table_name):
         "companies": "una empresa",
         "users": "un usuario",
         "employees": "un empleado",
-        "areas": "un area",
+        "areas": "un área",
         "tasks": "una tarea",
         "time_records": "un registro de trabajo",
         "accounting_clients": "un cliente contable",

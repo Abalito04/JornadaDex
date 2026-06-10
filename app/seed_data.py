@@ -11,7 +11,7 @@ INITIAL_DEFINITION = {
         "Registracion y cierres contables anuales",
         "Confeccion y exposicion de estados contables",
         "Analisis e interpretacion de resultados",
-        "Auditoria de estados contables",
+        "Auditoría de estados contables",
         "Informes especiales",
     ],
     "Societario": [
@@ -19,7 +19,7 @@ INITIAL_DEFINITION = {
         "Tramites y presentaciones externas",
         "Asesoramiento y estructura societaria",
     ],
-    "Auditoria y Certificaciones": [
+    "Auditoría y Certificaciones": [
         "Certificaciones contables e informes especiales",
     ],
     "Organizacion Interna": [
@@ -28,7 +28,7 @@ INITIAL_DEFINITION = {
         "Emision de informes",
         "Reparaciones y mantenimientos",
         "Organizacion Jachal",
-        "Administracion metalurgica",
+        "Administración metalúrgica",
         "Cuentas corrientes",
         "Tramites bancarios",
     ],

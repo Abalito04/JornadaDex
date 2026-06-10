@@ -57,7 +57,7 @@ def export_csv():
     records = _filtered_records().all()
     output = StringIO()
     writer = csv.writer(output, delimiter=";")
-    writer.writerow(["Empleado", "Supervisor", "Cliente", "Fecha", "Inicio", "Fin", "Horas", "Estado", "Area", "Tarea", "Observaciones"])
+    writer.writerow(["Empleado", "Supervisor", "Cliente", "Fecha", "Inicio", "Fin", "Horas", "Estado", "Área", "Tarea", "Observaciones"])
     for record in records:
         writer.writerow(_record_row(record))
     write_audit("EXPORT", "time_records", new_values={"format": "csv", "count": len(records)})
@@ -78,7 +78,7 @@ def export_excel():
     wb = Workbook()
     ws = wb.active
     ws.title = "Control de tiempo"
-    ws.append(["Empleado", "Supervisor", "Cliente", "Fecha", "Inicio", "Fin", "Horas", "Estado", "Area", "Tarea", "Observaciones"])
+    ws.append(["Empleado", "Supervisor", "Cliente", "Fecha", "Inicio", "Fin", "Horas", "Estado", "Área", "Tarea", "Observaciones"])
     for record in records:
         ws.append(_record_row(record))
     buffer = BytesIO()

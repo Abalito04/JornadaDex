@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}TrazaLab | Gestion de empleados{% endblock %}
+{% block title %}TrazaLab | Gestión de empleados{% endblock %}
 {% block content %}
 <section class="landing-page">
   <header class="landing-nav">
@@ -31,19 +31,19 @@
         Control de tareas, tiempos y trazabilidad para equipos contables y administrativos.
       </p>
       <p>
-        Cada tarea queda asociada a un empleado, supervisor, cliente, area y horario real. La empresa gana evidencia
+        Cada tarea queda asociada a un empleado, supervisor, cliente, área y horario real. La empresa gana evidencia
         para supervisar trabajo diario, medir tiempos y consultar reportes sin depender de planillas sueltas.
       </p>
       <div class="landing-checks">
-        <span><i data-lucide="check-circle-2"></i>Registro automatico de fecha y hora</span>
+        <span><i data-lucide="check-circle-2"></i>Registro automático de fecha y hora</span>
         <span><i data-lucide="check-circle-2"></i>Asignacion por supervisor</span>
-        <span><i data-lucide="check-circle-2"></i>Reportes por usuario, area y cliente</span>
+        <span><i data-lucide="check-circle-2"></i>Reportes por usuario, área y cliente</span>
       </div>
       <div class="landing-cta">
         {% if current_user.is_authenticated %}
           <a class="button" href="{{ url_for('dashboard.index') }}"><i data-lucide="layout-dashboard"></i>Ir al panel</a>
         {% else %}
-          <a class="button" href="{{ url_for('auth.login') }}"><i data-lucide="log-in"></i>Iniciar sesion</a>
+          <a class="button" href="{{ url_for('auth.login') }}"><i data-lucide="log-in"></i>Iniciar sesión</a>
         {% endif %}
         <a class="button ghost" href="#funciones">Ver funciones</a>
       </div>
@@ -63,14 +63,14 @@
       </div>
       <div class="preview-tabs" role="tablist" aria-label="Vista previa">
         <button class="active" type="button" data-preview-tab="tiempos">Tiempos</button>
-        <button type="button" data-preview-tab="supervision">Supervision</button>
+        <button type="button" data-preview-tab="supervision">Supervisión</button>
         <button type="button" data-preview-tab="reportes">Reportes</button>
       </div>
       <div class="preview-stage">
         <div class="preview-chart" data-preview-panel="tiempos">
           <span style="--bar: 78%"><b>Contable</b></span>
           <span style="--bar: 52%"><b>Impositiva</b></span>
-          <span style="--bar: 66%"><b>Auditoria</b></span>
+          <span style="--bar: 66%"><b>Auditoría</b></span>
           <span style="--bar: 38%"><b>Administrativa</b></span>
         </div>
         <div class="preview-list hidden" data-preview-panel="supervision">
@@ -85,39 +85,39 @@
           <div><span>Clientes</span><strong>24</strong></div>
         </div>
       </div>
-      <p data-preview-copy>Horas registradas por area, con formato 24hs y trazabilidad por tarea.</p>
+      <p data-preview-copy>Horas registradas por área, con formato 24hs y trazabilidad por tarea.</p>
     </div>
   </section>
 
   <section class="landing-section" id="funciones">
     <div class="landing-section-title">
       <h2>Como funciona</h2>
-      <p>Un flujo simple para registrar trabajo real y convertirlo en informacion util.</p>
+      <p>Un flujo simple para registrar trabajo real y convertirlo en información útil.</p>
     </div>
     <div class="landing-steps">
       <article>
         <span>1</span>
         <i data-lucide="clipboard-check"></i>
         <h3>Se asignan tareas</h3>
-        <p>El equipo trabaja por cliente, area y actividad, con supervisor responsable cuando corresponde.</p>
+        <p>El equipo trabaja por cliente, área y actividad, con supervisor responsable cuando corresponde.</p>
       </article>
       <article>
         <span>2</span>
         <i data-lucide="clock-3"></i>
         <h3>Se registra el tiempo</h3>
-        <p>La fecha y la hora se toman automaticamente para evitar cargas manuales.</p>
+        <p>La fecha y la hora se toman automáticamente para evitar cargas manuales.</p>
       </article>
       <article>
         <span>3</span>
         <i data-lucide="scan-search"></i>
         <h3>Se supervisa</h3>
-        <p>Supervisores y dueños ven avances, ediciones justificadas y actividad segun su rol.</p>
+        <p>Supervisores y dueños ven avances, ediciones justificadas y actividad según su rol.</p>
       </article>
       <article>
         <span>4</span>
         <i data-lucide="file-bar-chart"></i>
         <h3>Se reporta</h3>
-        <p>La informacion queda lista para consultar horas por empleado, area, cliente y periodo.</p>
+        <p>La información queda lista para consultar horas por empleado, área, cliente y período.</p>
       </article>
     </div>
   </section>
@@ -136,12 +136,12 @@
       <article>
         <i data-lucide="users-round"></i>
         <h3>Supervisor</h3>
-        <p>Controla empleados a cargo, edita registros con observacion y analiza horas del equipo.</p>
+        <p>Controla empleados a cargo, edita registros con observación y analiza horas del equipo.</p>
       </article>
       <article>
         <i data-lucide="crown"></i>
         <h3>Dueño</h3>
-        <p>Tiene vision global de empresa, empleados, clientes, areas, tareas y reportes mensuales.</p>
+        <p>Tiene visión global de empresa, empleados, clientes, áreas, tareas y reportes mensuales.</p>
       </article>
     </div>
   </section>
@@ -150,7 +150,7 @@
     <div>
       <h2>Trazabilidad que genera confianza</h2>
       <p>
-        Cada accion queda registrada para que la empresa pueda reconstruir que paso, cuando paso y quien intervino.
+        Cada acción queda registrada para que la empresa pueda reconstruir qué pasó, cuándo pasó y quién intervino.
         Es una base ordenada para informes, supervision y decisiones internas.
       </p>
       <div class="evidence-points">
@@ -160,7 +160,7 @@
       </div>
     </div>
     <div class="evidence-card">
-      <div class="evidence-row"><span>Horas por area mensual</span><strong>120:45hs</strong></div>
+      <div class="evidence-row"><span>Horas por área mensual</span><strong>120:45hs</strong></div>
       <div class="evidence-bar"><span style="width: 92%"></span></div>
       <div class="evidence-row"><span>Horas por empleado</span><strong>42:15hs</strong></div>
       <div class="evidence-bar"><span style="width: 76%"></span></div>

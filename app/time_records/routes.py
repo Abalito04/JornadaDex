@@ -42,7 +42,7 @@ def index():
                 observations=request.form.get("observations", "").strip() or None,
             )
             db.session.commit()
-            flash("Tarea iniciada con fecha y hora automatica.", "success")
+            flash("Tarea iniciada con fecha y hora automática.", "success")
             return redirect(url_for("time_records.index"))
         except (ValueError, TypeError) as exc:
             db.session.rollback()
@@ -138,9 +138,9 @@ def edit(record_id):
                 raise ValueError("Cliente contable invalido.")
             selected_area = Area.query.filter_by(id=area_id, company_id=current_company_id(), active=True, deleted_at=None).first()
             if not selected_area:
-                raise ValueError("Area invalida.")
+                raise ValueError("Área inválida.")
             if not Task.query.filter_by(id=task_id, area_id=selected_area.id, active=True, deleted_at=None).first():
-                raise ValueError("Tarea invalida para el area seleccionada.")
+                raise ValueError("Tarea inválida para el área seleccionada.")
 
             record.employee_id = employee_id
             record.supervisor_id = supervisor_id
@@ -199,7 +199,7 @@ def finish(record_id):
     try:
         finish_time_record(record, current_user.id)
         db.session.commit()
-        flash("Tarea finalizada con hora automatica.", "success")
+        flash("Tarea finalizada con hora automática.", "success")
     except ValueError as exc:
         db.session.rollback()
         flash(str(exc), "danger")
@@ -219,7 +219,7 @@ def delete(record_id):
     record.soft_delete(current_user.id)
     write_audit("DELETE", "time_records", record.id, previous_values={"hours": str(record.hours)})
     db.session.commit()
-    flash("Registro eliminado logicamente.", "success")
+    flash("Registro eliminado lógicamente.", "success")
     return redirect(url_for("time_records.index"))
 
 
@@ -230,7 +230,7 @@ def _can_edit_records():
 def _append_edit_note(observations, edit_note):
     prefix = "Edicion supervisor"
     if current_user.is_company_owner or is_platform_admin():
-        prefix = "Edicion gestion"
+        prefix = "Edición gestión"
     text = f"{prefix}: {edit_note}"
     return f"{observations}\n{text}" if observations else text
 
@@ -241,7 +241,7 @@ def _edit_note_for_record(record):
     notes = [
         line.strip()
         for line in record.observations.splitlines()
-        if line.strip().lower().startswith("edicion ")
+        if line.strip().lower().startswith(("edición ", "edicion "))
     ]
     return notes[-1] if notes else ""
 

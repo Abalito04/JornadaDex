@@ -38,7 +38,7 @@ def create():
                 created_by=current_user.id,
             )
             if not employee.first_name or not employee.last_name or not employee.document_number:
-                raise ValueError("Completa nombre, apellido y documento.")
+                raise ValueError("Completá nombre, apellido y documento.")
             db.session.add(employee)
             db.session.flush()
 
@@ -107,7 +107,7 @@ def edit(employee_id):
             employee.updated_by = current_user.id
 
             if not employee.first_name or not employee.last_name or not employee.document_number:
-                raise ValueError("Completa nombre, apellido y documento.")
+                raise ValueError("Completá nombre, apellido y documento.")
 
             if employee.user:
                 employee.user.email = employee.email or employee.user.email
@@ -162,5 +162,5 @@ def delete(employee_id):
         employee.user.is_active_flag = False
     write_audit("DELETE", "employees", employee.id, previous_values={"name": employee.full_name})
     db.session.commit()
-    flash("Empleado eliminado logicamente.", "success")
+    flash("Empleado eliminado lógicamente.", "success")
     return redirect(url_for("employees.index"))

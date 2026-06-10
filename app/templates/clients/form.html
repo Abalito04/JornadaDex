@@ -10,7 +10,7 @@
   <form method="post" class="grid-form">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <div>
-      <label>Razon social</label>
+      <label>Razón social</label>
       <input name="name" value="{{ client.name or '' }}" required>
     </div>
     <div>
@@ -18,11 +18,11 @@
       <input name="tax_id" value="{{ client.tax_id or '' }}">
     </div>
     <div class="full">
-      <label>Direccion</label>
+      <label>Dirección</label>
       <input name="address" value="{{ client.address or '' }}">
     </div>
     <div>
-      <label>Situacion IVA</label>
+      <label>Situación IVA</label>
       <select name="fiscal_condition">
         {% set selected_condition = client.fiscal_condition or '' %}
         {% for condition in ["", "Responsable Inscripto", "Monotributo", "Exento", "No responsable"] %}
@@ -31,10 +31,10 @@
       </select>
     </div>
     <div>
-      <label>Situacion ingresos brutos</label>
+      <label>Situación ingresos brutos</label>
       <select name="multilateral_agreement">
         {% set selected_agreement = client.multilateral_agreement or '' %}
-        {% for agreement in ["", "Regimen lateral", "Convenio multilateral"] %}
+        {% for agreement in ["", "Régimen lateral", "Convenio multilateral"] %}
           <option value="{{ agreement }}" {% if selected_agreement == agreement %}selected{% endif %}>{{ agreement or "Seleccionar" }}</option>
         {% endfor %}
       </select>
@@ -43,28 +43,28 @@
       <label>Se realiza balance</label>
       <select name="does_balance">
         <option value="0" {% if not client.does_balance %}selected{% endif %}>No</option>
-        <option value="1" {% if client.does_balance %}selected{% endif %}>Si</option>
+        <option value="1" {% if client.does_balance %}selected{% endif %}>Sí</option>
       </select>
     </div>
     <div>
       <label>SICORE</label>
       <select name="sicore">
         <option value="0" {% if not client.sicore %}selected{% endif %}>No</option>
-        <option value="1" {% if client.sicore %}selected{% endif %}>Si</option>
+        <option value="1" {% if client.sicore %}selected{% endif %}>Sí</option>
       </select>
     </div>
     <div>
       <label>Ganancias</label>
       <select name="income_tax">
         <option value="0" {% if not client.income_tax %}selected{% endif %}>No</option>
-        <option value="1" {% if client.income_tax %}selected{% endif %}>Si</option>
+        <option value="1" {% if client.income_tax %}selected{% endif %}>Sí</option>
       </select>
     </div>
     <div>
       <label>Bienes personales</label>
       <select name="personal_assets">
         <option value="0" {% if not client.personal_assets %}selected{% endif %}>No</option>
-        <option value="1" {% if client.personal_assets %}selected{% endif %}>Si</option>
+        <option value="1" {% if client.personal_assets %}selected{% endif %}>Sí</option>
       </select>
     </div>
     <div class="checkbox-row">

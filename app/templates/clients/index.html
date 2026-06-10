@@ -13,7 +13,7 @@
   <div class="table-wrap">
     <table>
       <thead>
-        <tr><th>Razon social</th><th>CUIT</th><th>Situacion IVA</th><th>Ingresos brutos</th><th>Balance</th><th>SICORE</th><th>Ganancias</th><th>Bienes personales</th><th>Estado</th><th></th></tr>
+        <tr><th>Razón social</th><th>CUIT</th><th>Situación IVA</th><th>Ingresos brutos</th><th>Balance</th><th>SICORE</th><th>Ganancias</th><th>Bienes personales</th><th>Estado</th><th></th></tr>
       </thead>
       <tbody>
         {% for client in clients %}
@@ -22,14 +22,14 @@
             <td>{{ client.tax_id or "" }}</td>
             <td>{{ client.fiscal_condition or "" }}</td>
             <td>{{ client.multilateral_agreement or "" }}</td>
-            <td>{{ "Si" if client.does_balance else "No" }}</td>
-            <td>{{ "Si" if client.sicore else "No" }}</td>
-            <td>{{ "Si" if client.income_tax else "No" }}</td>
-            <td>{{ "Si" if client.personal_assets else "No" }}</td>
+            <td>{{ "Sí" if client.does_balance else "No" }}</td>
+            <td>{{ "Sí" if client.sicore else "No" }}</td>
+            <td>{{ "Sí" if client.income_tax else "No" }}</td>
+            <td>{{ "Sí" if client.personal_assets else "No" }}</td>
             <td><span class="status-badge {{ 'completed' if client.active else 'blocked' }}">{{ "Activo" if client.active else "Inactivo" }}</span></td>
             <td>
               <a class="button small secondary" href="{{ url_for('clients.edit', client_id=client.id) }}">Editar</a>
-              <form method="post" action="{{ url_for('clients.delete', client_id=client.id) }}" onsubmit="return confirm('Eliminar cliente contable?')">
+              <form method="post" action="{{ url_for('clients.delete', client_id=client.id) }}" onsubmit="return confirm('¿Eliminar cliente contable?')">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <button class="danger small" type="submit">Eliminar</button>
               </form>
@@ -41,7 +41,7 @@
               <div class="empty-state compact">
                 <i data-lucide="briefcase-business"></i>
                 <strong>No hay clientes contables cargados.</strong>
-                <span>Carga el primer cliente para poder asociarlo a los registros de trabajo.</span>
+                <span>Cargá el primer cliente para poder asociarlo a los registros de trabajo.</span>
               </div>
             </td>
           </tr>

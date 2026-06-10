@@ -3,7 +3,7 @@
 {% block content %}
 <section class="page-title">
   <h1>Empresas</h1>
-  <p>Administra empresas y selecciona el contexto de trabajo como Developer.</p>
+  <p>Administrá empresas y seleccioná el contexto de trabajo como Developer.</p>
 </section>
 
 <section class="panel">
@@ -40,7 +40,7 @@
                 <button class="small" type="submit">Administrar</button>
               </form>
               <a class="button small secondary" href="{{ url_for('platform.edit_company', company_id=company.id) }}">Editar</a>
-              <form method="post" action="{{ url_for('platform.delete_company', company_id=company.id) }}" onsubmit="return confirm('Eliminar empresa?')">
+              <form method="post" action="{{ url_for('platform.delete_company', company_id=company.id) }}" onsubmit="return confirm('¿Eliminar empresa?')">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <button class="danger small" type="submit">Eliminar</button>
               </form>

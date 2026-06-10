@@ -100,7 +100,7 @@ def delete_company(company_id):
     db.session.commit()
     if session.get("active_company_id") == company.id:
         session.pop("active_company_id", None)
-    flash("Empresa eliminada logicamente.", "success")
+    flash("Empresa eliminada lógicamente.", "success")
     return redirect(url_for("platform.companies"))
 
 
@@ -197,7 +197,7 @@ def delete_user(user_id):
 
     user = User.query.filter_by(id=user_id, deleted_at=None).first_or_404()
     if user.id == current_user.id:
-        flash("No podes eliminar tu propio usuario Developer.", "danger")
+        flash("No podés eliminar tu propio usuario Developer.", "danger")
         return redirect(url_for("platform.users"))
 
     previous_values = {
@@ -212,7 +212,7 @@ def delete_user(user_id):
     user.is_active_flag = False
     write_audit("DELETE", "users", user.id, previous_values=previous_values, company_id=user.company_id)
     db.session.commit()
-    flash("Usuario eliminado logicamente.", "success")
+    flash("Usuario eliminado lógicamente.", "success")
     return redirect(url_for("platform.users"))
 
 

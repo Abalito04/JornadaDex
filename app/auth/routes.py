@@ -27,10 +27,10 @@ def signup():
                 password=request.form.get("password", ""),
             )
             if not company.name or not user.email or not user.username or not request.form.get("password"):
-                raise ValueError("Completa empresa, jefe, email, usuario y clave.")
+                raise ValueError("Completá empresa, jefe, email, usuario y clave.")
             write_audit("CREATE", "companies", company.id, new_values={"name": company.name}, company_id=company.id)
             db.session.commit()
-            flash("Empresa creada. Ya podes iniciar sesion.", "success")
+            flash("Empresa creada. Ya podés iniciar sesión.", "success")
             return redirect(url_for("auth.login"))
         except (IntegrityError, ValueError) as exc:
             db.session.rollback()
@@ -54,7 +54,7 @@ def login():
             write_audit("LOGIN", "users", user.id, company_id=user.company_id)
             db.session.commit()
             return redirect(url_for("dashboard.index"))
-        flash("Usuario o clave invalida.", "danger")
+        flash("Usuario o clave inválida.", "danger")
 
     return render_template("auth/login.html")
 

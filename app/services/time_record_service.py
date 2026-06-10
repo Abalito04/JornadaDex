@@ -25,7 +25,7 @@ def calculate_hours(record_date, start_time, end_time):
     if diff_seconds == 0:
         return Decimal("0.00")
     if diff_seconds < 0:
-        raise ValueError("La tarea debe finalizar despues de iniciarse.")
+        raise ValueError("La tarea debe finalizar después de iniciarse.")
     return Decimal(diff_seconds / 3600).quantize(Decimal("0.01"))
 
 
@@ -49,11 +49,11 @@ def start_time_record(company_id, user_id, employee_id, supervisor_id, accountin
 
     area = Area.query.filter_by(id=area_id, company_id=company_id, deleted_at=None).first()
     if not area:
-        raise ValueError("Area invalida.")
+        raise ValueError("Área inválida.")
 
     task = Task.query.join(Area).filter(Task.id == task_id, Task.area_id == area.id, Task.deleted_at.is_(None)).first()
     if not task:
-        raise ValueError("Tarea invalida para el area seleccionada.")
+        raise ValueError("Tarea inválida para el área seleccionada.")
 
     now = argentina_now()
     record = TimeRecord(

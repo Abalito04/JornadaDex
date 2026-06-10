@@ -4,13 +4,13 @@
 <section class="page-title">
   {% if dashboard_role == "employee" %}
     <h1>Mi dashboard</h1>
-    <p>Resumen personal de horas, tareas activas y ultimos registros.</p>
+    <p>Resumen personal de horas, tareas activas y últimos registros.</p>
   {% elif dashboard_role == "supervisor" %}
-    <h1>Dashboard de supervision</h1>
-    <p>Horas del equipo completo, ranking por empleado y areas por periodo.</p>
+    <h1>Dashboard de supervisión</h1>
+    <p>Horas del equipo completo, ranking por empleado y áreas por período.</p>
   {% else %}
     <h1>Dashboard del dueño</h1>
-    <p>Vision general de productividad, clientes y estructura de la empresa.</p>
+    <p>Visión general de productividad, clientes y estructura de la empresa.</p>
   {% endif %}
 </section>
 
@@ -37,8 +37,8 @@
         {% else %}
           <div class="empty-state compact">
             <i data-lucide="timer-off"></i>
-            <strong>No tenes tareas en curso.</strong>
-            <span>Cuando inicies una tarea va a aparecer aca.</span>
+            <strong>No tenés tareas en curso.</strong>
+            <span>Cuando inicies una tarea va a aparecer acá.</span>
           </div>
         {% endfor %}
       </div>
@@ -51,7 +51,7 @@
   </section>
 
   <section class="panel">
-    <h2>Mis ultimos registros</h2>
+    <h2>Mis últimos registros</h2>
     {% include "dashboard/_recent_records.html" %}
   </section>
 {% elif dashboard_role == "supervisor" %}
@@ -64,13 +64,13 @@
 
   <section class="two-columns">
     <div class="panel">
-      <h2>Horas por area semanal</h2>
+      <h2>Horas por área semanal</h2>
       {% set chart_rows = area_week_chart %}
       {% include "dashboard/_bar_chart.html" %}
     </div>
 
     <div class="panel">
-      <h2>Horas por area mensual</h2>
+      <h2>Horas por área mensual</h2>
       {% set chart_rows = area_month_chart %}
       {% include "dashboard/_bar_chart.html" %}
     </div>
@@ -99,13 +99,13 @@
 
   <section class="two-columns">
     <div class="panel">
-      <h2>Horas por area semanal</h2>
+      <h2>Horas por área semanal</h2>
       {% set chart_rows = area_week_chart %}
       {% include "dashboard/_bar_chart.html" %}
     </div>
 
     <div class="panel">
-      <h2>Horas por area mensual</h2>
+      <h2>Horas por área mensual</h2>
       {% set chart_rows = area_month_chart %}
       {% include "dashboard/_bar_chart.html" %}
     </div>
@@ -130,7 +130,7 @@
     <div class="metric-grid compact-metrics">
       <article><span>Total empleados</span><strong>{{ metrics.active_employees }}</strong></article>
       <article><span>Total clientes</span><strong>{{ metrics.active_clients }}</strong></article>
-      <article><span>Areas / tareas</span><strong>{{ metrics.active_areas }}/{{ metrics.active_tasks }}</strong></article>
+      <article><span>Áreas / tareas</span><strong>{{ metrics.active_areas }}/{{ metrics.active_tasks }}</strong></article>
       <article><span>Registros del mes</span><strong>{{ metrics.total_records_month }}</strong></article>
     </div>
   </section>

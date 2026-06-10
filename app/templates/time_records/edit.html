@@ -3,7 +3,7 @@
 {% block content %}
 <section class="page-title">
   <h1>Editar registro</h1>
-  <p>Corregi datos operativos del registro sin modificar la fecha ni los horarios automaticos.</p>
+  <p>Corregí datos operativos del registro sin modificar la fecha ni los horarios automáticos.</p>
 </section>
 
 <section class="panel">
@@ -42,7 +42,7 @@
       </select>
     </div>
     <div>
-      <label>Area</label>
+      <label>Área</label>
       <select id="areaSelect" name="area_id" required>
         {% for area in areas %}
           <option value="{{ area.id }}" {% if area.id == record.area_id %}selected{% endif %}>{{ area.name }}</option>
@@ -74,8 +74,8 @@
       <textarea name="observations" rows="3">{{ record.observations or "" }}</textarea>
     </div>
     <div class="full">
-      <label>Observacion de edicion</label>
-      <textarea name="edit_note" rows="2" placeholder="Ejemplo: el empleado salio a realizar una gestion externa y se corrige la tarea asociada."></textarea>
+      <label>Observación de edición</label>
+      <textarea name="edit_note" rows="2" placeholder="Ejemplo: el empleado salió a realizar una gestión externa y se corrige la tarea asociada."></textarea>
     </div>
     <div class="full form-actions">
       <button type="submit"><i data-lucide="save"></i>Guardar cambios</button>
