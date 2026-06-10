@@ -93,6 +93,13 @@ def ensure_runtime_schema():
             db.session.execute(text("ALTER TABLE time_records ADD COLUMN accounting_client_id INTEGER"))
             db.session.commit()
 
+    if "accounting_clients" in inspector.get_table_names():
+        client_columns = {column["name"] for column in inspector.get_columns("accounting_clients")}
+        for column_name in ("sicore", "income_tax", "personal_assets"):
+            if column_name not in client_columns:
+                db.session.execute(text(f"ALTER TABLE accounting_clients ADD COLUMN {column_name} BOOLEAN NOT NULL DEFAULT FALSE"))
+        db.session.commit()
+
 
 def bootstrap_platform_admin():
     from app.config import clean_env_value

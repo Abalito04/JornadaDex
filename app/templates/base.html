@@ -21,6 +21,12 @@
   <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
+  {% if not current_user.is_authenticated %}
+    <button class="icon-button auth-theme-toggle" id="themeToggle" type="button" aria-label="Cambiar tema">
+      <i data-lucide="moon"></i>
+    </button>
+  {% endif %}
+
   {% if current_user.is_authenticated %}
     {% set current_path = request.path %}
     {% set company = active_company() %}

@@ -71,6 +71,9 @@ def _save_client(client, success_message, audit_action):
                 "fiscal_condition": client.fiscal_condition,
                 "multilateral_agreement": client.multilateral_agreement,
                 "does_balance": client.does_balance,
+                "sicore": client.sicore,
+                "income_tax": client.income_tax,
+                "personal_assets": client.personal_assets,
                 "active": client.active,
             }
 
@@ -79,7 +82,10 @@ def _save_client(client, success_message, audit_action):
         client.address = request.form.get("address", "").strip() or None
         client.fiscal_condition = request.form.get("fiscal_condition", "").strip() or None
         client.multilateral_agreement = request.form.get("multilateral_agreement", "").strip() or None
-        client.does_balance = request.form.get("does_balance") == "on"
+        client.does_balance = _yes_no("does_balance")
+        client.sicore = _yes_no("sicore")
+        client.income_tax = _yes_no("income_tax")
+        client.personal_assets = _yes_no("personal_assets")
         client.active = request.form.get("active", "on") == "on"
         client.notes = request.form.get("notes", "").strip() or None
 
@@ -103,6 +109,9 @@ def _save_client(client, success_message, audit_action):
                 "tax_id": client.tax_id,
                 "fiscal_condition": client.fiscal_condition,
                 "does_balance": client.does_balance,
+                "sicore": client.sicore,
+                "income_tax": client.income_tax,
+                "personal_assets": client.personal_assets,
                 "active": client.active,
             },
         )
@@ -113,3 +122,7 @@ def _save_client(client, success_message, audit_action):
         db.session.rollback()
         flash(str(getattr(exc, "orig", exc)), "danger")
         return render_template("clients/form.html", client=client)
+
+
+def _yes_no(field_name):
+    return request.form.get(field_name) in {"1", "on", "true", "True", "si", "Si"}

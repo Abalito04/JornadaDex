@@ -140,6 +140,9 @@ class AccountingClient(db.Model, AuditMixin):
     fiscal_condition = db.Column(db.String(120), nullable=True)
     multilateral_agreement = db.Column(db.String(120), nullable=True)
     does_balance = db.Column(db.Boolean, default=False, nullable=False)
+    sicore = db.Column(db.Boolean, default=False, nullable=False)
+    income_tax = db.Column(db.Boolean, default=False, nullable=False)
+    personal_assets = db.Column(db.Boolean, default=False, nullable=False)
     active = db.Column(db.Boolean, default=True, nullable=False)
     notes = db.Column(db.Text, nullable=True)
 

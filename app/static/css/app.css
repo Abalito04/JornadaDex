@@ -713,6 +713,14 @@ button:hover,
   color: var(--color-text);
 }
 
+.auth-theme-toggle {
+  position: fixed;
+  top: var(--space-5);
+  right: var(--space-5);
+  z-index: 50;
+  box-shadow: var(--shadow-sm);
+}
+
 .icon-button svg,
 .button svg,
 button svg {

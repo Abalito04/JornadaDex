@@ -13,7 +13,7 @@
   <div class="table-wrap">
     <table>
       <thead>
-        <tr><th>Cliente</th><th>CUIT</th><th>Condicion fiscal</th><th>Convenio multilateral</th><th>Balance</th><th>Estado</th><th></th></tr>
+        <tr><th>Razon social</th><th>CUIT</th><th>Situacion IVA</th><th>Ingresos brutos</th><th>Balance</th><th>SICORE</th><th>Ganancias</th><th>Bienes personales</th><th>Estado</th><th></th></tr>
       </thead>
       <tbody>
         {% for client in clients %}
@@ -23,6 +23,9 @@
             <td>{{ client.fiscal_condition or "" }}</td>
             <td>{{ client.multilateral_agreement or "" }}</td>
             <td>{{ "Si" if client.does_balance else "No" }}</td>
+            <td>{{ "Si" if client.sicore else "No" }}</td>
+            <td>{{ "Si" if client.income_tax else "No" }}</td>
+            <td>{{ "Si" if client.personal_assets else "No" }}</td>
             <td><span class="status-badge {{ 'completed' if client.active else 'blocked' }}">{{ "Activo" if client.active else "Inactivo" }}</span></td>
             <td>
               <a class="button small secondary" href="{{ url_for('clients.edit', client_id=client.id) }}">Editar</a>
@@ -34,7 +37,7 @@
           </tr>
         {% else %}
           <tr>
-            <td colspan="7">
+            <td colspan="10">
               <div class="empty-state compact">
                 <i data-lucide="briefcase-business"></i>
                 <strong>No hay clientes contables cargados.</strong>
