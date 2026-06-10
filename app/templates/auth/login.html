@@ -7,7 +7,7 @@
       <img class="logo-light" src="{{ url_for('static', filename='img/trazalab-logo.svg') }}" alt="TrazaLab Gestion de Empleados">
       <img class="logo-dark" src="{{ url_for('static', filename='img/trazalab-logo-dark.svg') }}" alt="TrazaLab Gestion de Empleados">
     </div>
-    <span class="auth-eyebrow">Gestion y trazabilidad contable</span>
+    <span class="auth-eyebrow">Gestion y trazabilidad empresarial</span>
     <h1>TrazaLab</h1>
     <p>Control de tareas, tiempos, clientes contables y evidencia operativa para equipos administrativos.</p>
     <div class="auth-points">
@@ -32,6 +32,7 @@
         <input name="password" type="password" autocomplete="current-password" required>
       </div>
       <button type="submit"><i data-lucide="log-in"></i>Entrar</button>
+      <a class="button ghost" href="{{ url_for('dashboard.landing') }}"><i data-lucide="arrow-left"></i>Volver al inicio</a>
     </form>
     <p class="auth-link">No tenes empresa creada? <a href="{{ url_for('auth.signup') }}">Crear empresa y jefe</a></p>
   </section>

@@ -589,8 +589,8 @@ main.auth-main:has(.landing-page) {
   min-height: 38px;
   border: 1px solid transparent;
   border-radius: var(--radius-sm);
-  background: color-mix(in oklch, var(--color-surface) 78%, transparent);
-  color: var(--color-text);
+  background: color-mix(in oklch, var(--color-primary) 7%, var(--color-surface));
+  color: color-mix(in oklch, var(--color-primary) 78%, var(--color-text));
   box-shadow: none;
   font-weight: 800;
 }
@@ -602,9 +602,9 @@ main.auth-main:has(.landing-page) {
 }
 
 [data-theme="dark"] .preview-tabs button:not(.active) {
-  border-color: color-mix(in oklch, var(--color-primary) 16%, transparent);
-  background: color-mix(in oklch, var(--color-surface-2) 76%, transparent);
-  color: var(--color-text);
+  border-color: color-mix(in oklch, var(--color-primary) 22%, transparent);
+  background: color-mix(in oklch, var(--color-primary) 10%, var(--color-surface-2));
+  color: color-mix(in oklch, var(--color-primary) 72%, white);
 }
 
 .preview-stage {
@@ -628,15 +628,17 @@ main.auth-main:has(.landing-page) {
   align-items: end;
   justify-content: center;
   height: var(--bar);
-  min-height: 34px;
+  min-height: 118px;
   padding: var(--space-2);
   border-radius: var(--radius-sm);
   background: var(--gradient-accent);
   box-shadow: 0 12px 30px color-mix(in oklch, var(--color-primary) 18%, transparent);
+  overflow: hidden;
 }
 
 .preview-chart b {
   color: white;
+  text-shadow: 0 1px 2px oklch(0.12 0.02 230 / 0.35);
   font-size: var(--text-xs);
   writing-mode: vertical-rl;
   transform: rotate(180deg);
@@ -2168,6 +2170,10 @@ details.area-block:not([open]) .accordion-indicator::after { content: " tareas";
 
   .preview-chart {
     min-height: 140px;
+  }
+
+  .preview-chart span {
+    min-height: 96px;
   }
 
   .landing-features {
