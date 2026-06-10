@@ -71,10 +71,53 @@
   </form>
 </section>
 
-<section class="panel">
-  <h2>Ultimos registros</h2>
+<details class="panel records-panel" {% if has_record_filters %}open{% endif %}>
+  <summary class="records-summary">
+    <span>Ultimos registros</span>
+    <strong>{{ records|length }} visibles</strong>
+  </summary>
+  <form method="get" class="filter-form records-filter">
+    {% if can_choose_employee %}
+      <select name="record_employee_id">
+        <option value="">Todos los empleados</option>
+        {% for employee in employees %}
+          <option value="{{ employee.id }}" {% if request.args.get('record_employee_id') == employee.id|string %}selected{% endif %}>{{ employee.full_name }}</option>
+        {% endfor %}
+      </select>
+    {% endif %}
+    <select name="record_supervisor_id">
+      <option value="">Todos los supervisores</option>
+      {% for supervisor in supervisors %}
+        <option value="{{ supervisor.id }}" {% if request.args.get('record_supervisor_id') == supervisor.id|string %}selected{% endif %}>{{ supervisor.employee.full_name if supervisor.employee else supervisor.username }}</option>
+      {% endfor %}
+    </select>
+    <select name="record_accounting_client_id">
+      <option value="">Todos los clientes</option>
+      {% for client in clients %}
+        <option value="{{ client.id }}" {% if request.args.get('record_accounting_client_id') == client.id|string %}selected{% endif %}>{{ client.name }}</option>
+      {% endfor %}
+    </select>
+    <select name="record_area_id">
+      <option value="">Todas las areas</option>
+      {% for area in areas %}
+        <option value="{{ area.id }}" {% if request.args.get('record_area_id') == area.id|string %}selected{% endif %}>{{ area.name }}</option>
+      {% endfor %}
+    </select>
+    <select name="record_task_id">
+      <option value="">Todas las tareas</option>
+      {% for task in tasks %}
+        <option value="{{ task.id }}" {% if request.args.get('record_task_id') == task.id|string %}selected{% endif %}>{{ task.name }}</option>
+      {% endfor %}
+    </select>
+    <input name="record_date_from" type="date" value="{{ request.args.get('record_date_from', '') }}">
+    <input name="record_date_to" type="date" value="{{ request.args.get('record_date_to', '') }}">
+    <button type="submit"><i data-lucide="search"></i>Buscar</button>
+    {% if has_record_filters %}
+      <a class="button ghost" href="{{ url_for('time_records.index') }}">Limpiar</a>
+    {% endif %}
+  </form>
   <div class="table-wrap">
-    <table>
+    <table class="records-table">
       <thead>
         <tr><th>Empleado</th><th>Supervisor</th><th>Cliente</th><th>Fecha</th><th>Inicio</th><th>Fin</th><th>Horas</th><th>Estado</th><th>Area</th><th>Tarea</th><th>Edicion</th><th></th></tr>
       </thead>
@@ -88,7 +131,7 @@
             <td>{{ format_time_hs(record.start_time) }}</td>
             <td>{{ format_time_hs(record.end_time) }}</td>
             <td>{{ format_duration_hs(record.hours) }}</td>
-            <td>
+            <td class="edit-note-cell">
               {% if not record.end_time %}
                 <span class="status-badge en-curso">En curso</span>
               {% else %}
@@ -100,7 +143,10 @@
             <td>
               {% set edit_note = edit_note_for_record(record) %}
               {% if edit_note %}
-                <span class="status-badge pending">{{ edit_note }}</span>
+                <details class="inline-note">
+                  <summary>Editado</summary>
+                  <span>{{ edit_note }}</span>
+                </details>
               {% else %}
                 <span class="muted-text">Sin edicion</span>
               {% endif %}
@@ -135,5 +181,5 @@
       </tbody>
     </table>
   </div>
-</section>
+</details>
 {% endblock %}

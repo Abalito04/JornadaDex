@@ -7,7 +7,7 @@ from app.models import AccountingClient, Area, Employee, Task, TimeRecord
 from app.roles import ROLE_EMPLOYEE, ROLE_SUPERVISOR
 from app.services.audit_service import write_audit
 from app.services.supervisor_service import supervisor_for_company, supervisors_for_company
-from app.services.time_record_service import finish_time_record, start_time_record
+from app.services.time_record_service import finish_time_record, parse_date, start_time_record
 from app.services.visibility_service import employee_is_visible, visible_company_time_records_query, visible_employees_query, visible_time_records_query
 
 time_records_bp = Blueprint("time_records", __name__, url_prefix="/time-records")
@@ -54,6 +54,12 @@ def index():
         employees.insert(0, current_user.employee)
 
     areas = Area.query.filter_by(company_id=current_company_id(), active=True, deleted_at=None).order_by(Area.name).all()
+    tasks = (
+        Task.query.join(Area)
+        .filter(Area.company_id == current_company_id(), Task.active.is_(True), Task.deleted_at.is_(None))
+        .order_by(Task.name)
+        .all()
+    )
     clients = (
         AccountingClient.query.filter_by(company_id=current_company_id(), active=True, deleted_at=None)
         .order_by(AccountingClient.name)
@@ -67,18 +73,21 @@ def index():
         records_query = visible_company_time_records_query(records_query)
     else:
         records_query = visible_time_records_query(records_query)
+    records_query = _apply_record_filters(records_query, can_choose_employee)
     records = records_query.order_by(TimeRecord.record_date.desc(), TimeRecord.start_time.desc()).limit(100).all()
     return render_template(
         "time_records/index.html",
         employees=employees,
         clients=clients,
         areas=areas,
+        tasks=tasks,
         records=records,
         supervisors=supervisors,
         can_choose_employee=can_choose_employee,
         can_choose_supervisor=can_choose_supervisor,
         can_edit_records=_can_edit_records(),
         edit_note_for_record=_edit_note_for_record,
+        has_record_filters=_has_record_filters(),
     )
 
 
@@ -227,3 +236,48 @@ def _edit_note_for_record(record):
         if line.strip().lower().startswith("edicion ")
     ]
     return notes[-1] if notes else ""
+
+
+def _apply_record_filters(query, can_choose_employee):
+    employee_id = request.args.get("record_employee_id", type=int)
+    supervisor_id = request.args.get("record_supervisor_id", type=int)
+    client_id = request.args.get("record_accounting_client_id", type=int)
+    area_id = request.args.get("record_area_id", type=int)
+    task_id = request.args.get("record_task_id", type=int)
+    date_from = request.args.get("record_date_from", "").strip()
+    date_to = request.args.get("record_date_to", "").strip()
+
+    if employee_id and can_choose_employee:
+        employee = Employee.query.filter_by(id=employee_id, company_id=current_company_id(), deleted_at=None).first()
+        if employee_is_visible(employee):
+            query = query.filter(TimeRecord.employee_id == employee.id)
+        else:
+            query = query.filter(TimeRecord.employee_id == 0)
+    if supervisor_id:
+        query = query.filter(TimeRecord.supervisor_id == supervisor_id)
+    if client_id:
+        query = query.filter(TimeRecord.accounting_client_id == client_id)
+    if area_id:
+        query = query.filter(TimeRecord.area_id == area_id)
+    if task_id:
+        query = query.filter(TimeRecord.task_id == task_id)
+    if date_from:
+        query = query.filter(TimeRecord.record_date >= parse_date(date_from))
+    if date_to:
+        query = query.filter(TimeRecord.record_date <= parse_date(date_to))
+    return query
+
+
+def _has_record_filters():
+    return any(
+        request.args.get(key)
+        for key in (
+            "record_employee_id",
+            "record_supervisor_id",
+            "record_accounting_client_id",
+            "record_area_id",
+            "record_task_id",
+            "record_date_from",
+            "record_date_to",
+        )
+    )
