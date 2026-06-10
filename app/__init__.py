@@ -66,10 +66,14 @@ def create_app(config_class=Config):
     @app.context_processor
     def inject_global_context():
         from app.context import current_company, is_platform_admin
+        from app.utils.datetime import format_datetime_argentina, format_duration_hs, format_time_hs
 
         return {
             "active_company": current_company,
             "is_platform_admin": is_platform_admin,
+            "format_time_hs": format_time_hs,
+            "format_duration_hs": format_duration_hs,
+            "format_datetime_argentina": format_datetime_argentina,
         }
 
     from app.cli import register_cli

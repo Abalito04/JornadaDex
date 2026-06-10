@@ -4,6 +4,7 @@ from decimal import Decimal
 from app.extensions import db
 from app.models import AccountingClient, Area, Employee, Task, TimeRecord
 from app.services.audit_service import write_audit
+from app.utils.datetime import argentina_now
 
 
 def parse_date(value):
@@ -58,7 +59,7 @@ def start_time_record(company_id, user_id, employee_id, accounting_client_id, ar
     if open_record:
         raise ValueError("Ese empleado ya tiene una tarea en curso. Finalizala antes de iniciar otra.")
 
-    now = datetime.now()
+    now = argentina_now()
     record = TimeRecord(
         company_id=company_id,
         employee_id=employee_id,
@@ -95,7 +96,7 @@ def finish_time_record(record, user_id):
     if record.end_time is not None:
         raise ValueError("La tarea ya fue finalizada.")
 
-    now = datetime.now()
+    now = argentina_now()
     end_time = now.time().replace(microsecond=0)
     hours = calculate_hours(record.record_date, record.start_time, end_time)
     previous_values = {"status": "in_progress", "hours": str(record.hours)}

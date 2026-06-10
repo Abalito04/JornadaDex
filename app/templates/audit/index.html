@@ -45,7 +45,7 @@
               <span class="activity-category">{{ event.category }}</span>
               <h2>{{ event.title }}</h2>
             </div>
-            <time>{{ event.created_at.strftime("%Y-%m-%d %H:%M") }}</time>
+            <time>{{ format_datetime_argentina(event.created_at) }}</time>
           </div>
           <p>{{ event.detail }}</p>
           {% if event.show_technical %}

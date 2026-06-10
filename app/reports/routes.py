@@ -11,6 +11,7 @@ from app.extensions import db
 from app.models import AccountingClient, Area, Employee, Task, TimeRecord
 from app.services.audit_service import write_audit
 from app.services.time_record_service import parse_date
+from app.utils.datetime import format_duration_hs, format_time_hs
 
 reports_bp = Blueprint("reports", __name__, url_prefix="/reports")
 
@@ -95,9 +96,9 @@ def _record_row(record):
         record.employee.full_name,
         record.accounting_client.name if record.accounting_client else "",
         record.record_date.isoformat(),
-        record.start_time.strftime("%H:%M:%S"),
-        record.end_time.strftime("%H:%M:%S") if record.end_time else "",
-        float(record.hours),
+        format_time_hs(record.start_time),
+        format_time_hs(record.end_time),
+        format_duration_hs(record.hours),
         "En curso" if not record.end_time else "Finalizada",
         record.area.name,
         record.task.name,

@@ -25,7 +25,7 @@
       <label>Situacion IVA</label>
       <select name="fiscal_condition">
         {% set selected_condition = client.fiscal_condition or '' %}
-        {% for condition in ["", "Responsable Inscripto", "Monotributo", "Exento", "No responsable", "Consumidor final"] %}
+        {% for condition in ["", "Responsable Inscripto", "Monotributo", "Exento", "No responsable"] %}
           <option value="{{ condition }}" {% if selected_condition == condition %}selected{% endif %}>{{ condition or "Seleccionar" }}</option>
         {% endfor %}
       </select>
@@ -34,7 +34,7 @@
       <label>Situacion ingresos brutos</label>
       <select name="multilateral_agreement">
         {% set selected_agreement = client.multilateral_agreement or '' %}
-        {% for agreement in ["", "Regimen local", "Convenio multilateral", "No aplica", "Pendiente", "Baja"] %}
+        {% for agreement in ["", "Regimen lateral", "Convenio multilateral"] %}
           <option value="{{ agreement }}" {% if selected_agreement == agreement %}selected{% endif %}>{{ agreement or "Seleccionar" }}</option>
         {% endfor %}
       </select>

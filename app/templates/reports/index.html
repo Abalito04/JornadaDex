@@ -3,7 +3,7 @@
 {% block content %}
 <section class="page-title">
   <h1>Reportes</h1>
-  <p>Total filtrado: {{ "%.2f"|format(total_hours) }} horas.</p>
+  <p>Total filtrado: {{ format_duration_hs(total_hours) }}.</p>
 </section>
 
 <section class="panel">
@@ -46,9 +46,9 @@
             <td>{{ record.employee.full_name }}</td>
             <td>{{ record.accounting_client.name if record.accounting_client else "Sin cliente" }}</td>
             <td>{{ record.record_date }}</td>
-            <td>{{ record.start_time.strftime("%H:%M:%S") }}</td>
-            <td>{{ record.end_time.strftime("%H:%M:%S") if record.end_time else "" }}</td>
-            <td>{{ record.hours }}</td>
+            <td>{{ format_time_hs(record.start_time) }}</td>
+            <td>{{ format_time_hs(record.end_time) }}</td>
+            <td>{{ format_duration_hs(record.hours) }}</td>
             <td>
               {% if not record.end_time %}
                 <span class="status-badge en-curso">En curso</span>
