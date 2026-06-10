@@ -2979,7 +2979,7 @@ details.area-block:not([open]) .accordion-indicator::after { content: " tareas";
 }
 
 .donut {
-  width: 150px;
+  width: 132px;
   aspect-ratio: 1;
   border-radius: 50%;
   background: conic-gradient(var(--color-primary) 0 34%, #0f766e 34% 58%, #57c785 58% 76%, #9be15d 76% 100%);
@@ -2989,7 +2989,7 @@ details.area-block:not([open]) .accordion-indicator::after { content: " tareas";
 .donut-wrap {
   display: grid;
   grid-template-columns: 132px minmax(0, 1fr);
-  gap: var(--space-4);
+  gap: var(--space-5);
   align-items: center;
 }
 
@@ -3032,7 +3032,7 @@ details.area-block:not([open]) .accordion-indicator::after { content: " tareas";
 
 .donut::after {
   position: absolute;
-  inset: 38px;
+  inset: 34px;
   border-radius: 50%;
   background: var(--color-surface);
   content: "";
