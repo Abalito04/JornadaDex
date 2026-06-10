@@ -1,5 +1,6 @@
 from app.extensions import db
 from app.models import Area, Company, Task
+from app.roles import ROLE_OWNER
 from app.seed_data import INITIAL_DEFINITION
 
 
@@ -39,7 +40,7 @@ def create_company_with_owner(company_name, owner_name, email, username, passwor
         employee_id=employee.id,
         username=username,
         email=email,
-        role="Administrator",
+        role=ROLE_OWNER,
         is_company_owner=True,
         created_by=None,
     )

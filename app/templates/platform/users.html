@@ -18,7 +18,7 @@
             <td>{{ user.username }}</td>
             <td>{{ user.email }}</td>
             <td>{{ user.company.name if user.company else "" }}</td>
-            <td>{{ user.role }}{% if user.is_platform_admin %} / Developer{% endif %}</td>
+            <td>{{ role_label(user.role, user.is_company_owner, user.is_platform_admin) }}</td>
             <td><span class="status-badge {{ 'completed' if user.is_active else 'blocked' }}">{{ "Activo" if user.is_active else "Inactivo" }}</span></td>
             <td><a class="button small secondary" href="{{ url_for('platform.edit_user', user_id=user.id) }}">Editar</a></td>
           </tr>

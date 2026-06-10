@@ -8,7 +8,7 @@ audit_bp = Blueprint("audit", __name__, url_prefix="/audit")
 
 
 @audit_bp.route("/")
-@roles_required("Administrator")
+@roles_required("Owner")
 def index():
     company_id = current_company_id()
     selected_user_id = request.args.get("user_id", type=int)

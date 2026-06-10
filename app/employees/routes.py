@@ -2,9 +2,11 @@ from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import current_user
 from sqlalchemy.exc import IntegrityError
 
+from app.context import current_company_id, is_platform_admin
 from app.extensions import db
 from app.models import Employee, User
 from app.permissions.decorators import manager_required
+from app.roles import ROLE_EMPLOYEE, ROLE_SUPERVISOR
 from app.services.audit_service import write_audit
 
 employees_bp = Blueprint("employees", __name__, url_prefix="/employees")
@@ -13,7 +15,7 @@ employees_bp = Blueprint("employees", __name__, url_prefix="/employees")
 @employees_bp.route("/")
 @manager_required
 def index():
-    employees = Employee.query.filter_by(company_id=current_user.company_id, deleted_at=None).order_by(Employee.last_name).all()
+    employees = Employee.query.filter_by(company_id=current_company_id(), deleted_at=None).order_by(Employee.last_name).all()
     return render_template("employees/index.html", employees=employees)
 
 
@@ -23,7 +25,7 @@ def create():
     if request.method == "POST":
         try:
             employee = Employee(
-                company_id=current_user.company_id,
+                company_id=current_company_id(),
                 first_name=request.form.get("first_name", "").strip(),
                 last_name=request.form.get("last_name", "").strip(),
                 document_number=request.form.get("document_number", "").strip(),
@@ -41,11 +43,13 @@ def create():
             if request.form.get("create_user") == "on":
                 username = request.form.get("username", "").strip().lower()
                 password = request.form.get("password", "")
-                role = request.form.get("role", "Employee")
+                role = request.form.get("role", ROLE_EMPLOYEE)
+                if role not in (ROLE_EMPLOYEE, ROLE_SUPERVISOR):
+                    role = ROLE_EMPLOYEE
                 if not username or not password:
                     raise ValueError("Para crear usuario, completa usuario y clave.")
                 user = User(
-                    company_id=current_user.company_id,
+                    company_id=current_company_id(),
                     employee_id=employee.id,
                     username=username,
                     email=employee.email or f"{username}@local",
@@ -71,11 +75,11 @@ def create():
 def edit(employee_id):
     employee = Employee.query.filter_by(
         id=employee_id,
-        company_id=current_user.company_id,
+        company_id=current_company_id(),
         deleted_at=None,
     ).first_or_404()
 
-    if employee.user and employee.user.is_company_owner and not current_user.is_company_owner:
+    if employee.user and employee.user.is_company_owner and not current_user.is_company_owner and not is_platform_admin():
         return ("Forbidden", 403)
 
     if request.method == "POST":
@@ -141,8 +145,8 @@ def edit(employee_id):
 @employees_bp.route("/<int:employee_id>/delete", methods=["POST"])
 @manager_required
 def delete(employee_id):
-    employee = Employee.query.filter_by(id=employee_id, company_id=current_user.company_id, deleted_at=None).first_or_404()
-    if employee.user and employee.user.is_company_owner and not current_user.is_company_owner:
+    employee = Employee.query.filter_by(id=employee_id, company_id=current_company_id(), deleted_at=None).first_or_404()
+    if employee.user and employee.user.is_company_owner and not current_user.is_company_owner and not is_platform_admin():
         return ("Forbidden", 403)
 
     employee.soft_delete(current_user.id)

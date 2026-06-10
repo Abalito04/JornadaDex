@@ -28,8 +28,8 @@
     <div>
       <label>Rol</label>
       <select name="role">
-        {% for role in ["Administrator", "Supervisor", "Employee", "Developer"] %}
-          <option value="{{ role }}" {% if user.role == role %}selected{% endif %}>{{ role }}</option>
+        {% for value, label in [("Employee", "Empleado"), ("Supervisor", "Supervisor"), ("Owner", "Dueño"), ("Developer", "Developer")] %}
+          <option value="{{ value }}" {% if user.role == value or (value == "Owner" and user.is_company_owner) %}selected{% endif %}>{{ label }}</option>
         {% endfor %}
       </select>
     </div>
@@ -40,14 +40,6 @@
     <div class="full checkbox-row">
       <input id="is_active" name="is_active" type="checkbox" {% if user.is_active_flag %}checked{% endif %}>
       <label for="is_active">Usuario activo</label>
-    </div>
-    <div class="full checkbox-row">
-      <input id="is_company_owner" name="is_company_owner" type="checkbox" {% if user.is_company_owner %}checked{% endif %}>
-      <label for="is_company_owner">Dueño/Jefe de empresa</label>
-    </div>
-    <div class="full checkbox-row">
-      <input id="is_platform_admin" name="is_platform_admin" type="checkbox" {% if user.is_platform_admin %}checked{% endif %}>
-      <label for="is_platform_admin">Developer / Superadmin</label>
     </div>
     <div class="full form-actions">
       <button type="submit">Guardar cambios</button>

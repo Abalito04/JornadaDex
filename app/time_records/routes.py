@@ -13,10 +13,11 @@ time_records_bp = Blueprint("time_records", __name__, url_prefix="/time-records"
 @time_records_bp.route("/", methods=["GET", "POST"])
 @login_required
 def index():
+    can_choose_employee = current_user.role != "Employee" or current_user.is_company_owner or is_platform_admin()
     if request.method == "POST":
         try:
             employee_id = int(request.form.get("employee_id") or 0)
-            if current_user.role == "Employee" and not current_user.is_company_owner and not is_platform_admin():
+            if not can_choose_employee:
                 employee_id = current_user.employee_id
             start_time_record(
                 company_id=current_company_id(),
@@ -35,7 +36,7 @@ def index():
             flash(str(exc), "danger")
 
     employees = Employee.query.filter_by(company_id=current_company_id(), active=True, deleted_at=None).order_by(Employee.last_name).all()
-    if current_user.role == "Employee" and not current_user.is_company_owner and not is_platform_admin():
+    if not can_choose_employee:
         employees = [current_user.employee] if current_user.employee else []
 
     areas = Area.query.filter_by(company_id=current_company_id(), active=True, deleted_at=None).order_by(Area.name).all()
@@ -45,10 +46,17 @@ def index():
         .all()
     )
     records_query = TimeRecord.query.filter_by(company_id=current_company_id(), deleted_at=None)
-    if current_user.role == "Employee" and not current_user.is_company_owner and not is_platform_admin():
+    if not can_choose_employee:
         records_query = records_query.filter(TimeRecord.employee_id == current_user.employee_id)
     records = records_query.order_by(TimeRecord.record_date.desc(), TimeRecord.start_time.desc()).limit(100).all()
-    return render_template("time_records/index.html", employees=employees, clients=clients, areas=areas, records=records)
+    return render_template(
+        "time_records/index.html",
+        employees=employees,
+        clients=clients,
+        areas=areas,
+        records=records,
+        can_choose_employee=can_choose_employee,
+    )
 
 
 @time_records_bp.route("/<int:record_id>/finish", methods=["POST"])

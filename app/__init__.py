@@ -66,11 +66,13 @@ def create_app(config_class=Config):
     @app.context_processor
     def inject_global_context():
         from app.context import current_company, is_platform_admin
+        from app.roles import role_label
         from app.utils.datetime import format_datetime_argentina, format_duration_hs, format_time_hs
 
         return {
             "active_company": current_company,
             "is_platform_admin": is_platform_admin,
+            "role_label": role_label,
             "format_time_hs": format_time_hs,
             "format_duration_hs": format_duration_hs,
             "format_datetime_argentina": format_datetime_argentina,
@@ -90,6 +92,8 @@ def ensure_runtime_schema():
     if "is_platform_admin" not in columns:
         db.session.execute(text("ALTER TABLE users ADD COLUMN is_platform_admin BOOLEAN NOT NULL DEFAULT FALSE"))
         db.session.commit()
+    db.session.execute(text("UPDATE users SET role = 'Owner', is_company_owner = TRUE WHERE role = 'Administrator'"))
+    db.session.commit()
 
     if "time_records" in inspector.get_table_names():
         time_record_columns = {column["name"] for column in inspector.get_columns("time_records")}

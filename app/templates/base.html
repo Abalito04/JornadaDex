@@ -45,7 +45,7 @@
         <a class="nav-item {{ 'active' if current_path.startswith('/time-records') else '' }}" href="{{ url_for('time_records.index') }}" aria-label="Horas">
           <i data-lucide="timer"></i><span>Horas</span>
         </a>
-        {% if current_user.role in ['Administrator', 'Supervisor'] or current_user.is_company_owner or is_platform_admin() %}
+        {% if current_user.role in ['Owner', 'Supervisor'] or current_user.is_company_owner or is_platform_admin() %}
           <a class="nav-item {{ 'active' if current_path.startswith('/employees') else '' }}" href="{{ url_for('employees.index') }}" aria-label="Empleados">
             <i data-lucide="users"></i><span>Empleados</span>
           </a>
@@ -59,7 +59,7 @@
         <a class="nav-item {{ 'active' if current_path.startswith('/reports') else '' }}" href="{{ url_for('reports.index') }}" aria-label="Reportes">
           <i data-lucide="bar-chart-3"></i><span>Reportes</span>
         </a>
-        {% if current_user.role == 'Administrator' or current_user.is_company_owner or is_platform_admin() %}
+        {% if current_user.role == 'Owner' or current_user.is_company_owner or is_platform_admin() %}
           <a class="nav-item {{ 'active' if current_path.startswith('/audit') else '' }}" href="{{ url_for('audit.index') }}" aria-label="Actividad">
             <i data-lucide="activity"></i><span>Actividad</span>
           </a>
@@ -96,7 +96,7 @@
           </button>
           <div class="user-chip">
             <span class="avatar">{{ (current_user.username or 'U')[:2].upper() }}</span>
-            <span class="role-badge">{{ "Developer" if is_platform_admin() else current_user.role }}</span>
+            <span class="role-badge">{{ role_label(current_user.role, current_user.is_company_owner, is_platform_admin()) }}</span>
           </div>
           <form method="post" action="{{ url_for('auth.logout') }}" class="topbar-action">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">

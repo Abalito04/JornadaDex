@@ -4,6 +4,7 @@ from flask_login import login_required
 from app.extensions import db
 from app.context import is_platform_admin
 from app.models import Company, User
+from app.roles import ROLE_DEVELOPER, ROLE_OWNER, normalize_role
 from app.services.audit_service import write_audit
 
 platform_bp = Blueprint("platform", __name__, url_prefix="/platform")
@@ -132,11 +133,11 @@ def edit_user(user_id):
         }
         user.username = request.form.get("username", "").strip().lower()
         user.email = request.form.get("email", "").strip().lower()
-        user.role = request.form.get("role", "Employee")
+        user.role = normalize_role(request.form.get("role", "Employee"), allow_developer=True)
         user.company_id = int(request.form.get("company_id") or user.company_id)
         user.is_active_flag = request.form.get("is_active") == "on"
-        user.is_company_owner = request.form.get("is_company_owner") == "on"
-        user.is_platform_admin = request.form.get("is_platform_admin") == "on"
+        user.is_platform_admin = user.role == ROLE_DEVELOPER
+        user.is_company_owner = user.role == ROLE_OWNER and not user.is_platform_admin
         password = request.form.get("password", "")
         if password:
             user.set_password(password)

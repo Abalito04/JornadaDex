@@ -9,14 +9,22 @@
 <section class="panel">
   <form method="post" class="grid-form">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <div>
-      <label>Empleado</label>
-      <select name="employee_id" required>
-        {% for employee in employees %}
-          <option value="{{ employee.id }}">{{ employee.full_name }}</option>
-        {% endfor %}
-      </select>
-    </div>
+    {% if can_choose_employee %}
+      <div>
+        <label>Empleado</label>
+        <select name="employee_id" required>
+          {% for employee in employees %}
+            <option value="{{ employee.id }}">{{ employee.full_name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    {% else %}
+      <div>
+        <label>Empleado</label>
+        <input value="{{ current_user.employee.full_name if current_user.employee else current_user.username }}" disabled>
+        <input type="hidden" name="employee_id" value="{{ current_user.employee_id or '' }}">
+      </div>
+    {% endif %}
     <div>
       <label>Cliente</label>
       <select name="accounting_client_id" required>
