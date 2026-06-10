@@ -64,18 +64,6 @@
 
   <section class="two-columns">
     <div class="panel">
-      <h2>Ranking semanal por empleado</h2>
-      {% set chart_rows = employee_week_chart %}
-      {% include "dashboard/_bar_chart.html" %}
-    </div>
-
-    <div class="panel">
-      <h2>Ranking mensual por empleado</h2>
-      {% set chart_rows = employee_chart %}
-      {% include "dashboard/_bar_chart.html" %}
-    </div>
-
-    <div class="panel">
       <h2>Horas por area semanal</h2>
       {% set chart_rows = area_week_chart %}
       {% include "dashboard/_bar_chart.html" %}
@@ -84,6 +72,20 @@
     <div class="panel">
       <h2>Horas por area mensual</h2>
       {% set chart_rows = area_month_chart %}
+      {% include "dashboard/_bar_chart.html" %}
+    </div>
+  </section>
+
+  <section class="two-columns">
+    <div class="panel">
+      <h2>Ranking semanal por empleado</h2>
+      {% set chart_rows = employee_week_chart %}
+      {% include "dashboard/_bar_chart.html" %}
+    </div>
+
+    <div class="panel">
+      <h2>Ranking mensual por empleado</h2>
+      {% set chart_rows = employee_chart %}
       {% include "dashboard/_bar_chart.html" %}
     </div>
   </section>
