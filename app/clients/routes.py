@@ -1,3 +1,5 @@
+from decimal import Decimal, InvalidOperation
+
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import current_user
 from sqlalchemy.exc import IntegrityError
@@ -74,6 +76,12 @@ def _save_client(client, success_message, audit_action):
                 "sicore": client.sicore,
                 "income_tax": client.income_tax,
                 "personal_assets": client.personal_assets,
+                "payroll_enabled": client.payroll_enabled,
+                "payroll_employee_count": client.payroll_employee_count,
+                "group_enabled": client.group_enabled,
+                "group_name": client.group_name,
+                "budgeted_hours": str(client.budgeted_hours) if client.budgeted_hours is not None else None,
+                "fees": str(client.fees) if client.fees is not None else None,
                 "active": client.active,
             }
 
@@ -86,11 +94,21 @@ def _save_client(client, success_message, audit_action):
         client.sicore = _yes_no("sicore")
         client.income_tax = _yes_no("income_tax")
         client.personal_assets = _yes_no("personal_assets")
+        client.payroll_enabled = _yes_no("payroll_enabled")
+        client.payroll_employee_count = _parse_positive_int("payroll_employee_count") if client.payroll_enabled else None
+        client.group_enabled = _yes_no("group_enabled")
+        client.group_name = request.form.get("group_name", "").strip() if client.group_enabled else None
+        client.budgeted_hours = _parse_decimal("budgeted_hours")
+        client.fees = _parse_decimal("fees")
         client.active = request.form.get("active", "on") == "on"
         client.notes = request.form.get("notes", "").strip() or None
 
         if not client.name:
             raise ValueError("El nombre del cliente es obligatorio.")
+        if client.payroll_enabled and client.payroll_employee_count is None:
+            raise ValueError("Ingresá la cantidad de empleados cuando Sueldos sea Si.")
+        if client.group_enabled and not client.group_name:
+            raise ValueError("Ingresá el nombre de grupo cuando Grupo sea Si.")
 
         if not client.id:
             client.created_by = current_user.id
@@ -112,6 +130,12 @@ def _save_client(client, success_message, audit_action):
                 "sicore": client.sicore,
                 "income_tax": client.income_tax,
                 "personal_assets": client.personal_assets,
+                "payroll_enabled": client.payroll_enabled,
+                "payroll_employee_count": client.payroll_employee_count,
+                "group_enabled": client.group_enabled,
+                "group_name": client.group_name,
+                "budgeted_hours": str(client.budgeted_hours) if client.budgeted_hours is not None else None,
+                "fees": str(client.fees) if client.fees is not None else None,
                 "active": client.active,
             },
         )
@@ -126,3 +150,33 @@ def _save_client(client, success_message, audit_action):
 
 def _yes_no(field_name):
     return request.form.get(field_name) in {"1", "on", "true", "True", "si", "Si"}
+
+
+def _parse_positive_int(field_name):
+    value = request.form.get(field_name, "").strip()
+    if not value:
+        return None
+    try:
+        parsed = int(value)
+    except ValueError as exc:
+        raise ValueError("La cantidad de empleados debe ser un número entero.") from exc
+    if parsed < 0:
+        raise ValueError("La cantidad de empleados no puede ser negativa.")
+    return parsed
+
+
+def _parse_decimal(field_name):
+    value = request.form.get(field_name, "").strip()
+    if not value:
+        return None
+    if "," in value and "." in value:
+        value = value.replace(".", "").replace(",", ".")
+    elif "," in value:
+        value = value.replace(",", ".")
+    try:
+        parsed = Decimal(value)
+    except InvalidOperation as exc:
+        raise ValueError("Horas presupuestadas y honorarios deben ser valores numéricos.") from exc
+    if parsed < 0:
+        raise ValueError("Horas presupuestadas y honorarios no pueden ser negativos.")
+    return parsed

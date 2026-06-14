@@ -143,6 +143,12 @@ class AccountingClient(db.Model, AuditMixin):
     sicore = db.Column(db.Boolean, default=False, nullable=False)
     income_tax = db.Column(db.Boolean, default=False, nullable=False)
     personal_assets = db.Column(db.Boolean, default=False, nullable=False)
+    payroll_enabled = db.Column(db.Boolean, default=False, nullable=False)
+    payroll_employee_count = db.Column(db.Integer, nullable=True)
+    group_enabled = db.Column(db.Boolean, default=False, nullable=False)
+    group_name = db.Column(db.String(180), nullable=True)
+    budgeted_hours = db.Column(db.Numeric(8, 2), nullable=True)
+    fees = db.Column(db.Numeric(12, 2), nullable=True)
     active = db.Column(db.Boolean, default=True, nullable=False)
     notes = db.Column(db.Text, nullable=True)
 

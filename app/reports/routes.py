@@ -57,7 +57,7 @@ def export_csv():
     records = _filtered_records().all()
     output = StringIO()
     writer = csv.writer(output, delimiter=";")
-    writer.writerow(["Empleado", "Supervisor", "Cliente", "Fecha", "Inicio", "Fin", "Horas", "Estado", "Área", "Tarea", "Observaciones"])
+    writer.writerow(_export_headers())
     for record in records:
         writer.writerow(_record_row(record))
     write_audit("EXPORT", "time_records", new_values={"format": "csv", "count": len(records)})
@@ -78,7 +78,7 @@ def export_excel():
     wb = Workbook()
     ws = wb.active
     ws.title = "Control de tiempo"
-    ws.append(["Empleado", "Supervisor", "Cliente", "Fecha", "Inicio", "Fin", "Horas", "Estado", "Área", "Tarea", "Observaciones"])
+    ws.append(_export_headers())
     for record in records:
         ws.append(_record_row(record))
     buffer = BytesIO()
@@ -133,10 +133,16 @@ def _is_employee_scope():
 
 
 def _record_row(record):
+    client = record.accounting_client
     return [
         record.employee.full_name,
         _supervisor_name(record),
-        record.accounting_client.name if record.accounting_client else "",
+        client.name if client else "",
+        client.group_name if client and client.group_enabled and client.group_name else "",
+        "Si" if client and client.payroll_enabled else "No",
+        client.payroll_employee_count if client and client.payroll_enabled and client.payroll_employee_count is not None else "",
+        str(client.budgeted_hours) if client and client.budgeted_hours is not None else "",
+        str(client.fees) if client and client.fees is not None else "",
         record.record_date.isoformat(),
         format_time_hs(record.start_time),
         format_time_hs(record.end_time),
@@ -145,6 +151,27 @@ def _record_row(record):
         record.area.name,
         record.task.name,
         record.observations or "",
+    ]
+
+
+def _export_headers():
+    return [
+        "Empleado",
+        "Supervisor",
+        "Cliente",
+        "Grupo",
+        "Sueldos",
+        "Cantidad de empleados",
+        "Horas presupuestadas",
+        "Honorarios",
+        "Fecha",
+        "Inicio",
+        "Fin",
+        "Horas",
+        "Estado",
+        "Área",
+        "Tarea",
+        "Observaciones",
     ]
 
 

@@ -120,9 +120,19 @@ def ensure_runtime_schema():
 
     if "accounting_clients" in inspector.get_table_names():
         client_columns = {column["name"] for column in inspector.get_columns("accounting_clients")}
-        for column_name in ("sicore", "income_tax", "personal_assets"):
+        for column_name in ("sicore", "income_tax", "personal_assets", "payroll_enabled", "group_enabled"):
             if column_name not in client_columns:
                 db.session.execute(text(f"ALTER TABLE accounting_clients ADD COLUMN {column_name} BOOLEAN NOT NULL DEFAULT FALSE"))
+        if "payroll_employee_count" not in client_columns:
+            db.session.execute(text("ALTER TABLE accounting_clients ADD COLUMN payroll_employee_count INTEGER"))
+        if "group_name" not in client_columns:
+            db.session.execute(text("ALTER TABLE accounting_clients ADD COLUMN group_name VARCHAR(180)"))
+        if "budgeted_hours" not in client_columns:
+            db.session.execute(text("ALTER TABLE accounting_clients ADD COLUMN budgeted_hours NUMERIC(8, 2)"))
+        if "fees" not in client_columns:
+            db.session.execute(text("ALTER TABLE accounting_clients ADD COLUMN fees NUMERIC(12, 2)"))
+        db.session.execute(text("UPDATE accounting_clients SET fiscal_condition = 'No aplica' WHERE fiscal_condition = 'No responsable'"))
+        db.session.execute(text("UPDATE accounting_clients SET multilateral_agreement = 'Regimen General' WHERE multilateral_agreement IN ('Régimen lateral', 'Regimen lateral')"))
         db.session.commit()
 
 

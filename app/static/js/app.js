@@ -7,6 +7,7 @@ const previewTitle = document.querySelector("[data-preview-title]");
 const previewCopy = document.querySelector("[data-preview-copy]");
 const smoothLinks = document.querySelectorAll(".landing-menu a[href^='#'], .landing-cta a[href^='#'], .landing-footer a[href^='#']");
 const revealItems = document.querySelectorAll(".landing-copy, .landing-preview, .landing-section, .landing-day, .landing-evidence, .landing-band");
+const conditionalToggles = document.querySelectorAll("[data-conditional-toggle]");
 const root = document.documentElement;
 const themeStorageKey = "trazalab-theme";
 
@@ -99,6 +100,20 @@ if (previewTabs.length && previewPanels.length) {
     }, 4200);
   }
 }
+
+conditionalToggles.forEach((toggle) => {
+  const target = document.getElementById(toggle.dataset.conditionalToggle);
+  if (!target) {
+    return;
+  }
+
+  const syncConditionalField = () => {
+    target.classList.toggle("hidden", toggle.value !== "1");
+  };
+
+  toggle.addEventListener("change", syncConditionalField);
+  syncConditionalField();
+});
 
 smoothLinks.forEach((link) => {
   link.addEventListener("click", (event) => {
