@@ -30,7 +30,7 @@ def create():
     client = AccountingClient(company_id=current_company_id())
     if request.method == "POST":
         return _save_client(client, "Cliente contable creado.", "CREATE")
-    return render_template("clients/form.html", client=client)
+    return _render_form(client)
 
 
 @clients_bp.route("/<int:client_id>/edit", methods=["GET", "POST"])
@@ -43,7 +43,7 @@ def edit(client_id):
     ).first_or_404()
     if request.method == "POST":
         return _save_client(client, "Cliente contable actualizado.", "UPDATE")
-    return render_template("clients/form.html", client=client)
+    return _render_form(client)
 
 
 @clients_bp.route("/<int:client_id>/delete", methods=["POST"])
@@ -97,7 +97,7 @@ def _save_client(client, success_message, audit_action):
         client.payroll_enabled = _yes_no("payroll_enabled")
         client.payroll_employee_count = _parse_positive_int("payroll_employee_count") if client.payroll_enabled else None
         client.group_enabled = _yes_no("group_enabled")
-        client.group_name = request.form.get("group_name", "").strip() if client.group_enabled else None
+        client.group_name = _canonical_group_name(request.form.get("group_name", "")) if client.group_enabled else None
         client.budgeted_hours = _parse_hours("budgeted_hours")
         client.fees = _parse_currency("fees")
         client.active = request.form.get("active", "on") == "on"
@@ -145,11 +145,49 @@ def _save_client(client, success_message, audit_action):
     except (IntegrityError, ValueError) as exc:
         db.session.rollback()
         flash(str(getattr(exc, "orig", exc)), "danger")
-        return render_template("clients/form.html", client=client)
+        return _render_form(client)
 
 
 def _yes_no(field_name):
     return request.form.get(field_name) in {"1", "on", "true", "True", "si", "Si"}
+
+
+def _render_form(client):
+    return render_template("clients/form.html", client=client, group_names=_group_names())
+
+
+def _group_names():
+    rows = (
+        db.session.query(AccountingClient.group_name)
+        .filter(
+            AccountingClient.company_id == current_company_id(),
+            AccountingClient.deleted_at.is_(None),
+            AccountingClient.group_enabled.is_(True),
+            AccountingClient.group_name.isnot(None),
+            AccountingClient.group_name != "",
+        )
+        .order_by(AccountingClient.group_name)
+        .all()
+    )
+    names = []
+    seen = set()
+    for (name,) in rows:
+        normalized = " ".join(name.split())
+        key = normalized.casefold()
+        if normalized and key not in seen:
+            seen.add(key)
+            names.append(normalized)
+    return names
+
+
+def _canonical_group_name(value):
+    normalized = " ".join(value.strip().split())
+    if not normalized:
+        return None
+    for existing_name in _group_names():
+        if existing_name.casefold() == normalized.casefold():
+            return existing_name
+    return normalized
 
 
 def _parse_positive_int(field_name):

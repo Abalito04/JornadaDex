@@ -89,7 +89,12 @@
     </div>
     <div id="groupDetails" class="conditional-field {% if not client.group_enabled %}hidden{% endif %}">
       <label>Nombre de grupo</label>
-      <input name="group_name" value="{{ client.group_name or '' }}">
+      <input name="group_name" value="{{ client.group_name or '' }}" list="groupNameSuggestions" autocomplete="off">
+      <datalist id="groupNameSuggestions">
+        {% for group_name in group_names %}
+          <option value="{{ group_name }}"></option>
+        {% endfor %}
+      </datalist>
     </div>
     <div>
       <label>Horas presupuestadas</label>
