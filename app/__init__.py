@@ -137,6 +137,8 @@ def ensure_runtime_schema():
         db.session.execute(text("UPDATE accounting_clients SET fiscal_condition = 'No aplica' WHERE fiscal_condition = 'No responsable'"))
         db.session.execute(text("UPDATE accounting_clients SET multilateral_agreement = 'Regimen General' WHERE multilateral_agreement IN ('Régimen lateral', 'Regimen lateral')"))
         db.session.execute(text("UPDATE accounting_clients SET multilateral_agreement = 'Convenio Multilateral' WHERE multilateral_agreement = 'Convenio multilateral'"))
+        db.session.execute(text("UPDATE accounting_clients SET multilateral_agreement = 'Régimen Simplificado' WHERE multilateral_agreement = 'Regimen Simplificado'"))
+        db.session.execute(text("UPDATE accounting_clients SET multilateral_agreement = 'No Aplica' WHERE multilateral_agreement IN ('No aplica', 'No aplica ', 'No corresponde')"))
         db.session.commit()
 
 

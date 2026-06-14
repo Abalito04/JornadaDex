@@ -36,7 +36,7 @@
       <select name="multilateral_agreement">
         {% set selected_agreement = client.multilateral_agreement or '' %}
         {% if selected_agreement in ["Régimen lateral", "Regimen lateral"] %}{% set selected_agreement = "Regimen General" %}{% endif %}
-        {% for agreement in ["", "Regimen General", "Convenio Multilateral"] %}
+        {% for agreement in ["", "Regimen General", "Convenio Multilateral", "Régimen Simplificado", "No Aplica"] %}
           <option value="{{ agreement }}" {% if selected_agreement == agreement %}selected{% endif %}>{{ agreement or "Seleccionar" }}</option>
         {% endfor %}
       </select>
