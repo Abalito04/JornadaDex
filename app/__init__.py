@@ -67,7 +67,8 @@ def create_app(config_class=Config):
     def inject_global_context():
         from app.context import current_company, is_platform_admin
         from app.roles import role_label
-        from app.utils.datetime import format_datetime_argentina, format_duration_hs, format_time_hs
+        from app.utils.datetime import format_datetime_argentina, format_duration_hs, format_duration_input, format_time_hs
+        from app.utils.formatting import format_currency_ars
 
         return {
             "active_company": current_company,
@@ -75,7 +76,9 @@ def create_app(config_class=Config):
             "role_label": role_label,
             "format_time_hs": format_time_hs,
             "format_duration_hs": format_duration_hs,
+            "format_duration_input": format_duration_input,
             "format_datetime_argentina": format_datetime_argentina,
+            "format_currency_ars": format_currency_ars,
         }
 
     from app.cli import register_cli
@@ -133,6 +136,7 @@ def ensure_runtime_schema():
             db.session.execute(text("ALTER TABLE accounting_clients ADD COLUMN fees NUMERIC(12, 2)"))
         db.session.execute(text("UPDATE accounting_clients SET fiscal_condition = 'No aplica' WHERE fiscal_condition = 'No responsable'"))
         db.session.execute(text("UPDATE accounting_clients SET multilateral_agreement = 'Regimen General' WHERE multilateral_agreement IN ('Régimen lateral', 'Regimen lateral')"))
+        db.session.execute(text("UPDATE accounting_clients SET multilateral_agreement = 'Convenio Multilateral' WHERE multilateral_agreement = 'Convenio multilateral'"))
         db.session.commit()
 
 

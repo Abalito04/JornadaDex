@@ -32,3 +32,7 @@ def format_duration_hs(value):
     total_minutes = int((decimal_hours * Decimal("60")).quantize(Decimal("1")))
     hours, minutes = divmod(max(total_minutes, 0), 60)
     return f"{hours:02d}:{minutes:02d}hs"
+
+
+def format_duration_input(value):
+    return format_duration_hs(value).removesuffix("hs")

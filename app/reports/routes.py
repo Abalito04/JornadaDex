@@ -15,6 +15,7 @@ from app.services.supervisor_service import supervisors_for_company
 from app.services.time_record_service import parse_date
 from app.services.visibility_service import employee_is_visible, visible_employees_query, visible_time_records_query
 from app.utils.datetime import format_duration_hs, format_time_hs
+from app.utils.formatting import format_currency_ars
 
 reports_bp = Blueprint("reports", __name__, url_prefix="/reports")
 
@@ -81,6 +82,8 @@ def export_excel():
     ws.append(_export_headers())
     for record in records:
         ws.append(_record_row(record))
+    ws.auto_filter.ref = ws.dimensions
+    ws.freeze_panes = "A2"
     buffer = BytesIO()
     wb.save(buffer)
     buffer.seek(0)
@@ -141,8 +144,8 @@ def _record_row(record):
         client.group_name if client and client.group_enabled and client.group_name else "",
         "Si" if client and client.payroll_enabled else "No",
         client.payroll_employee_count if client and client.payroll_enabled and client.payroll_employee_count is not None else "",
-        str(client.budgeted_hours) if client and client.budgeted_hours is not None else "",
-        str(client.fees) if client and client.fees is not None else "",
+        format_duration_hs(client.budgeted_hours) if client and client.budgeted_hours is not None else "",
+        format_currency_ars(client.fees) if client else "",
         record.record_date.isoformat(),
         format_time_hs(record.start_time),
         format_time_hs(record.end_time),

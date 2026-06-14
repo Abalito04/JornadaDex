@@ -32,11 +32,11 @@
       </select>
     </div>
     <div>
-      <label>Situación ingresos brutos</label>
+      <label>Situación IIBB</label>
       <select name="multilateral_agreement">
         {% set selected_agreement = client.multilateral_agreement or '' %}
         {% if selected_agreement in ["Régimen lateral", "Regimen lateral"] %}{% set selected_agreement = "Regimen General" %}{% endif %}
-        {% for agreement in ["", "Regimen General", "Convenio multilateral"] %}
+        {% for agreement in ["", "Regimen General", "Convenio Multilateral"] %}
           <option value="{{ agreement }}" {% if selected_agreement == agreement %}selected{% endif %}>{{ agreement or "Seleccionar" }}</option>
         {% endfor %}
       </select>
@@ -93,11 +93,11 @@
     </div>
     <div>
       <label>Horas presupuestadas</label>
-      <input name="budgeted_hours" type="number" min="0" step="0.01" value="{{ client.budgeted_hours if client.budgeted_hours is not none else '' }}">
+      <input name="budgeted_hours" inputmode="numeric" placeholder="00:00" value="{{ format_duration_input(client.budgeted_hours) if client.budgeted_hours is not none else '' }}" data-time-budget-input>
     </div>
     <div>
       <label>Honorarios</label>
-      <input name="fees" type="number" min="0" step="0.01" value="{{ client.fees if client.fees is not none else '' }}">
+      <input name="fees" inputmode="decimal" placeholder="$ 1.000" value="{{ format_currency_ars(client.fees) if client.fees is not none else '' }}" data-currency-input>
     </div>
     <div class="checkbox-row">
       <input id="active" name="active" type="checkbox" {% if client.active or not client.id %}checked{% endif %}>

@@ -98,8 +98,8 @@ def _save_client(client, success_message, audit_action):
         client.payroll_employee_count = _parse_positive_int("payroll_employee_count") if client.payroll_enabled else None
         client.group_enabled = _yes_no("group_enabled")
         client.group_name = request.form.get("group_name", "").strip() if client.group_enabled else None
-        client.budgeted_hours = _parse_decimal("budgeted_hours")
-        client.fees = _parse_decimal("fees")
+        client.budgeted_hours = _parse_hours("budgeted_hours")
+        client.fees = _parse_currency("fees")
         client.active = request.form.get("active", "on") == "on"
         client.notes = request.form.get("notes", "").strip() or None
 
@@ -180,3 +180,39 @@ def _parse_decimal(field_name):
     if parsed < 0:
         raise ValueError("Horas presupuestadas y honorarios no pueden ser negativos.")
     return parsed
+
+
+def _parse_currency(field_name):
+    value = request.form.get(field_name, "").strip().replace("$", "").replace(" ", "")
+    if not value:
+        return None
+    if "," in value and "." in value:
+        value = value.replace(".", "").replace(",", ".")
+    elif "," in value:
+        value = value.replace(",", ".")
+    elif "." in value:
+        value = value.replace(".", "")
+    try:
+        parsed = Decimal(value)
+    except InvalidOperation as exc:
+        raise ValueError("Honorarios debe ser un valor numérico.") from exc
+    if parsed < 0:
+        raise ValueError("Honorarios no puede ser negativo.")
+    return parsed
+
+
+def _parse_hours(field_name):
+    value = request.form.get(field_name, "").strip().lower().removesuffix("hs").strip()
+    if not value:
+        return None
+    if ":" in value:
+        hours_text, minutes_text = value.split(":", 1)
+        try:
+            hours = int(hours_text or 0)
+            minutes = int(minutes_text or 0)
+        except ValueError as exc:
+            raise ValueError("Horas presupuestadas debe tener formato 00:00.") from exc
+        if hours < 0 or minutes < 0 or minutes > 59:
+            raise ValueError("Horas presupuestadas debe tener formato 00:00.")
+        return Decimal(hours) + (Decimal(minutes) / Decimal("60"))
+    return _parse_decimal(field_name)

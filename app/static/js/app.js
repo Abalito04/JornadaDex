@@ -8,6 +8,8 @@ const previewCopy = document.querySelector("[data-preview-copy]");
 const smoothLinks = document.querySelectorAll(".landing-menu a[href^='#'], .landing-cta a[href^='#'], .landing-footer a[href^='#']");
 const revealItems = document.querySelectorAll(".landing-copy, .landing-preview, .landing-section, .landing-day, .landing-evidence, .landing-band");
 const conditionalToggles = document.querySelectorAll("[data-conditional-toggle]");
+const timeBudgetInputs = document.querySelectorAll("[data-time-budget-input]");
+const currencyInputs = document.querySelectorAll("[data-currency-input]");
 const root = document.documentElement;
 const themeStorageKey = "trazalab-theme";
 
@@ -113,6 +115,46 @@ conditionalToggles.forEach((toggle) => {
 
   toggle.addEventListener("change", syncConditionalField);
   syncConditionalField();
+});
+
+timeBudgetInputs.forEach((input) => {
+  input.addEventListener("blur", () => {
+    const cleanValue = input.value.trim().toLowerCase().replace("hs", "");
+    if (!cleanValue) {
+      return;
+    }
+    let hours = 0;
+    let minutes = 0;
+    if (cleanValue.includes(":")) {
+      const parts = cleanValue.split(":");
+      hours = Number.parseInt(parts[0] || "0", 10);
+      minutes = Number.parseInt(parts[1] || "0", 10);
+    } else {
+      hours = Number.parseInt(cleanValue || "0", 10);
+    }
+    if (Number.isNaN(hours) || Number.isNaN(minutes)) {
+      return;
+    }
+    minutes = Math.min(Math.max(minutes, 0), 59);
+    input.value = `${String(Math.max(hours, 0)).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
+  });
+});
+
+currencyInputs.forEach((input) => {
+  input.addEventListener("blur", () => {
+    const cleanValue = input.value.trim().replace("$", "").replaceAll(" ", "");
+    if (!cleanValue) {
+      return;
+    }
+    const normalizedValue = cleanValue.includes(",")
+      ? cleanValue.replaceAll(".", "").replace(",", ".")
+      : cleanValue.replaceAll(".", "");
+    const amount = Number.parseFloat(normalizedValue);
+    if (Number.isNaN(amount)) {
+      return;
+    }
+    input.value = `$ ${Math.round(amount).toLocaleString("es-AR")}`;
+  });
 });
 
 smoothLinks.forEach((link) => {
