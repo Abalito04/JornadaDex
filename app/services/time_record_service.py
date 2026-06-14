@@ -34,6 +34,15 @@ def start_time_record(company_id, user_id, employee_id, supervisor_id, accountin
     if not employee:
         raise ValueError("Empleado invalido.")
 
+    active_record = TimeRecord.query.filter_by(
+        company_id=company_id,
+        employee_id=employee_id,
+        end_time=None,
+        deleted_at=None,
+    ).first()
+    if active_record:
+        raise ValueError("Este empleado ya tiene una tarea en curso. Finalizala antes de iniciar otra.")
+
     supervisor = supervisor_for_company(company_id, supervisor_id)
     if not supervisor:
         raise ValueError("Supervisor invalido.")
