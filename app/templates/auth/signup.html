@@ -46,6 +46,12 @@
         <a class="button ghost" href="{{ url_for('auth.login') }}">Volver al ingreso</a>
       </div>
     </form>
+    <p class="auth-legal-note">
+      Al crear la empresa, aceptás los
+      <a href="{{ url_for('dashboard.terms_conditions') }}">Términos y condiciones</a>
+      y la
+      <a href="{{ url_for('dashboard.privacy_policy') }}">Política de privacidad</a>.
+    </p>
   </section>
 </section>
 {% endblock %}

@@ -19,6 +19,16 @@ def landing():
     return render_template("landing.html")
 
 
+@dashboard_bp.route("/politica-privacidad")
+def privacy_policy():
+    return render_template("legal/privacy_policy.html")
+
+
+@dashboard_bp.route("/terminos-condiciones")
+def terms_conditions():
+    return render_template("legal/terms_conditions.html")
+
+
 @dashboard_bp.route("/dashboard")
 @login_required
 def index():
