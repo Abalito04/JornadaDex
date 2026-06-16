@@ -35,8 +35,6 @@ def index():
     if is_platform_admin():
         return redirect(url_for("platform.companies"))
     today = argentina_now().date()
-    week_start = today - timedelta(days=today.weekday())
-    month_start = today.replace(day=1)
     company_id = current_company_id()
     base = TimeRecord.query.filter_by(company_id=company_id, deleted_at=None)
     dashboard_role = _dashboard_role()
@@ -47,6 +45,9 @@ def index():
     else:
         base = visible_time_records_query(base)
 
+    reference_date = base.with_entities(func.max(TimeRecord.record_date)).scalar() or today
+    week_start = reference_date - timedelta(days=6)
+    month_start = reference_date.replace(day=1)
     active_employees_query = Employee.query.filter_by(company_id=company_id, active=True, deleted_at=None)
     open_records = base.filter(TimeRecord.end_time.is_(None)).order_by(TimeRecord.record_date.desc(), TimeRecord.start_time.desc()).limit(8).all()
     recent_records = base.order_by(TimeRecord.record_date.desc(), TimeRecord.start_time.desc()).limit(8).all()
@@ -54,7 +55,7 @@ def index():
         "active_employees": visible_employees_query(active_employees_query).count(),
         "active_clients": AccountingClient.query.filter_by(company_id=company_id, active=True, deleted_at=None).count(),
         "total_hours_today": _sum_hours(base.filter(TimeRecord.record_date == today)),
-        "total_hours_week": _sum_hours(base.filter(TimeRecord.record_date >= week_start)),
+        "total_hours_week": _sum_hours(base.filter(TimeRecord.record_date >= week_start, TimeRecord.record_date <= reference_date)),
         "total_hours_month": _sum_hours(base.filter(TimeRecord.record_date >= month_start)),
         "total_records": base.count(),
         "total_records_month": base.filter(TimeRecord.record_date >= month_start).count(),
@@ -73,7 +74,7 @@ def index():
         .all()
     )
     by_area_week = (
-        base.filter(TimeRecord.record_date >= week_start)
+        base.filter(TimeRecord.record_date >= week_start, TimeRecord.record_date <= reference_date)
         .join(Area, TimeRecord.area_id == Area.id)
         .with_entities(Area.name, func.sum(TimeRecord.hours))
         .group_by(Area.name)
@@ -99,7 +100,7 @@ def index():
         .all()
     )
     by_employee_week = (
-        base.filter(TimeRecord.record_date >= week_start)
+        base.filter(TimeRecord.record_date >= week_start, TimeRecord.record_date <= reference_date)
         .join(Employee, TimeRecord.employee_id == Employee.id)
         .with_entities(Employee.first_name, Employee.last_name, func.sum(TimeRecord.hours))
         .group_by(Employee.id)

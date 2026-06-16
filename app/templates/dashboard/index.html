@@ -15,7 +15,7 @@
 {% if dashboard_role == "employee" %}
   <section class="metric-grid">
     <article><span>Horas hoy</span><strong>{{ format_duration_hs(metrics.total_hours_today) }}</strong></article>
-    <article><span>Horas semana</span><strong>{{ format_duration_hs(metrics.total_hours_week) }}</strong></article>
+    <article><span>Horas últimos 7 días</span><strong>{{ format_duration_hs(metrics.total_hours_week) }}</strong></article>
     <article><span>Horas mes</span><strong>{{ format_duration_hs(metrics.total_hours_month) }}</strong></article>
     <article><span>Tareas en curso</span><strong>{{ metrics.open_records }}</strong></article>
   </section>
@@ -55,14 +55,14 @@
 {% elif dashboard_role == "supervisor" %}
   <section class="metric-grid">
     <article><span>Horas hoy</span><strong>{{ format_duration_hs(metrics.total_hours_today) }}</strong></article>
-    <article><span>Horas semana</span><strong>{{ format_duration_hs(metrics.total_hours_week) }}</strong></article>
+    <article><span>Horas últimos 7 días</span><strong>{{ format_duration_hs(metrics.total_hours_week) }}</strong></article>
     <article><span>Horas mes</span><strong>{{ format_duration_hs(metrics.total_hours_month) }}</strong></article>
     <article><span>Tareas en curso</span><strong>{{ metrics.open_records }}</strong></article>
   </section>
 
   <section class="two-columns">
     <div class="panel">
-      <h2>Horas por área semanal</h2>
+      <h2>Horas por área últimos 7 días</h2>
       {% set chart_rows = area_week_chart %}
       {% include "dashboard/_bar_chart.html" %}
     </div>
@@ -76,7 +76,7 @@
 
   <section class="two-columns">
     <div class="panel">
-      <h2>Ranking semanal por colaborador</h2>
+      <h2>Ranking últimos 7 días por colaborador</h2>
       {% set chart_rows = employee_week_chart %}
       {% include "dashboard/_bar_chart.html" %}
     </div>
@@ -90,14 +90,14 @@
 {% else %}
   <section class="metric-grid">
     <article><span>Horas hoy</span><strong>{{ format_duration_hs(metrics.total_hours_today) }}</strong></article>
-    <article><span>Horas semana</span><strong>{{ format_duration_hs(metrics.total_hours_week) }}</strong></article>
+    <article><span>Horas últimos 7 días</span><strong>{{ format_duration_hs(metrics.total_hours_week) }}</strong></article>
     <article><span>Horas mes</span><strong>{{ format_duration_hs(metrics.total_hours_month) }}</strong></article>
     <article><span>Tareas en curso</span><strong>{{ metrics.open_records }}</strong></article>
   </section>
 
   <section class="two-columns">
     <div class="panel">
-      <h2>Horas por área semanal</h2>
+      <h2>Horas por área últimos 7 días</h2>
       {% set chart_rows = area_week_chart %}
       {% include "dashboard/_bar_chart.html" %}
     </div>
@@ -111,7 +111,7 @@
 
   <section class="two-columns">
     <div class="panel">
-      <h2>Ranking semanal por colaborador</h2>
+      <h2>Ranking últimos 7 días por colaborador</h2>
       {% set chart_rows = employee_week_chart %}
       {% include "dashboard/_bar_chart.html" %}
     </div>
