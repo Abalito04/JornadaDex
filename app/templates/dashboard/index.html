@@ -2,14 +2,12 @@
 {% block title %}Dashboard{% endblock %}
 {% block content %}
 <section class="page-title">
+  <h1>{{ current_user.employee.full_name if current_user.employee else current_user.username }}</h1>
   {% if dashboard_role == "employee" %}
-    <h1>Mi dashboard</h1>
     <p>Resumen personal de horas, tareas activas y últimos registros.</p>
   {% elif dashboard_role == "supervisor" %}
-    <h1>Dashboard de encargado</h1>
     <p>Horas del equipo completo, ranking por colaborador y áreas por período.</p>
   {% else %}
-    <h1>Dashboard del administrador</h1>
     <p>Visión general de productividad, clientes y estructura de la empresa.</p>
   {% endif %}
 </section>
