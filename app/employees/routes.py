@@ -18,7 +18,19 @@ employees_bp = Blueprint("employees", __name__, url_prefix="/employees")
 def index():
     employees_query = Employee.query.filter_by(company_id=current_company_id(), deleted_at=None)
     employees = visible_employees_query(employees_query).order_by(Employee.last_name).all()
-    return render_template("employees/index.html", employees=employees)
+    linked_user_ids = {employee.user.id for employee in employees if employee.user}
+    collaborator_users = (
+        User.query.filter(
+            User.company_id == current_company_id(),
+            User.deleted_at.is_(None),
+            User.is_active_flag.is_(True),
+            User.role.in_([ROLE_EMPLOYEE, ROLE_SUPERVISOR]),
+        )
+        .order_by(User.username)
+        .all()
+    )
+    unlinked_users = [user for user in collaborator_users if user.id not in linked_user_ids]
+    return render_template("employees/index.html", employees=employees, unlinked_users=unlinked_users)
 
 
 @employees_bp.route("/create", methods=["GET", "POST"])

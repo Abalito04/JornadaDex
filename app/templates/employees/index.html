@@ -37,7 +37,19 @@
               {% endif %}
             </td>
           </tr>
-        {% else %}
+        {% endfor %}
+        {% for user in unlinked_users %}
+          <tr>
+            <td>{{ user.username }}</td>
+            <td><span class="muted-text">Sin ficha</span></td>
+            <td>{{ user.email }}</td>
+            <td><span class="muted-text">Sin ficha</span></td>
+            <td>{{ user.username }}</td>
+            <td>{{ role_label(user.role, user.is_company_owner, user.is_platform_admin) }}</td>
+            <td><span class="muted-text">Crear ficha de colaborador</span></td>
+          </tr>
+        {% endfor %}
+        {% if not employees and not unlinked_users %}
           <tr>
             <td colspan="7">
               <div class="empty-state compact">
@@ -47,7 +59,7 @@
               </div>
             </td>
           </tr>
-        {% endfor %}
+        {% endif %}
       </tbody>
     </table>
   </div>
