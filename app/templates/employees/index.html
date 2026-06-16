@@ -49,10 +49,7 @@
             <td>{{ role_label(user.role, user.is_company_owner, user.is_platform_admin) }}</td>
             <td>
               {% if linked_employee %}
-                <form method="post" action="{{ url_for('employees.restore', employee_id=linked_employee.id) }}">
-                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                  <button class="small secondary" type="submit">Reactivar ficha</button>
-                </form>
+                <span class="muted-text">{{ "Inactivo" if not linked_employee.active or linked_employee.deleted_at else "Ficha cargada" }}</span>
               {% else %}
                 <a class="button small secondary" href="{{ url_for('employees.create', user_id=user.id) }}">Completar ficha</a>
               {% endif %}

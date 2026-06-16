@@ -203,24 +203,3 @@ def delete(employee_id):
     flash("Colaborador eliminado lógicamente.", "success")
     return redirect(url_for("employees.index"))
 
-
-@employees_bp.route("/<int:employee_id>/restore", methods=["POST"])
-@manager_required
-def restore(employee_id):
-    employee = Employee.query.filter_by(id=employee_id, company_id=current_company_id()).first_or_404()
-    if employee.user and employee.user.is_company_owner and not current_user.is_company_owner and not is_platform_admin():
-        return ("Forbidden", 403)
-
-    employee.deleted_at = None
-    employee.deleted_by = None
-    employee.active = True
-    employee.updated_by = current_user.id
-    if employee.user:
-        employee.user.deleted_at = None
-        employee.user.deleted_by = None
-        employee.user.is_active_flag = True
-        employee.user.updated_by = current_user.id
-    write_audit("RESTORE", "employees", employee.id, new_values={"name": employee.full_name})
-    db.session.commit()
-    flash("Ficha de colaborador reactivada.", "success")
-    return redirect(url_for("employees.index"))
