@@ -9,10 +9,13 @@
 <section class="panel">
   <form method="post" class="grid-form">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <div><label>Nombre</label><input name="first_name" value="{{ employee.first_name if employee else '' }}" required></div>
-    <div><label>Apellido</label><input name="last_name" value="{{ employee.last_name if employee else '' }}" required></div>
+    {% if existing_user %}
+      <input type="hidden" name="existing_user_id" value="{{ existing_user.id }}">
+    {% endif %}
+    <div><label>Nombre</label><input name="first_name" value="{{ employee.first_name if employee else form_defaults.first_name if form_defaults else '' }}" required></div>
+    <div><label>Apellido</label><input name="last_name" value="{{ employee.last_name if employee else form_defaults.last_name if form_defaults else '' }}" required></div>
     <div><label>Documento</label><input name="document_number" value="{{ employee.document_number if employee else '' }}" required></div>
-    <div><label>Email</label><input name="email" type="email" value="{{ employee.email if employee and employee.email else '' }}"></div>
+    <div><label>Email</label><input name="email" type="email" value="{{ employee.email if employee and employee.email else form_defaults.email if form_defaults else '' }}"></div>
     <div><label>Teléfono</label><input name="phone" value="{{ employee.phone if employee and employee.phone else '' }}"></div>
     <div><label>Puesto</label><input name="position" value="{{ employee.position if employee and employee.position else '' }}"></div>
     <div class="full"><label>Notas</label><textarea name="notes" rows="2">{{ employee.notes if employee and employee.notes else '' }}</textarea></div>
@@ -28,6 +31,11 @@
           <input name="password" type="password" placeholder="Dejar vacío para no cambiar">
         </div>
       {% endif %}
+    {% elif existing_user %}
+      <div class="full form-divider">
+        <strong>Acceso existente</strong>
+        <span>{{ existing_user.username }} · {{ role_label(existing_user.role, existing_user.is_company_owner, existing_user.is_platform_admin) }}</span>
+      </div>
     {% else %}
       <div class="full checkbox-row">
         <input id="create_user" name="create_user" type="checkbox">

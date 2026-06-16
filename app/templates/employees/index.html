@@ -46,7 +46,7 @@
             <td><span class="muted-text">Sin ficha</span></td>
             <td>{{ user.username }}</td>
             <td>{{ role_label(user.role, user.is_company_owner, user.is_platform_admin) }}</td>
-            <td><span class="muted-text">Crear ficha de colaborador</span></td>
+            <td><a class="button small secondary" href="{{ url_for('employees.create', user_id=user.id) }}">Completar ficha</a></td>
           </tr>
         {% endfor %}
         {% if not employees and not unlinked_users %}

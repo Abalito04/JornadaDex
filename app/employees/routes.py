@@ -36,6 +36,18 @@ def index():
 @employees_bp.route("/create", methods=["GET", "POST"])
 @manager_required
 def create():
+    existing_user = None
+    existing_user_id = request.form.get("existing_user_id", type=int) if request.method == "POST" else request.args.get("user_id", type=int)
+    if existing_user_id:
+        existing_user = User.query.filter_by(
+            id=existing_user_id,
+            company_id=current_company_id(),
+            deleted_at=None,
+        ).first()
+        if not existing_user or existing_user.employee_id:
+            flash("Ese usuario ya tiene ficha de colaborador o no existe.", "danger")
+            return redirect(url_for("employees.index"))
+
     if request.method == "POST":
         try:
             employee = Employee(
@@ -54,7 +66,11 @@ def create():
             db.session.add(employee)
             db.session.flush()
 
-            if request.form.get("create_user") == "on":
+            if existing_user:
+                existing_user.employee_id = employee.id
+                existing_user.email = employee.email or existing_user.email
+                existing_user.updated_by = current_user.id
+            elif request.form.get("create_user") == "on":
                 username = request.form.get("username", "").strip().lower()
                 password = request.form.get("password", "")
                 role = request.form.get("role", ROLE_EMPLOYEE)
@@ -81,7 +97,12 @@ def create():
             db.session.rollback()
             flash(str(getattr(exc, "orig", exc)), "danger")
 
-    return render_template("employees/form.html", employee=None)
+    form_defaults = {
+        "first_name": request.form.get("first_name", existing_user.username if existing_user else ""),
+        "last_name": request.form.get("last_name", ""),
+        "email": request.form.get("email", existing_user.email if existing_user else ""),
+    }
+    return render_template("employees/form.html", employee=None, existing_user=existing_user, form_defaults=form_defaults)
 
 
 @employees_bp.route("/<int:employee_id>/edit", methods=["GET", "POST"])
@@ -155,7 +176,7 @@ def edit(employee_id):
             db.session.rollback()
             flash(str(getattr(exc, "orig", exc)), "danger")
 
-    return render_template("employees/form.html", employee=employee)
+    return render_template("employees/form.html", employee=employee, existing_user=None, form_defaults=None)
 
 
 @employees_bp.route("/<int:employee_id>/delete", methods=["POST"])
