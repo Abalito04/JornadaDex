@@ -1754,12 +1754,14 @@ th {
   text-transform: uppercase;
 }
 
+[data-sortable-table] th:not(:empty),
 th[data-sortable-column] {
   cursor: pointer;
   user-select: none;
   white-space: nowrap;
 }
 
+[data-sortable-table] th:not(:empty)::after,
 th[data-sortable-column]::after {
   content: "↕";
   display: inline-block;
@@ -1768,11 +1770,13 @@ th[data-sortable-column]::after {
   font-size: 0.9em;
 }
 
+[data-sortable-table] th[data-sort-direction="asc"]::after,
 th[data-sortable-column][data-sort-direction="asc"]::after {
   content: "↑";
   color: var(--color-primary);
 }
 
+[data-sortable-table] th[data-sort-direction="desc"]::after,
 th[data-sortable-column][data-sort-direction="desc"]::after {
   content: "↓";
   color: var(--color-primary);

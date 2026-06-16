@@ -159,7 +159,10 @@ currencyInputs.forEach((input) => {
 });
 
 sortableTables.forEach((table) => {
-  const headers = Array.from(table.querySelectorAll("[data-sortable-column]"));
+  const explicitHeaders = Array.from(table.querySelectorAll("[data-sortable-column]"));
+  const headers = explicitHeaders.length
+    ? explicitHeaders
+    : Array.from(table.querySelectorAll("thead th")).filter((header) => header.textContent.trim());
   const tbody = table.querySelector("tbody");
   if (!headers.length || !tbody) {
     return;
