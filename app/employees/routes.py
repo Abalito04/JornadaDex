@@ -83,9 +83,6 @@ def create():
                 user = User.query.filter_by(username=username).first()
                 if user and user.deleted_at is None:
                     raise ValueError("Ya existe un usuario activo con ese nombre.")
-                email_owner = User.query.filter(User.email == email, User.username != username).first()
-                if email_owner and email_owner.deleted_at is None:
-                    raise ValueError("Ya existe un usuario activo con ese email.")
                 if user:
                     user.company_id = current_company_id()
                     user.employee_id = employee.id
@@ -167,6 +164,9 @@ def edit(employee_id):
 
             if employee.user:
                 employee.user.email = employee.email or employee.user.email
+                role = request.form.get("role", employee.user.role)
+                if role in (ROLE_EMPLOYEE, ROLE_SUPERVISOR):
+                    employee.user.role = role
                 employee.user.updated_by = current_user.id
                 new_password = request.form.get("password", "")
                 if new_password:
@@ -177,6 +177,40 @@ def edit(employee_id):
                         employee.user.id,
                         new_values={"employee_id": employee.id, "reset_by": current_user.id},
                     )
+            elif request.form.get("create_user") == "on":
+                username = request.form.get("username", "").strip().lower()
+                password = request.form.get("password", "")
+                role = request.form.get("role", ROLE_EMPLOYEE)
+                if role not in (ROLE_EMPLOYEE, ROLE_SUPERVISOR):
+                    role = ROLE_EMPLOYEE
+                if not username or not password:
+                    raise ValueError("Para crear usuario, completa usuario y clave.")
+                email = employee.email or f"{username}@local"
+                user = User.query.filter_by(username=username).first()
+                if user and user.deleted_at is None:
+                    raise ValueError("Ya existe un usuario activo con ese nombre.")
+                if user:
+                    user.company_id = current_company_id()
+                    user.employee_id = employee.id
+                    user.email = email
+                    user.role = role
+                    user.deleted_at = None
+                    user.deleted_by = None
+                    user.is_active_flag = True
+                    user.is_company_owner = False
+                    user.is_platform_admin = False
+                    user.updated_by = current_user.id
+                else:
+                    user = User(
+                        company_id=current_company_id(),
+                        employee_id=employee.id,
+                        username=username,
+                        email=email,
+                        role=role,
+                        created_by=current_user.id,
+                    )
+                user.set_password(password)
+                db.session.add(user)
 
             write_audit(
                 "UPDATE",

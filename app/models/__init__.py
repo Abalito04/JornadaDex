@@ -49,7 +49,7 @@ class User(UserMixin, db.Model, AuditMixin):
     company_id = db.Column(db.Integer, db.ForeignKey("companies.id"), nullable=False)
     employee_id = db.Column(db.Integer, db.ForeignKey("employees.id"), nullable=True)
     username = db.Column(db.String(80), nullable=False, unique=True)
-    email = db.Column(db.String(255), nullable=False, unique=True)
+    email = db.Column(db.String(255), nullable=False)
     password_hash = db.Column(db.String(255), nullable=False)
     role = db.Column(db.String(30), nullable=False, default="Employee")
     is_company_owner = db.Column(db.Boolean, default=False, nullable=False)

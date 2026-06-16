@@ -27,8 +27,29 @@
       </div>
       {% if employee.user %}
         <div>
+          <label>Rol</label>
+          <select name="role">
+            <option value="Employee" {% if employee.user.role == "Employee" %}selected{% endif %}>Colaborador</option>
+            <option value="Supervisor" {% if employee.user.role == "Supervisor" %}selected{% endif %}>Encargado</option>
+          </select>
+        </div>
+        <div>
           <label>Nueva clave</label>
           <input name="password" type="password" placeholder="Dejar vacío para no cambiar">
+        </div>
+      {% else %}
+        <div class="full checkbox-row">
+          <input id="create_user" name="create_user" type="checkbox">
+          <label for="create_user">Crear usuario de acceso</label>
+        </div>
+        <div><label>Usuario</label><input name="username"></div>
+        <div><label>Clave</label><input name="password" type="password"></div>
+        <div>
+          <label>Rol</label>
+          <select name="role">
+            <option value="Employee">Colaborador</option>
+            <option value="Supervisor">Encargado</option>
+          </select>
         </div>
       {% endif %}
     {% elif existing_user %}

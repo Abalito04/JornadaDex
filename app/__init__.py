@@ -95,6 +95,15 @@ def ensure_runtime_schema():
     if "is_platform_admin" not in columns:
         db.session.execute(text("ALTER TABLE users ADD COLUMN is_platform_admin BOOLEAN NOT NULL DEFAULT FALSE"))
         db.session.commit()
+    for statement in (
+        "DROP INDEX IF EXISTS users_email_key",
+        "ALTER TABLE users DROP CONSTRAINT IF EXISTS users_email_key",
+    ):
+        try:
+            db.session.execute(text(statement))
+            db.session.commit()
+        except Exception:
+            db.session.rollback()
     db.session.execute(text("UPDATE users SET role = 'Owner', is_company_owner = TRUE WHERE role = 'Administrator'"))
     db.session.commit()
     if "employees" in inspector.get_table_names():
