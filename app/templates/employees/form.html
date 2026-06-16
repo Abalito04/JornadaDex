@@ -14,11 +14,11 @@
     {% endif %}
     <div><label>Nombre</label><input name="first_name" value="{{ employee.first_name if employee else form_defaults.first_name if form_defaults else '' }}" required></div>
     <div><label>Apellido</label><input name="last_name" value="{{ employee.last_name if employee else form_defaults.last_name if form_defaults else '' }}" required></div>
-    <div><label>Documento</label><input name="document_number" value="{{ employee.document_number if employee else '' }}" required></div>
+    <div><label>Documento</label><input name="document_number" value="{{ employee.document_number if employee else form_defaults.document_number if form_defaults else '' }}" required></div>
     <div><label>Email</label><input name="email" type="email" value="{{ employee.email if employee and employee.email else form_defaults.email if form_defaults else '' }}"></div>
-    <div><label>Teléfono</label><input name="phone" value="{{ employee.phone if employee and employee.phone else '' }}"></div>
-    <div><label>Puesto</label><input name="position" value="{{ employee.position if employee and employee.position else '' }}"></div>
-    <div class="full"><label>Notas</label><textarea name="notes" rows="2">{{ employee.notes if employee and employee.notes else '' }}</textarea></div>
+    <div><label>Teléfono</label><input name="phone" value="{{ employee.phone if employee and employee.phone else form_defaults.phone if form_defaults else '' }}"></div>
+    <div><label>Puesto</label><input name="position" value="{{ employee.position if employee and employee.position else form_defaults.position if form_defaults else '' }}"></div>
+    <div class="full"><label>Notas</label><textarea name="notes" rows="2">{{ employee.notes if employee and employee.notes else form_defaults.notes if form_defaults else '' }}</textarea></div>
 
     {% if employee %}
       <div class="full form-divider">

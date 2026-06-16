@@ -39,14 +39,24 @@
           </tr>
         {% endfor %}
         {% for user in unlinked_users %}
+          {% set linked_employee = user.employee %}
           <tr>
-            <td>{{ user.username }}</td>
-            <td><span class="muted-text">Sin ficha</span></td>
-            <td>{{ user.email }}</td>
-            <td><span class="muted-text">Sin ficha</span></td>
+            <td>{{ linked_employee.full_name if linked_employee else user.username }}</td>
+            <td>{{ linked_employee.document_number if linked_employee else "Sin ficha" }}</td>
+            <td>{{ linked_employee.email if linked_employee and linked_employee.email else user.email }}</td>
+            <td>{{ linked_employee.position if linked_employee and linked_employee.position else "Sin ficha" }}</td>
             <td>{{ user.username }}</td>
             <td>{{ role_label(user.role, user.is_company_owner, user.is_platform_admin) }}</td>
-            <td><a class="button small secondary" href="{{ url_for('employees.create', user_id=user.id) }}">Completar ficha</a></td>
+            <td>
+              {% if linked_employee %}
+                <form method="post" action="{{ url_for('employees.restore', employee_id=linked_employee.id) }}">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                  <button class="small secondary" type="submit">Reactivar ficha</button>
+                </form>
+              {% else %}
+                <a class="button small secondary" href="{{ url_for('employees.create', user_id=user.id) }}">Completar ficha</a>
+              {% endif %}
+            </td>
           </tr>
         {% endfor %}
         {% if not employees and not unlinked_users %}

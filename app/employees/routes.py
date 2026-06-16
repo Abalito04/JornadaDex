@@ -44,23 +44,24 @@ def create():
             company_id=current_company_id(),
             deleted_at=None,
         ).first()
-        if not existing_user or existing_user.employee_id:
+        if not existing_user:
             flash("Ese usuario ya tiene ficha de colaborador o no existe.", "danger")
             return redirect(url_for("employees.index"))
 
     if request.method == "POST":
         try:
-            employee = Employee(
-                company_id=current_company_id(),
-                first_name=request.form.get("first_name", "").strip(),
-                last_name=request.form.get("last_name", "").strip(),
-                document_number=request.form.get("document_number", "").strip(),
-                email=request.form.get("email", "").strip().lower() or None,
-                phone=request.form.get("phone", "").strip() or None,
-                position=request.form.get("position", "").strip() or None,
-                notes=request.form.get("notes", "").strip() or None,
-                created_by=current_user.id,
-            )
+            employee = existing_user.employee if existing_user and existing_user.employee else Employee(company_id=current_company_id(), created_by=current_user.id)
+            employee.first_name = request.form.get("first_name", "").strip()
+            employee.last_name = request.form.get("last_name", "").strip()
+            employee.document_number = request.form.get("document_number", "").strip()
+            employee.email = request.form.get("email", "").strip().lower() or None
+            employee.phone = request.form.get("phone", "").strip() or None
+            employee.position = request.form.get("position", "").strip() or None
+            employee.notes = request.form.get("notes", "").strip() or None
+            employee.active = True
+            employee.deleted_at = None
+            employee.deleted_by = None
+            employee.updated_by = current_user.id
             if not employee.first_name or not employee.last_name or not employee.document_number:
                 raise ValueError("Completá nombre, apellido y documento.")
             db.session.add(employee)
@@ -98,9 +99,13 @@ def create():
             flash(str(getattr(exc, "orig", exc)), "danger")
 
     form_defaults = {
-        "first_name": request.form.get("first_name", existing_user.username if existing_user else ""),
-        "last_name": request.form.get("last_name", ""),
-        "email": request.form.get("email", existing_user.email if existing_user else ""),
+        "first_name": request.form.get("first_name", existing_user.employee.first_name if existing_user and existing_user.employee else existing_user.username if existing_user else ""),
+        "last_name": request.form.get("last_name", existing_user.employee.last_name if existing_user and existing_user.employee else ""),
+        "email": request.form.get("email", existing_user.employee.email if existing_user and existing_user.employee and existing_user.employee.email else existing_user.email if existing_user else ""),
+        "document_number": request.form.get("document_number", existing_user.employee.document_number if existing_user and existing_user.employee else ""),
+        "phone": request.form.get("phone", existing_user.employee.phone if existing_user and existing_user.employee and existing_user.employee.phone else ""),
+        "position": request.form.get("position", existing_user.employee.position if existing_user and existing_user.employee and existing_user.employee.position else ""),
+        "notes": request.form.get("notes", existing_user.employee.notes if existing_user and existing_user.employee and existing_user.employee.notes else ""),
     }
     return render_template("employees/form.html", employee=None, existing_user=existing_user, form_defaults=form_defaults)
 
@@ -196,4 +201,26 @@ def delete(employee_id):
     write_audit("DELETE", "employees", employee.id, previous_values={"name": employee.full_name})
     db.session.commit()
     flash("Colaborador eliminado lógicamente.", "success")
+    return redirect(url_for("employees.index"))
+
+
+@employees_bp.route("/<int:employee_id>/restore", methods=["POST"])
+@manager_required
+def restore(employee_id):
+    employee = Employee.query.filter_by(id=employee_id, company_id=current_company_id()).first_or_404()
+    if employee.user and employee.user.is_company_owner and not current_user.is_company_owner and not is_platform_admin():
+        return ("Forbidden", 403)
+
+    employee.deleted_at = None
+    employee.deleted_by = None
+    employee.active = True
+    employee.updated_by = current_user.id
+    if employee.user:
+        employee.user.deleted_at = None
+        employee.user.deleted_by = None
+        employee.user.is_active_flag = True
+        employee.user.updated_by = current_user.id
+    write_audit("RESTORE", "employees", employee.id, new_values={"name": employee.full_name})
+    db.session.commit()
+    flash("Ficha de colaborador reactivada.", "success")
     return redirect(url_for("employees.index"))
