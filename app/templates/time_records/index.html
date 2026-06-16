@@ -11,7 +11,7 @@
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     {% if can_choose_employee %}
       <div>
-        <label>Empleado</label>
+        <label>Colaborador</label>
         <select name="employee_id" required>
           {% for employee in employees %}
             <option value="{{ employee.id }}">{{ employee.full_name }}</option>
@@ -20,16 +20,16 @@
       </div>
     {% else %}
       <div>
-        <label>Empleado</label>
+        <label>Colaborador</label>
         <input value="{{ current_user.employee.full_name if current_user.employee else current_user.username }}" disabled>
         <input type="hidden" name="employee_id" value="{{ current_user.employee_id or '' }}">
       </div>
     {% endif %}
     {% if can_choose_supervisor %}
       <div>
-        <label>Supervisor responsable</label>
+        <label>Encargado responsable</label>
         <select name="supervisor_id" required>
-          <option value="">Seleccionar supervisor</option>
+          <option value="">Seleccionar encargado</option>
           {% for supervisor in supervisors %}
             <option value="{{ supervisor.id }}">{{ supervisor.employee.full_name if supervisor.employee else supervisor.username }}</option>
           {% endfor %}
@@ -37,7 +37,7 @@
       </div>
     {% else %}
       <div>
-        <label>Supervisor responsable</label>
+        <label>Encargado responsable</label>
         <input value="{{ current_user.employee.full_name if current_user.employee else current_user.username }}" disabled>
         <input type="hidden" name="supervisor_id" value="{{ current_user.id }}">
       </div>
@@ -79,14 +79,14 @@
   <form method="get" class="filter-form records-filter">
     {% if can_choose_employee %}
       <select name="record_employee_id">
-        <option value="">Todos los empleados</option>
+        <option value="">Todos los colaboradores</option>
         {% for employee in employees %}
           <option value="{{ employee.id }}" {% if request.args.get('record_employee_id') == employee.id|string %}selected{% endif %}>{{ employee.full_name }}</option>
         {% endfor %}
       </select>
     {% endif %}
     <select name="record_supervisor_id">
-      <option value="">Todos los supervisores</option>
+      <option value="">Todos los encargados</option>
       {% for supervisor in supervisors %}
         <option value="{{ supervisor.id }}" {% if request.args.get('record_supervisor_id') == supervisor.id|string %}selected{% endif %}>{{ supervisor.employee.full_name if supervisor.employee else supervisor.username }}</option>
       {% endfor %}
@@ -119,7 +119,7 @@
   <div class="table-wrap">
     <table class="records-table">
       <thead>
-        <tr><th>Empleado</th><th>Supervisor</th><th>Cliente</th><th>Fecha</th><th>Inicio</th><th>Fin</th><th>Horas</th><th>Estado</th><th>Área</th><th>Tarea</th><th>Edición</th><th></th></tr>
+        <tr><th>Colaborador</th><th>Encargado</th><th>Cliente</th><th>Fecha</th><th>Inicio</th><th>Fin</th><th>Horas</th><th>Estado</th><th>Área</th><th>Tarea</th><th>Edición</th><th></th></tr>
       </thead>
       <tbody>
         {% for record in records %}

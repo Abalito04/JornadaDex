@@ -87,7 +87,7 @@ def _target_label(table_name):
     labels = {
         "companies": "una empresa",
         "users": "un usuario",
-        "employees": "un empleado",
+        "employees": "un colaborador",
         "areas": "un área",
         "tasks": "una tarea",
         "time_records": "un registro de trabajo",
@@ -103,9 +103,9 @@ def _detail_text(values):
     if values.get("name"):
         parts.append(str(values["name"]))
     if values.get("employee_id"):
-        parts.append(f"Empleado #{values['employee_id']}")
+        parts.append(f"Colaborador #{values['employee_id']}")
     if values.get("supervisor_id"):
-        parts.append(f"Supervisor #{values['supervisor_id']}")
+        parts.append(f"Encargado #{values['supervisor_id']}")
     if values.get("accounting_client_id"):
         parts.append(f"Cliente #{values['accounting_client_id']}")
     if values.get("format"):

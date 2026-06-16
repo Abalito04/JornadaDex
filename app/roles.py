@@ -8,11 +8,11 @@ COMPANY_ROLES = (ROLE_EMPLOYEE, ROLE_SUPERVISOR, ROLE_OWNER)
 PLATFORM_ROLES = COMPANY_ROLES + (ROLE_DEVELOPER,)
 
 ROLE_LABELS = {
-    ROLE_EMPLOYEE: "Empleado",
-    ROLE_SUPERVISOR: "Supervisor",
-    ROLE_OWNER: "Dueño",
+    ROLE_EMPLOYEE: "Colaborador",
+    ROLE_SUPERVISOR: "Encargado",
+    ROLE_OWNER: "Administrador",
     ROLE_DEVELOPER: "Developer",
-    LEGACY_ADMIN: "Dueño",
+    LEGACY_ADMIN: "Administrador",
 }
 
 

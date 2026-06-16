@@ -159,8 +159,8 @@ def _record_row(record):
 
 def _export_headers():
     return [
-        "Empleado",
-        "Supervisor",
+        "Colaborador",
+        "Encargado",
         "Cliente",
         "Grupo",
         "Sueldos",

@@ -28,7 +28,7 @@ def signup():
                 password=request.form.get("password", ""),
             )
             if not company.name or not company.tax_id or not user.email or not user.username or not request.form.get("password"):
-                raise ValueError("Completá nombre de la empresa, CUIT, jefe, email, usuario y clave.")
+                raise ValueError("Completá nombre de la empresa, CUIT, administrador, email, usuario y clave.")
             write_audit("CREATE", "companies", company.id, new_values={"name": company.name, "tax_id": company.tax_id}, company_id=company.id)
             db.session.commit()
             flash("Empresa creada. Ya podés iniciar sesión.", "success")

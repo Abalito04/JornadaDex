@@ -10,7 +10,7 @@
   <form method="get" class="filter-form">
     {% if can_filter_employee %}
       <select name="employee_id">
-        <option value="">Todos los empleados</option>
+        <option value="">Todos los colaboradores</option>
         {% for employee in employees %}
           <option value="{{ employee.id }}" {% if request.args.get('employee_id') == employee.id|string %}selected{% endif %}>{{ employee.full_name }}</option>
         {% endfor %}
@@ -18,7 +18,7 @@
     {% endif %}
     {% if can_filter_supervisor %}
       <select name="supervisor_id">
-        <option value="">Todos los supervisores</option>
+        <option value="">Todos los encargados</option>
         {% for supervisor in supervisors %}
           <option value="{{ supervisor.id }}" {% if request.args.get('supervisor_id') == supervisor.id|string %}selected{% endif %}>
             {{ supervisor.employee.full_name if supervisor.employee else supervisor.username }}
@@ -50,7 +50,7 @@
   <div class="table-wrap">
     <table>
       <thead>
-        <tr>{% if can_filter_employee %}<th>Empleado</th>{% endif %}<th>Supervisor</th><th>Cliente</th><th>Fecha</th><th>Inicio</th><th>Fin</th><th>Horas</th><th>Estado</th><th>Área</th><th>Tarea</th></tr>
+        <tr>{% if can_filter_employee %}<th>Colaborador</th>{% endif %}<th>Encargado</th><th>Cliente</th><th>Fecha</th><th>Inicio</th><th>Fin</th><th>Horas</th><th>Estado</th><th>Área</th><th>Tarea</th></tr>
       </thead>
       <tbody>
         {% for record in records %}

@@ -28,7 +28,7 @@
     <div>
       <label>Rol</label>
       <select name="role">
-        {% for value, label in [("Employee", "Empleado"), ("Supervisor", "Supervisor"), ("Owner", "Dueño"), ("Developer", "Developer")] %}
+        {% for value, label in [("Employee", "Colaborador"), ("Supervisor", "Encargado"), ("Owner", "Administrador"), ("Developer", "Developer")] %}
           <option value="{{ value }}" {% if user.role == value or (value == "Owner" and user.is_company_owner) %}selected{% endif %}>{{ label }}</option>
         {% endfor %}
       </select>

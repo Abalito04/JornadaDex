@@ -6,10 +6,10 @@
     <h1>Mi dashboard</h1>
     <p>Resumen personal de horas, tareas activas y últimos registros.</p>
   {% elif dashboard_role == "supervisor" %}
-    <h1>Dashboard de supervisión</h1>
-    <p>Horas del equipo completo, ranking por empleado y áreas por período.</p>
+    <h1>Dashboard de encargado</h1>
+    <p>Horas del equipo completo, ranking por colaborador y áreas por período.</p>
   {% else %}
-    <h1>Dashboard del dueño</h1>
+    <h1>Dashboard del administrador</h1>
     <p>Visión general de productividad, clientes y estructura de la empresa.</p>
   {% endif %}
 </section>
@@ -30,7 +30,7 @@
           <article class="dashboard-row">
             <div>
               <strong>{{ record.task.name }}</strong>
-              <span>{{ record.area.name }}{% if record.accounting_client %} · {{ record.accounting_client.name }}{% endif %}{% if record.supervisor %} · Supervisor: {{ record.supervisor.employee.full_name if record.supervisor.employee else record.supervisor.username }}{% endif %}</span>
+              <span>{{ record.area.name }}{% if record.accounting_client %} · {{ record.accounting_client.name }}{% endif %}{% if record.supervisor %} · Encargado: {{ record.supervisor.employee.full_name if record.supervisor.employee else record.supervisor.username }}{% endif %}</span>
             </div>
             <span class="status-badge en-curso">{{ format_time_hs(record.start_time) }}</span>
           </article>
@@ -78,13 +78,13 @@
 
   <section class="two-columns">
     <div class="panel">
-      <h2>Ranking semanal por empleado</h2>
+      <h2>Ranking semanal por colaborador</h2>
       {% set chart_rows = employee_week_chart %}
       {% include "dashboard/_bar_chart.html" %}
     </div>
 
     <div class="panel">
-      <h2>Ranking mensual por empleado</h2>
+      <h2>Ranking mensual por colaborador</h2>
       {% set chart_rows = employee_chart %}
       {% include "dashboard/_bar_chart.html" %}
     </div>
@@ -113,13 +113,13 @@
 
   <section class="two-columns">
     <div class="panel">
-      <h2>Ranking semanal por empleado</h2>
+      <h2>Ranking semanal por colaborador</h2>
       {% set chart_rows = employee_week_chart %}
       {% include "dashboard/_bar_chart.html" %}
     </div>
 
     <div class="panel">
-      <h2>Ranking mensual por empleado</h2>
+      <h2>Ranking mensual por colaborador</h2>
       {% set chart_rows = employee_chart %}
       {% include "dashboard/_bar_chart.html" %}
     </div>

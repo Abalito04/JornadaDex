@@ -56,7 +56,7 @@ if (previewTabs.length && previewPanels.length) {
     },
     supervision: {
       title: "Supervisión activa",
-      copy: "El supervisor ve avances del equipo y puede revisar registros con contexto.",
+      copy: "El encargado ve avances del equipo y puede revisar registros con contexto.",
     },
     reportes: {
       title: "Reportes listos",

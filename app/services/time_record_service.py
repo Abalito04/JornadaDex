@@ -32,7 +32,7 @@ def calculate_hours(record_date, start_time, end_time):
 def start_time_record(company_id, user_id, employee_id, supervisor_id, accounting_client_id, area_id, task_id, observations):
     employee = Employee.query.filter_by(id=employee_id, company_id=company_id, deleted_at=None).first()
     if not employee:
-        raise ValueError("Empleado invalido.")
+        raise ValueError("Colaborador invalido.")
 
     active_record = TimeRecord.query.filter_by(
         company_id=company_id,
@@ -41,11 +41,11 @@ def start_time_record(company_id, user_id, employee_id, supervisor_id, accountin
         deleted_at=None,
     ).first()
     if active_record:
-        raise ValueError("Este empleado ya tiene una tarea en curso. Finalizala antes de iniciar otra.")
+        raise ValueError("Este colaborador ya tiene una tarea en curso. Finalizala antes de iniciar otra.")
 
     supervisor = supervisor_for_company(company_id, supervisor_id)
     if not supervisor:
-        raise ValueError("Supervisor invalido.")
+        raise ValueError("Encargado invalido.")
 
     accounting_client = AccountingClient.query.filter_by(
         id=accounting_client_id,

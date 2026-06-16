@@ -10,7 +10,7 @@
   <form method="post" class="grid-form">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <div>
-      <label>Empleado</label>
+      <label>Colaborador</label>
       <select name="employee_id" required>
         {% for employee in employees %}
           <option value="{{ employee.id }}" {% if employee.id == record.employee_id %}selected{% endif %}>{{ employee.full_name }}</option>
@@ -19,7 +19,7 @@
     </div>
     {% if can_choose_supervisor %}
       <div>
-        <label>Supervisor responsable</label>
+        <label>Encargado responsable</label>
         <select name="supervisor_id" required>
           {% for supervisor in supervisors %}
             <option value="{{ supervisor.id }}" {% if supervisor.id == record.supervisor_id %}selected{% endif %}>{{ supervisor.employee.full_name if supervisor.employee else supervisor.username }}</option>
@@ -28,7 +28,7 @@
       </div>
     {% else %}
       <div>
-        <label>Supervisor responsable</label>
+        <label>Encargado responsable</label>
         <input value="{{ record.supervisor.employee.full_name if record.supervisor and record.supervisor.employee else record.supervisor.username if record.supervisor else current_user.username }}" disabled>
         <input type="hidden" name="supervisor_id" value="{{ record.supervisor_id or current_user.id }}">
       </div>
@@ -75,7 +75,7 @@
     </div>
     <div class="full">
       <label>Observación de edición</label>
-      <textarea name="edit_note" rows="2" placeholder="Ejemplo: el empleado salió a realizar una gestión externa y se corrige la tarea asociada."></textarea>
+      <textarea name="edit_note" rows="2" placeholder="Ejemplo: el colaborador salió a realizar una gestión externa y se corrige la tarea asociada."></textarea>
     </div>
     <div class="full form-actions">
       <button type="submit"><i data-lucide="save"></i>Guardar cambios</button>

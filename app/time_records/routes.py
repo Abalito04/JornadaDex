@@ -133,7 +133,7 @@ def edit(record_id):
             if not employee_is_visible(selected_employee):
                 return ("Forbidden", 403)
             if not supervisor_for_company(current_company_id(), supervisor_id):
-                raise ValueError("Supervisor invalido.")
+                raise ValueError("Encargado invalido.")
             if not AccountingClient.query.filter_by(id=accounting_client_id, company_id=current_company_id(), active=True, deleted_at=None).first():
                 raise ValueError("Cliente contable invalido.")
             selected_area = Area.query.filter_by(id=area_id, company_id=current_company_id(), active=True, deleted_at=None).first()
@@ -228,7 +228,7 @@ def _can_edit_records():
 
 
 def _append_edit_note(observations, edit_note):
-    prefix = "Edicion supervisor"
+    prefix = "Edicion encargado"
     if current_user.is_company_owner or is_platform_admin():
         prefix = "Edición gestión"
     text = f"{prefix}: {edit_note}"
