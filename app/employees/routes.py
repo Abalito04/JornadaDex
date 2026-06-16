@@ -113,11 +113,7 @@ def create():
 @employees_bp.route("/<int:employee_id>/edit", methods=["GET", "POST"])
 @manager_required
 def edit(employee_id):
-    employee = Employee.query.filter_by(
-        id=employee_id,
-        company_id=current_company_id(),
-        deleted_at=None,
-    ).first_or_404()
+    employee = Employee.query.filter_by(id=employee_id, company_id=current_company_id()).first_or_404()
 
     if employee.user and employee.user.is_company_owner and not current_user.is_company_owner and not is_platform_admin():
         return ("Forbidden", 403)
@@ -142,6 +138,9 @@ def edit(employee_id):
             employee.phone = request.form.get("phone", "").strip() or None
             employee.position = request.form.get("position", "").strip() or None
             employee.notes = request.form.get("notes", "").strip() or None
+            employee.active = True
+            employee.deleted_at = None
+            employee.deleted_by = None
             employee.updated_by = current_user.id
 
             if not employee.first_name or not employee.last_name or not employee.document_number:
@@ -187,7 +186,7 @@ def edit(employee_id):
 @employees_bp.route("/<int:employee_id>/delete", methods=["POST"])
 @manager_required
 def delete(employee_id):
-    employee = Employee.query.filter_by(id=employee_id, company_id=current_company_id(), deleted_at=None).first_or_404()
+    employee = Employee.query.filter_by(id=employee_id, company_id=current_company_id()).first_or_404()
     if employee.user and employee.user.is_company_owner and not current_user.is_company_owner and not is_platform_admin():
         return ("Forbidden", 403)
     if not employee_is_visible(employee):
@@ -202,4 +201,3 @@ def delete(employee_id):
     db.session.commit()
     flash("Colaborador eliminado lógicamente.", "success")
     return redirect(url_for("employees.index"))
-
