@@ -63,7 +63,7 @@ def create():
 
             write_audit("CREATE", "employees", employee.id, new_values={"name": employee.full_name})
             db.session.commit()
-            flash("Empleado creado.", "success")
+            flash("Colaborador creado.", "success")
             return redirect(url_for("employees.index"))
         except (IntegrityError, ValueError) as exc:
             db.session.rollback()
@@ -137,7 +137,7 @@ def edit(employee_id):
                 },
             )
             db.session.commit()
-            flash("Empleado actualizado.", "success")
+            flash("Colaborador actualizado.", "success")
             return redirect(url_for("employees.index"))
         except (IntegrityError, ValueError) as exc:
             db.session.rollback()
@@ -162,5 +162,5 @@ def delete(employee_id):
         employee.user.is_active_flag = False
     write_audit("DELETE", "employees", employee.id, previous_values={"name": employee.full_name})
     db.session.commit()
-    flash("Empleado eliminado lógicamente.", "success")
+    flash("Colaborador eliminado lógicamente.", "success")
     return redirect(url_for("employees.index"))

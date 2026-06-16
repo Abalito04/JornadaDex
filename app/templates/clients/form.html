@@ -77,7 +77,7 @@
       </select>
     </div>
     <div id="payrollDetails" class="conditional-field {% if not client.payroll_enabled %}hidden{% endif %}">
-      <label>Cantidad de empleados</label>
+      <label>Cantidad de colaboradores</label>
       <input name="payroll_employee_count" type="number" min="0" step="1" value="{{ client.payroll_employee_count if client.payroll_employee_count is not none else '' }}">
     </div>
     <div>

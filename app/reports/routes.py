@@ -164,7 +164,7 @@ def _export_headers():
         "Cliente",
         "Grupo",
         "Sueldos",
-        "Cantidad de empleados",
+        "Cantidad de colaboradores",
         "Horas presupuestadas",
         "Honorarios",
         "Fecha",

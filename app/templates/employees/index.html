@@ -1,12 +1,12 @@
 {% extends "base.html" %}
-{% block title %}Empleados{% endblock %}
+{% block title %}Colaboradores{% endblock %}
 {% block content %}
 <section class="page-title row-title">
   <div>
-    <h1>Empleados</h1>
+    <h1>Colaboradores</h1>
     <p>Personas y usuarios vinculados a esta empresa.</p>
   </div>
-  <a class="button" href="{{ url_for('employees.create') }}"><i data-lucide="plus"></i>Nuevo empleado</a>
+  <a class="button" href="{{ url_for('employees.create') }}"><i data-lucide="plus"></i>Nuevo colaborador</a>
 </section>
 
 <section class="panel">
@@ -27,7 +27,7 @@
               {% set is_owner_employee = employee.user and employee.user.is_company_owner %}
               {% if current_user.is_company_owner or is_platform_admin() or not is_owner_employee %}
                 <a class="button small secondary" href="{{ url_for('employees.edit', employee_id=employee.id) }}">Editar</a>
-                <form method="post" action="{{ url_for('employees.delete', employee_id=employee.id) }}" onsubmit="return confirm('Eliminar empleado?')">
+                <form method="post" action="{{ url_for('employees.delete', employee_id=employee.id) }}" onsubmit="return confirm('Eliminar colaborador?')">
                   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                   <button class="danger small" type="submit">Eliminar</button>
                 </form>
@@ -41,8 +41,8 @@
             <td colspan="6">
               <div class="empty-state compact">
                 <i data-lucide="users"></i>
-                <strong>No hay empleados cargados.</strong>
-                <span>Creá empleados y usuarios para comenzar a registrar tareas.</span>
+                <strong>No hay colaboradores cargados.</strong>
+                <span>Creá colaboradores y usuarios para comenzar a registrar tareas.</span>
               </div>
             </td>
           </tr>

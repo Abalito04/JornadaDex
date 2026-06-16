@@ -60,7 +60,7 @@ if (previewTabs.length && previewPanels.length) {
     },
     reportes: {
       title: "Reportes listos",
-      copy: "Los reportes resumen empleados, clientes, áreas y registros del período.",
+      copy: "Los reportes resumen colaboradores, clientes, áreas y registros del período.",
     },
   };
 

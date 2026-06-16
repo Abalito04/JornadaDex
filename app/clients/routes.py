@@ -106,7 +106,7 @@ def _save_client(client, success_message, audit_action):
         if not client.name:
             raise ValueError("El nombre del cliente es obligatorio.")
         if client.payroll_enabled and client.payroll_employee_count is None:
-            raise ValueError("Ingresá la cantidad de empleados cuando Sueldos sea Si.")
+            raise ValueError("Ingresá la cantidad de colaboradores cuando Sueldos sea Si.")
         if client.group_enabled and not client.group_name:
             raise ValueError("Ingresá el nombre de grupo cuando Grupo sea Si.")
 
@@ -197,9 +197,9 @@ def _parse_positive_int(field_name):
     try:
         parsed = int(value)
     except ValueError as exc:
-        raise ValueError("La cantidad de empleados debe ser un número entero.") from exc
+        raise ValueError("La cantidad de colaboradores debe ser un número entero.") from exc
     if parsed < 0:
-        raise ValueError("La cantidad de empleados no puede ser negativa.")
+        raise ValueError("La cantidad de colaboradores no puede ser negativa.")
     return parsed
 
 

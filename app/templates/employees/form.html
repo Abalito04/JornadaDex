@@ -1,8 +1,8 @@
 {% extends "base.html" %}
-{% block title %}{{ "Editar empleado" if employee else "Nuevo empleado" }}{% endblock %}
+{% block title %}{{ "Editar colaborador" if employee else "Nuevo colaborador" }}{% endblock %}
 {% block content %}
 <section class="page-title">
-  <h1>{{ "Editar empleado" if employee else "Nuevo empleado" }}</h1>
+  <h1>{{ "Editar colaborador" if employee else "Nuevo colaborador" }}</h1>
   <p>{% if employee %}Modificá datos y, si hace falta, reseteá la clave del usuario.{% else %}También podés crearle usuario para que cargue sus horas.{% endif %}</p>
 </section>
 
@@ -20,7 +20,7 @@
     {% if employee %}
       <div class="full form-divider">
         <strong>Acceso</strong>
-        <span>{{ employee.user.username if employee.user else "Este empleado no tiene usuario creado." }}</span>
+        <span>{{ employee.user.username if employee.user else "Este colaborador no tiene usuario creado." }}</span>
       </div>
       {% if employee.user %}
         <div>
