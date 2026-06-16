@@ -50,7 +50,7 @@ def index():
     month_start = reference_date.replace(day=1)
     active_employees_query = Employee.query.filter_by(company_id=company_id, active=True, deleted_at=None)
     open_records = base.filter(TimeRecord.end_time.is_(None)).order_by(TimeRecord.record_date.desc(), TimeRecord.start_time.desc()).limit(8).all()
-    recent_records = base.order_by(TimeRecord.record_date.desc(), TimeRecord.start_time.desc()).limit(8).all()
+    recent_records = base.filter(TimeRecord.end_time.isnot(None)).order_by(TimeRecord.record_date.desc(), TimeRecord.start_time.desc()).limit(8).all()
     metrics = {
         "active_employees": visible_employees_query(active_employees_query).count(),
         "active_clients": AccountingClient.query.filter_by(company_id=company_id, active=True, deleted_at=None).count(),

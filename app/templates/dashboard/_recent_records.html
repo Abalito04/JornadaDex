@@ -5,11 +5,7 @@
         <strong>{{ record.task.name }}</strong>
         <span>{{ record.record_date }} · {{ record.area.name }}{% if record.accounting_client %} · {{ record.accounting_client.name }}{% endif %}{% if record.supervisor %} · Encargado: {{ record.supervisor.employee.full_name if record.supervisor.employee else record.supervisor.username }}{% endif %}</span>
       </div>
-      {% if record.end_time %}
-        <span class="status-badge finalizada">{{ format_duration_hs(record.hours) }}</span>
-      {% else %}
-        <span class="status-badge en-curso">En curso</span>
-      {% endif %}
+      <span class="status-badge finalizada">{{ format_duration_hs(record.hours) }}</span>
     </article>
   {% else %}
     <div class="empty-state compact">
