@@ -1523,6 +1523,10 @@ main.auth-main:has(.landing-page) {
   font-weight: 700;
 }
 
+.records-summary.static-summary {
+  cursor: default;
+}
+
 .records-filter {
   padding: 0 var(--space-5) var(--space-4);
 }

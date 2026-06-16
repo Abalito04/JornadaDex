@@ -71,6 +71,45 @@
   </form>
 </section>
 
+{% if open_records %}
+  <section class="panel records-panel">
+    <div class="records-summary static-summary">
+      <span>{{ "Tarea en curso" if open_records|length == 1 else "Tareas en curso" }}</span>
+      <strong>{{ open_records|length }} activas</strong>
+    </div>
+    <div class="table-wrap">
+      <table class="records-table">
+        <thead>
+          <tr><th>Colaborador</th><th>Encargado</th><th>Cliente</th><th>Fecha</th><th>Inicio</th><th>Estado</th><th>Área</th><th>Tarea</th><th></th></tr>
+        </thead>
+        <tbody>
+          {% for record in open_records %}
+            <tr>
+              <td>{{ record.employee.full_name }}</td>
+              <td>{{ record.supervisor.employee.full_name if record.supervisor and record.supervisor.employee else record.supervisor.username if record.supervisor else "Sin asignar" }}</td>
+              <td>{{ record.accounting_client.name if record.accounting_client else "Sin cliente" }}</td>
+              <td>{{ record.record_date }}</td>
+              <td>{{ format_time_hs(record.start_time) }}</td>
+              <td><span class="status-badge en-curso">En curso</span></td>
+              <td>{{ record.area.name }}</td>
+              <td>{{ record.task.name }}</td>
+              <td>
+                {% if can_edit_records %}
+                  <a class="button small secondary" href="{{ url_for('time_records.edit', record_id=record.id) }}">Editar</a>
+                {% endif %}
+                <form method="post" action="{{ url_for('time_records.finish', record_id=record.id) }}">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                  <button class="small" type="submit">Finalizar</button>
+                </form>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+{% endif %}
+
 <details class="panel records-panel" {% if has_record_filters %}open{% endif %}>
   <summary class="records-summary">
     <span>Últimos registros</span>
@@ -132,11 +171,7 @@
             <td>{{ format_time_hs(record.end_time) }}</td>
             <td>{{ format_duration_hs(record.hours) }}</td>
             <td class="edit-note-cell">
-              {% if not record.end_time %}
-                <span class="status-badge en-curso">En curso</span>
-              {% else %}
-                <span class="status-badge finalizada">Finalizada</span>
-              {% endif %}
+              <span class="status-badge finalizada">Finalizada</span>
             </td>
             <td>{{ record.area.name }}</td>
             <td>{{ record.task.name }}</td>
@@ -154,12 +189,6 @@
             <td>
               {% if can_edit_records %}
                 <a class="button small secondary" href="{{ url_for('time_records.edit', record_id=record.id) }}">Editar</a>
-              {% endif %}
-              {% if not record.end_time %}
-                <form method="post" action="{{ url_for('time_records.finish', record_id=record.id) }}">
-                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                  <button class="small" type="submit">Finalizar</button>
-                </form>
               {% endif %}
               <form method="post" action="{{ url_for('time_records.delete', record_id=record.id) }}" onsubmit="return confirm('¿Eliminar registro?')">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">

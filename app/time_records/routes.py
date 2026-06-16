@@ -75,7 +75,14 @@ def index():
         records_query = visible_company_time_records_query(records_query)
     else:
         records_query = visible_time_records_query(records_query)
-    records_query = _apply_record_filters(records_query, can_choose_employee)
+
+    open_records = (
+        records_query.filter(TimeRecord.end_time.is_(None))
+        .order_by(TimeRecord.record_date.desc(), TimeRecord.start_time.desc())
+        .limit(20)
+        .all()
+    )
+    records_query = _apply_record_filters(records_query.filter(TimeRecord.end_time.isnot(None)), can_choose_employee)
     records = records_query.order_by(TimeRecord.record_date.desc(), TimeRecord.start_time.desc()).limit(100).all()
     return render_template(
         "time_records/index.html",
@@ -83,6 +90,7 @@ def index():
         clients=clients,
         areas=areas,
         tasks=tasks,
+        open_records=open_records,
         records=records,
         supervisors=supervisors,
         can_choose_employee=can_choose_employee,

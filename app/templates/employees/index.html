@@ -13,7 +13,7 @@
   <div class="table-wrap">
     <table>
       <thead>
-        <tr><th>Nombre</th><th>Documento</th><th>Email</th><th>Puesto</th><th>Usuario</th><th></th></tr>
+        <tr><th>Nombre</th><th>Documento</th><th>Email</th><th>Puesto</th><th>Usuario</th><th>Rol</th><th></th></tr>
       </thead>
       <tbody>
         {% for employee in employees %}
@@ -23,6 +23,7 @@
             <td>{{ employee.email or "" }}</td>
             <td>{{ employee.position or "" }}</td>
             <td>{{ employee.user.username if employee.user else "Sin usuario" }}</td>
+            <td>{{ role_label(employee.user.role, employee.user.is_company_owner, employee.user.is_platform_admin) if employee.user else "Sin acceso" }}</td>
             <td>
               {% set is_owner_employee = employee.user and employee.user.is_company_owner %}
               {% if current_user.is_company_owner or is_platform_admin() or not is_owner_employee %}
@@ -38,7 +39,7 @@
           </tr>
         {% else %}
           <tr>
-            <td colspan="6">
+            <td colspan="7">
               <div class="empty-state compact">
                 <i data-lucide="users"></i>
                 <strong>No hay colaboradores cargados.</strong>
