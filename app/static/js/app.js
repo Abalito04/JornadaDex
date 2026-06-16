@@ -10,6 +10,7 @@ const revealItems = document.querySelectorAll(".landing-copy, .landing-preview, 
 const conditionalToggles = document.querySelectorAll("[data-conditional-toggle]");
 const timeBudgetInputs = document.querySelectorAll("[data-time-budget-input]");
 const currencyInputs = document.querySelectorAll("[data-currency-input]");
+const sortableTables = document.querySelectorAll("[data-sortable-table]");
 const root = document.documentElement;
 const themeStorageKey = "trazalab-theme";
 
@@ -154,6 +155,51 @@ currencyInputs.forEach((input) => {
       return;
     }
     input.value = `$ ${Math.round(amount).toLocaleString("es-AR")}`;
+  });
+});
+
+sortableTables.forEach((table) => {
+  const headers = Array.from(table.querySelectorAll("[data-sortable-column]"));
+  const tbody = table.querySelector("tbody");
+  if (!headers.length || !tbody) {
+    return;
+  }
+
+  headers.forEach((header, columnIndex) => {
+    header.tabIndex = 0;
+    header.setAttribute("role", "button");
+    header.setAttribute("aria-sort", "none");
+
+    const sortTable = () => {
+      const nextDirection = header.dataset.sortDirection === "asc" ? "desc" : "asc";
+      headers.forEach((item) => {
+        item.dataset.sortDirection = "";
+        item.setAttribute("aria-sort", "none");
+      });
+      header.dataset.sortDirection = nextDirection;
+      header.setAttribute("aria-sort", nextDirection === "asc" ? "ascending" : "descending");
+
+      const rows = Array.from(tbody.querySelectorAll("tr")).filter((row) => row.children.length > columnIndex);
+      rows
+        .sort((firstRow, secondRow) => {
+          const firstValue = firstRow.children[columnIndex].textContent.trim();
+          const secondValue = secondRow.children[columnIndex].textContent.trim();
+          return firstValue.localeCompare(secondValue, "es", { numeric: true, sensitivity: "base" });
+        })
+        .forEach((row) => tbody.appendChild(row));
+
+      if (nextDirection === "desc") {
+        rows.reverse().forEach((row) => tbody.appendChild(row));
+      }
+    };
+
+    header.addEventListener("click", sortTable);
+    header.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        sortTable();
+      }
+    });
   });
 });
 

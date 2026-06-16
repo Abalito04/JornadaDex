@@ -11,9 +11,17 @@
 
 <section class="panel">
   <div class="table-wrap">
-    <table>
+    <table data-sortable-table>
       <thead>
-        <tr><th>Nombre</th><th>Documento</th><th>Email</th><th>Puesto</th><th>Usuario</th><th>Rol</th><th></th></tr>
+        <tr>
+          <th data-sortable-column>Nombre</th>
+          <th data-sortable-column>Documento</th>
+          <th data-sortable-column>Email</th>
+          <th data-sortable-column>Puesto</th>
+          <th data-sortable-column>Usuario</th>
+          <th data-sortable-column>Rol</th>
+          <th></th>
+        </tr>
       </thead>
       <tbody>
         {% for employee in employees %}

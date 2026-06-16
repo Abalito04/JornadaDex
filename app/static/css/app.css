@@ -1754,6 +1754,30 @@ th {
   text-transform: uppercase;
 }
 
+th[data-sortable-column] {
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+
+th[data-sortable-column]::after {
+  content: "↕";
+  display: inline-block;
+  margin-left: var(--space-2);
+  color: var(--color-text-muted);
+  font-size: 0.9em;
+}
+
+th[data-sortable-column][data-sort-direction="asc"]::after {
+  content: "↑";
+  color: var(--color-primary);
+}
+
+th[data-sortable-column][data-sort-direction="desc"]::after {
+  content: "↓";
+  color: var(--color-primary);
+}
+
 tbody tr {
   background: var(--color-surface);
   transition: background 160ms ease;
