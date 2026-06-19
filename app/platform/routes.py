@@ -5,7 +5,7 @@ from flask_login import current_user, login_required
 
 from app.extensions import db
 from app.context import is_platform_admin
-from app.models import Company, User
+from app.models import Company, TimeRecord, User
 from app.roles import ROLE_DEVELOPER, ROLE_OWNER, normalize_role
 from app.services.audit_service import write_audit
 
@@ -101,6 +101,30 @@ def delete_company(company_id):
     if session.get("active_company_id") == company.id:
         session.pop("active_company_id", None)
     flash("Empresa eliminada lógicamente.", "success")
+    return redirect(url_for("platform.companies"))
+
+
+@platform_bp.route("/companies/<int:company_id>/reset-activity", methods=["POST"])
+@login_required
+def reset_company_activity(company_id):
+    denied = require_platform_admin()
+    if denied:
+        return denied
+
+    company = Company.query.filter_by(id=company_id, deleted_at=None).first_or_404()
+    records = TimeRecord.query.filter_by(company_id=company.id, deleted_at=None).all()
+    for record in records:
+        record.soft_delete(current_user.id)
+    write_audit(
+        "RESET_ACTIVITY",
+        "companies",
+        company.id,
+        previous_values={"time_records": len(records)},
+        new_values={"preserved": "company, users, collaborators, clients, areas, tasks"},
+        company_id=company.id,
+    )
+    db.session.commit()
+    flash(f"Actividad reiniciada. Se conservaron empresa, usuarios y colaboradores. Registros archivados: {len(records)}.", "success")
     return redirect(url_for("platform.companies"))
 
 

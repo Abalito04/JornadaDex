@@ -40,6 +40,10 @@
                 <button class="small" type="submit">Administrar</button>
               </form>
               <a class="button small secondary" href="{{ url_for('platform.edit_company', company_id=company.id) }}">Editar</a>
+              <form method="post" action="{{ url_for('platform.reset_company_activity', company_id=company.id) }}" onsubmit="return confirm('Reiniciar actividad de esta empresa? Se conservaran usuarios, colaboradores, clientes, areas y tareas. Se archivaran los registros de horas.');">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button class="danger subtle small" type="submit">Reiniciar actividad</button>
+              </form>
               <form method="post" action="{{ url_for('platform.delete_company', company_id=company.id) }}" onsubmit="return confirm('¿Eliminar empresa?')">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <button class="danger small" type="submit">Eliminar</button>

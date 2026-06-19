@@ -1531,6 +1531,10 @@ main.auth-main:has(.landing-page) {
   padding: 0 var(--space-5) var(--space-4);
 }
 
+.records-panel > .dashboard-list {
+  padding: 0 var(--space-5) var(--space-5);
+}
+
 .records-table .edit-note-cell,
 .inline-note {
   max-width: 180px;

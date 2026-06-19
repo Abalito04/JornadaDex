@@ -48,10 +48,13 @@
     </div>
   </section>
 
-  <section class="panel">
-    <h2>Mis últimos registros</h2>
+  <details class="panel records-panel">
+    <summary class="records-summary">
+      <span>Mis últimos registros</span>
+      <strong>{{ recent_records|length }} visibles</strong>
+    </summary>
     {% include "dashboard/_recent_records.html" %}
-  </section>
+  </details>
 {% elif dashboard_role == "supervisor" %}
   <section class="metric-grid">
     <article><span>Horas hoy</span><strong>{{ format_duration_hs(metrics.total_hours_today) }}</strong></article>
