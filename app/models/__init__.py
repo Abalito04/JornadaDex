@@ -172,6 +172,9 @@ class TimeRecord(db.Model, AuditMixin):
     start_time = db.Column(db.Time, nullable=False)
     end_time = db.Column(db.Time, nullable=True)
     hours = db.Column(db.Numeric(8, 2), nullable=False, default=0)
+    is_paused = db.Column(db.Boolean, default=False, nullable=False)
+    paused_at = db.Column(db.DateTime, nullable=True)
+    paused_seconds = db.Column(db.Integer, default=0, nullable=False)
     observations = db.Column(db.Text, nullable=True)
 
     employee = db.relationship("Employee", back_populates="time_records")

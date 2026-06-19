@@ -63,7 +63,9 @@
             <td>{{ format_time_hs(record.end_time) }}</td>
             <td>{{ format_duration_hs(record.hours) }}</td>
             <td>
-              {% if not record.end_time %}
+              {% if not record.end_time and record.is_paused %}
+                <span class="status-badge blocked">Pausada</span>
+              {% elif not record.end_time %}
                 <span class="status-badge en-curso">En curso</span>
               {% else %}
                 <span class="status-badge finalizada">Finalizada</span>

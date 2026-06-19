@@ -9,6 +9,7 @@ from app.services.audit_service import write_audit
 from app.services.supervisor_service import supervisor_for_company, supervisors_for_company
 from app.services.time_record_service import finish_time_record, parse_date, start_time_record
 from app.services.visibility_service import employee_is_visible, visible_company_time_records_query, visible_employees_query, visible_time_records_query
+from app.utils.datetime import argentina_now
 
 time_records_bp = Blueprint("time_records", __name__, url_prefix="/time-records")
 
@@ -211,6 +212,58 @@ def finish(record_id):
     except ValueError as exc:
         db.session.rollback()
         flash(str(exc), "danger")
+    return redirect(url_for("time_records.index"))
+
+
+@time_records_bp.route("/<int:record_id>/toggle-pause", methods=["POST"])
+@login_required
+def toggle_pause(record_id):
+    if is_platform_admin():
+        abort(403)
+    record = TimeRecord.query.filter_by(id=record_id, company_id=current_company_id(), deleted_at=None).first_or_404()
+    if not employee_is_visible(record.employee):
+        return ("Forbidden", 403)
+    if current_user.role == ROLE_EMPLOYEE and not current_user.is_company_owner and not is_platform_admin() and record.employee_id != current_user.employee_id:
+        return ("Forbidden", 403)
+    if record.end_time:
+        flash("No se puede pausar una tarea finalizada.", "danger")
+        return redirect(url_for("time_records.index"))
+
+    if record.is_paused:
+        active_record = TimeRecord.query.filter(
+            TimeRecord.company_id == record.company_id,
+            TimeRecord.employee_id == record.employee_id,
+            TimeRecord.deleted_at.is_(None),
+            TimeRecord.end_time.is_(None),
+            TimeRecord.is_paused.is_(False),
+            TimeRecord.id != record.id,
+        ).first()
+        if active_record:
+            flash("Ya hay otra tarea activa. Pausala o finalizala antes de reanudar esta.", "danger")
+            return redirect(url_for("time_records.index"))
+
+    previous_status = "paused" if record.is_paused else "in_progress"
+    now = argentina_now().replace(tzinfo=None)
+    if record.is_paused:
+        if record.paused_at:
+            paused_seconds = int((now - record.paused_at.replace(tzinfo=None)).total_seconds())
+            record.paused_seconds = (record.paused_seconds or 0) + max(paused_seconds, 0)
+        record.paused_at = None
+        record.is_paused = False
+    else:
+        record.paused_at = now
+        record.is_paused = True
+    record.updated_by = current_user.id
+    write_audit(
+        "UPDATE",
+        "time_records",
+        record.id,
+        previous_values={"status": previous_status},
+        new_values={"status": "paused" if record.is_paused else "in_progress"},
+        company_id=record.company_id,
+    )
+    db.session.commit()
+    flash("Tarea pausada." if record.is_paused else "Tarea reanudada.", "success")
     return redirect(url_for("time_records.index"))
 
 

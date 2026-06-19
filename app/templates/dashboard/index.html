@@ -17,7 +17,7 @@
     <article><span>Horas hoy</span><strong>{{ format_duration_hs(metrics.total_hours_today) }}</strong></article>
     <article><span>Horas últimos 7 días</span><strong>{{ format_duration_hs(metrics.total_hours_week) }}</strong></article>
     <article><span>Horas mes</span><strong>{{ format_duration_hs(metrics.total_hours_month) }}</strong></article>
-    <article><span>Tareas en curso</span><strong>{{ metrics.open_records }}</strong></article>
+    <article><span>Tareas abiertas</span><strong>{{ metrics.open_records }}</strong></article>
   </section>
 
   <section class="two-columns">
@@ -30,12 +30,18 @@
               <strong>{{ record.task.name }}</strong>
               <span>{{ record.area.name }}{% if record.accounting_client %} · {{ record.accounting_client.name }}{% endif %}{% if record.supervisor %} · Encargado: {{ record.supervisor.employee.full_name if record.supervisor.employee else record.supervisor.username }}{% endif %}</span>
             </div>
-            <span class="status-badge en-curso">{{ format_time_hs(record.start_time) }}</span>
+            <div class="table-actions">
+              <span class="status-badge {{ 'blocked' if record.is_paused else 'en-curso' }}">{{ "Pausada" if record.is_paused else format_time_hs(record.start_time) }}</span>
+              <form method="post" action="{{ url_for('time_records.toggle_pause', record_id=record.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button class="small secondary" type="submit">{{ "Reanudar" if record.is_paused else "Pausar" }}</button>
+              </form>
+            </div>
           </article>
         {% else %}
           <div class="empty-state compact">
             <i data-lucide="timer-off"></i>
-            <strong>No tenés tareas en curso.</strong>
+            <strong>No tenés tareas abiertas.</strong>
             <span>Cuando inicies una tarea va a aparecer acá.</span>
           </div>
         {% endfor %}
@@ -60,7 +66,7 @@
     <article><span>Horas hoy</span><strong>{{ format_duration_hs(metrics.total_hours_today) }}</strong></article>
     <article><span>Horas últimos 7 días</span><strong>{{ format_duration_hs(metrics.total_hours_week) }}</strong></article>
     <article><span>Horas mes</span><strong>{{ format_duration_hs(metrics.total_hours_month) }}</strong></article>
-    <article><span>Tareas en curso</span><strong>{{ metrics.open_records }}</strong></article>
+    <article><span>Tareas abiertas</span><strong>{{ metrics.open_records }}</strong></article>
   </section>
 
   <section class="two-columns">
@@ -95,7 +101,7 @@
     <article><span>Horas hoy</span><strong>{{ format_duration_hs(metrics.total_hours_today) }}</strong></article>
     <article><span>Horas últimos 7 días</span><strong>{{ format_duration_hs(metrics.total_hours_week) }}</strong></article>
     <article><span>Horas mes</span><strong>{{ format_duration_hs(metrics.total_hours_month) }}</strong></article>
-    <article><span>Tareas en curso</span><strong>{{ metrics.open_records }}</strong></article>
+    <article><span>Tareas abiertas</span><strong>{{ metrics.open_records }}</strong></article>
   </section>
 
   <section class="two-columns">

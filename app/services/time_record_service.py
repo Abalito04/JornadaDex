@@ -29,6 +29,17 @@ def calculate_hours(record_date, start_time, end_time):
     return Decimal(diff_seconds / 3600).quantize(Decimal("0.01"))
 
 
+def calculate_adjusted_hours(record, end_time, extra_paused_seconds=0):
+    start_at = datetime.combine(record.record_date, record.start_time)
+    end_at = datetime.combine(record.record_date, end_time)
+    if end_at < start_at:
+        end_at += timedelta(days=1)
+    elapsed_seconds = max((end_at - start_at).total_seconds(), 0)
+    paused_seconds = (record.paused_seconds or 0) + extra_paused_seconds
+    worked_seconds = max(elapsed_seconds - paused_seconds, 0)
+    return Decimal(worked_seconds / 3600).quantize(Decimal("0.01"))
+
+
 def start_time_record(company_id, user_id, employee_id, supervisor_id, accounting_client_id, area_id, task_id, observations):
     employee = Employee.query.filter_by(id=employee_id, company_id=company_id, deleted_at=None).first()
     if not employee:
@@ -39,9 +50,10 @@ def start_time_record(company_id, user_id, employee_id, supervisor_id, accountin
         employee_id=employee_id,
         end_time=None,
         deleted_at=None,
+        is_paused=False,
     ).first()
     if active_record:
-        raise ValueError("Este colaborador ya tiene una tarea en curso. Finalizala antes de iniciar otra.")
+        raise ValueError("Este colaborador ya tiene una tarea activa. Pausala o finalizala antes de iniciar otra.")
 
     supervisor = supervisor_for_company(company_id, supervisor_id)
     if not supervisor:
@@ -105,10 +117,16 @@ def finish_time_record(record, user_id):
 
     now = argentina_now()
     end_time = now.time().replace(microsecond=0)
-    hours = calculate_hours(record.record_date, record.start_time, end_time)
+    extra_paused_seconds = 0
+    if record.is_paused and record.paused_at:
+        extra_paused_seconds = int((now.replace(tzinfo=None) - record.paused_at.replace(tzinfo=None)).total_seconds())
+    hours = calculate_adjusted_hours(record, end_time, max(extra_paused_seconds, 0))
     previous_values = {"status": "in_progress", "hours": str(record.hours)}
     record.end_time = end_time
     record.hours = hours
+    record.is_paused = False
+    record.paused_at = None
+    record.paused_seconds = (record.paused_seconds or 0) + max(extra_paused_seconds, 0)
     record.updated_by = user_id
     db.session.flush()
     write_audit(

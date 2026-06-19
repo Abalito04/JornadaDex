@@ -74,8 +74,8 @@
 {% if open_records %}
   <section class="panel records-panel">
     <div class="records-summary static-summary">
-      <span>{{ "Tarea en curso" if open_records|length == 1 else "Tareas en curso" }}</span>
-      <strong>{{ open_records|length }} activas</strong>
+      <span>{{ "Tarea abierta" if open_records|length == 1 else "Tareas abiertas" }}</span>
+      <strong>{{ open_records|length }} abiertas</strong>
     </div>
     <div class="table-wrap">
       <table class="records-table">
@@ -90,13 +90,23 @@
               <td>{{ record.accounting_client.name if record.accounting_client else "Sin cliente" }}</td>
               <td>{{ record.record_date }}</td>
               <td>{{ format_time_hs(record.start_time) }}</td>
-              <td><span class="status-badge en-curso">En curso</span></td>
+              <td>
+                {% if record.is_paused %}
+                  <span class="status-badge blocked">Pausada</span>
+                {% else %}
+                  <span class="status-badge en-curso">En curso</span>
+                {% endif %}
+              </td>
               <td>{{ record.area.name }}</td>
               <td>{{ record.task.name }}</td>
               <td>
                 {% if can_edit_records %}
                   <a class="button small secondary" href="{{ url_for('time_records.edit', record_id=record.id) }}">Editar</a>
                 {% endif %}
+                <form method="post" action="{{ url_for('time_records.toggle_pause', record_id=record.id) }}">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                  <button class="small secondary" type="submit">{{ "Reanudar" if record.is_paused else "Pausar" }}</button>
+                </form>
                 <form method="post" action="{{ url_for('time_records.finish', record_id=record.id) }}">
                   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                   <button class="small" type="submit">Finalizar</button>
