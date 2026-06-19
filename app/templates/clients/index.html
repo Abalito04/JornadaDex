@@ -6,7 +6,27 @@
     <h1>Clientes contables</h1>
     <p>Base de empresas/clientes para asignar cada registro de trabajo a un contexto contable concreto.</p>
   </div>
-  <a class="button" href="{{ url_for('clients.create') }}"><i data-lucide="plus"></i>Nuevo cliente</a>
+  <div class="page-actions">
+    <a class="button secondary" href="{{ url_for('clients.template_xlsx') }}"><i data-lucide="file-spreadsheet"></i>Plantilla XLSX</a>
+    <a class="button secondary" href="{{ url_for('clients.template_csv') }}"><i data-lucide="file-text"></i>Plantilla CSV</a>
+    <a class="button" href="{{ url_for('clients.create') }}"><i data-lucide="plus"></i>Nuevo cliente</a>
+  </div>
+</section>
+
+<section class="panel import-panel">
+  <div>
+    <h2>Importar clientes</h2>
+    <p>Subi un archivo CSV o XLSX con los encabezados de la plantilla. Si la razon social ya existe, se actualiza el cliente.</p>
+  </div>
+  <form method="post" action="{{ url_for('clients.import_clients') }}" enctype="multipart/form-data" class="import-form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label class="file-picker">
+      <i data-lucide="upload"></i>
+      <span>Archivo de clientes</span>
+      <input name="clients_file" type="file" accept=".csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" required>
+    </label>
+    <button type="submit"><i data-lucide="upload-cloud"></i>Importar clientes</button>
+  </form>
 </section>
 
 <section class="panel">

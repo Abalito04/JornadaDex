@@ -133,7 +133,8 @@ def ensure_runtime_schema():
             db.session.execute(text("ALTER TABLE time_records ADD COLUMN is_paused BOOLEAN NOT NULL DEFAULT FALSE"))
             db.session.commit()
         if "paused_at" not in time_record_columns:
-            db.session.execute(text("ALTER TABLE time_records ADD COLUMN paused_at DATETIME"))
+            datetime_type = "TIMESTAMP" if db.engine.dialect.name == "postgresql" else "DATETIME"
+            db.session.execute(text(f"ALTER TABLE time_records ADD COLUMN paused_at {datetime_type}"))
             db.session.commit()
         if "paused_seconds" not in time_record_columns:
             db.session.execute(text("ALTER TABLE time_records ADD COLUMN paused_seconds INTEGER NOT NULL DEFAULT 0"))
