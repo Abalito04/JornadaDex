@@ -17,8 +17,15 @@ def normalize_database_url(url):
     return url
 
 
+def require_secret_key():
+    secret_key = clean_env_value(os.getenv("SECRET_KEY"))
+    if not secret_key:
+        raise RuntimeError("SECRET_KEY must be set before starting JornadaDex.")
+    return secret_key
+
+
 class Config:
-    SECRET_KEY = clean_env_value(os.getenv("SECRET_KEY", "dev-secret-change-me"))
+    SECRET_KEY = require_secret_key()
     SQLALCHEMY_DATABASE_URI = normalize_database_url(os.getenv("DATABASE_URL", "sqlite:///time_control.db"))
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SESSION_COOKIE_HTTPONLY = True

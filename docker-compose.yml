@@ -4,7 +4,7 @@ services:
     ports:
       - "5000:5000"
     environment:
-      SECRET_KEY: "change-this-secret"
+      SECRET_KEY: "${SECRET_KEY:?Set SECRET_KEY in your environment or .env file}"
       DATABASE_URL: "sqlite:////app/instance/time_control.db"
       SESSION_COOKIE_SECURE: "false"
     volumes:
