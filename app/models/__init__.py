@@ -56,6 +56,7 @@ class User(UserMixin, db.Model, AuditMixin):
     is_platform_admin = db.Column(db.Boolean, default=False, nullable=False)
     is_active_flag = db.Column(db.Boolean, default=True, nullable=False)
     last_login_at = db.Column(db.DateTime, nullable=True)
+    email_verified_at = db.Column(db.DateTime, nullable=True)
 
     company = db.relationship("Company", back_populates="users", foreign_keys=[company_id])
     employee = db.relationship("Employee", back_populates="user", foreign_keys=[employee_id])
@@ -200,3 +201,4 @@ class AuditLog(db.Model):
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)
 
     user = db.relationship("User", foreign_keys=[user_id])
+

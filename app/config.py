@@ -43,6 +43,16 @@ class Config:
     CLIENT_IMPORT_MAX_ROWS = int(clean_env_value(os.getenv("CLIENT_IMPORT_MAX_ROWS", "2000")))
     TURNSTILE_SITE_KEY = clean_env_value(os.getenv("TURNSTILE_SITE_KEY", ""))
     TURNSTILE_SECRET_KEY = clean_env_value(os.getenv("TURNSTILE_SECRET_KEY", ""))
+    EMAIL_VERIFICATION_REQUIRED = clean_env_value(os.getenv("EMAIL_VERIFICATION_REQUIRED", "false")).lower() == "true"
+    EMAIL_VERIFICATION_MAX_AGE_HOURS = int(clean_env_value(os.getenv("EMAIL_VERIFICATION_MAX_AGE_HOURS", "24")))
+    PASSWORD_RESET_MAX_AGE_MINUTES = int(clean_env_value(os.getenv("PASSWORD_RESET_MAX_AGE_MINUTES", "60")))
+    SMTP_HOST = clean_env_value(os.getenv("SMTP_HOST", ""))
+    SMTP_PORT = int(clean_env_value(os.getenv("SMTP_PORT", "587")))
+    SMTP_USERNAME = clean_env_value(os.getenv("SMTP_USERNAME", ""))
+    SMTP_PASSWORD = clean_env_value(os.getenv("SMTP_PASSWORD", ""))
+    SMTP_FROM_EMAIL = clean_env_value(os.getenv("SMTP_FROM_EMAIL", ""))
+    SMTP_USE_TLS = clean_env_value(os.getenv("SMTP_USE_TLS", "true")).lower() == "true"
+
 
 
 

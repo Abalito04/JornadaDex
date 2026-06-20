@@ -122,6 +122,11 @@ def ensure_runtime_schema():
     if "is_platform_admin" not in columns:
         db.session.execute(text("ALTER TABLE users ADD COLUMN is_platform_admin BOOLEAN NOT NULL DEFAULT FALSE"))
         db.session.commit()
+    if "email_verified_at" not in columns:
+        datetime_type = "TIMESTAMP" if db.engine.dialect.name == "postgresql" else "DATETIME"
+        db.session.execute(text(f"ALTER TABLE users ADD COLUMN email_verified_at {datetime_type}"))
+        db.session.execute(text("UPDATE users SET email_verified_at = CURRENT_TIMESTAMP WHERE email_verified_at IS NULL"))
+        db.session.commit()
     for statement in (
         "DROP INDEX IF EXISTS users_email_key",
         "ALTER TABLE users DROP CONSTRAINT IF EXISTS users_email_key",
@@ -281,6 +286,7 @@ def bootstrap_platform_admin():
     developer.set_password(password)
     db.session.add(developer)
     db.session.commit()
+
 
 
 
