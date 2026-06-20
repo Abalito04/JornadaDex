@@ -82,7 +82,7 @@
           <i data-lucide="scan-line"></i>
           <div>
             <strong>{% block page_heading %}{{ self.title() }}{% endblock %}</strong>
-            <span>{{ company.name if company else "Vista de plataforma" }}</span>
+            <span>{{ "Vista de plataforma" if is_platform_admin() else (company.name if company else "Sin empresa activa") }}</span>
           </div>
         </div>
         <div class="top-actions">

@@ -15,7 +15,7 @@ def current_company_id():
     if not current_user.is_authenticated:
         return None
     if is_platform_admin():
-        return session.get("active_company_id") or current_user.company_id
+        return session.get("active_company_id")
     return current_user.company_id
 
 
