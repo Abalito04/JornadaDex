@@ -1,7 +1,7 @@
 import os
 
 from flask import Flask, request
-from sqlalchemy import inspect, text
+from sqlalchemy import func, inspect, or_, text
 
 from app.config import Config
 from app.extensions import csrf, db, login_manager, migrate
@@ -174,22 +174,71 @@ def bootstrap_platform_admin():
 
     from app.models import Company, User
 
-    user = User.query.filter_by(username=username).first()
-    if user:
-        user.email = email
-        user.is_platform_admin = True
-        user.role = "Developer"
-        user.is_active_flag = True
-        user.deleted_at = None
-        user.set_password(password)
-        db.session.commit()
-        return
-
     company = Company.query.filter_by(name="JornadaDex Developer").first()
+    legacy_company = Company.query.filter_by(name="TrazaLab Developer").first()
+    if company:
+        company.active = True
+        company.deleted_at = None
+        company.deleted_by = None
+    if not company and legacy_company:
+        company = legacy_company
+        company.name = "JornadaDex Developer"
+        company.active = True
+        company.deleted_at = None
+        company.deleted_by = None
+    elif company and legacy_company and legacy_company.id != company.id:
+        legacy_users = User.query.filter_by(company_id=legacy_company.id).all()
+        for legacy_user in legacy_users:
+            legacy_user.company_id = company.id
+        legacy_company.soft_delete()
+        legacy_company.active = False
+
     if not company:
         company = Company(name="JornadaDex Developer", active=True)
         db.session.add(company)
         db.session.flush()
+
+    candidates = (
+        User.query.filter(
+            or_(
+                User.username == username,
+                func.lower(User.email) == email,
+                User.is_platform_admin.is_(True),
+                User.role == "Developer",
+            )
+        )
+        .order_by(User.id)
+        .all()
+    )
+
+    user = (
+        next((candidate for candidate in candidates if candidate.username == username and candidate.deleted_at is None), None)
+        or next((candidate for candidate in candidates if candidate.username == username), None)
+        or next((candidate for candidate in candidates if candidate.email.lower() == email and candidate.deleted_at is None), None)
+        or next((candidate for candidate in candidates if candidate.is_platform_admin and candidate.deleted_at is None), None)
+        or (candidates[0] if candidates else None)
+    )
+
+    if user:
+        user.company_id = company.id
+        user.username = username
+        user.email = email
+        user.is_platform_admin = True
+        user.role = "Developer"
+        user.is_company_owner = False
+        user.is_active_flag = True
+        user.deleted_at = None
+        user.deleted_by = None
+        user.set_password(password)
+        for duplicate in candidates:
+            if duplicate.id == user.id:
+                continue
+            duplicate.is_platform_admin = False
+            duplicate.is_company_owner = False
+            duplicate.is_active_flag = False
+            duplicate.soft_delete(user.id)
+        db.session.commit()
+        return
 
     developer = User(
         company_id=company.id,
