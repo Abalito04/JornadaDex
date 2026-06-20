@@ -8,7 +8,10 @@ Use `.env.example` as base:
 SECRET_KEY=replace-with-a-long-random-secret
 DATABASE_URL=sqlite:///time_control.db
 SESSION_COOKIE_SECURE=false
+SESSION_LIFETIME_HOURS=12
 PUBLIC_SIGNUP_ENABLED=true
+SIGNUP_RATE_LIMIT_ATTEMPTS=5
+SIGNUP_RATE_LIMIT_WINDOW_MINUTES=60
 ENABLE_DEVELOPER_BOOTSTRAP=false
 TURNSTILE_SITE_KEY=
 TURNSTILE_SECRET_KEY=
@@ -18,7 +21,10 @@ For production:
 
 ```text
 SESSION_COOKIE_SECURE=true
+SESSION_LIFETIME_HOURS=12
 PUBLIC_SIGNUP_ENABLED=true
+SIGNUP_RATE_LIMIT_ATTEMPTS=5
+SIGNUP_RATE_LIMIT_WINDOW_MINUTES=60
 ENABLE_DEVELOPER_BOOTSTRAP=false
 TURNSTILE_SITE_KEY=your-cloudflare-turnstile-site-key
 TURNSTILE_SECRET_KEY=your-cloudflare-turnstile-secret-key
@@ -51,6 +57,8 @@ Then create the first company owner from `/auth/signup`.
 6. Schedule database backups.
 7. Use migrations for schema changes.
 8. Restrict access to server logs and environment files.
+
+
 
 
 

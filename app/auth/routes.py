@@ -15,11 +15,15 @@ from app.services.company_service import create_company_with_owner
 auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
 
 _LOGIN_FAILURES = {}
+_SIGNUP_ATTEMPTS = {}
+
+
+def _client_ip():
+    return request.access_route[0] if request.access_route else request.remote_addr or "unknown"
 
 
 def _login_rate_key(username):
-    ip_address = request.access_route[0] if request.access_route else request.remote_addr or "unknown"
-    return f"{ip_address}:{username}"
+    return f"{_client_ip()}:{username}"
 
 
 def _is_login_limited(username):
@@ -40,6 +44,20 @@ def _record_failed_login(username):
 
 def _clear_failed_logins(username):
     _LOGIN_FAILURES.pop(_login_rate_key(username), None)
+
+def _is_signup_limited():
+    key = _client_ip()
+    window = current_app.config["SIGNUP_RATE_LIMIT_WINDOW"]
+    max_attempts = current_app.config["SIGNUP_RATE_LIMIT_ATTEMPTS"]
+    now = datetime.now(timezone.utc)
+    attempts = [attempt for attempt in _SIGNUP_ATTEMPTS.get(key, []) if now - attempt < window]
+    _SIGNUP_ATTEMPTS[key] = attempts
+    return len(attempts) >= max_attempts
+
+
+def _record_signup_attempt():
+    attempts = _SIGNUP_ATTEMPTS.setdefault(_client_ip(), [])
+    attempts.append(datetime.now(timezone.utc))
 
 
 def _turnstile_configured():
@@ -88,6 +106,11 @@ def signup():
 
     if request.method == "POST":
         try:
+            if _is_signup_limited():
+                flash("Demasiadas altas desde esta red. Proba de nuevo mas tarde.", "danger")
+                return render_template("auth/signup.html"), 429
+            _record_signup_attempt()
+
             if not _verify_turnstile():
                 raise ValueError("No pudimos validar el captcha. Intentalo nuevamente.")
 
@@ -148,6 +171,7 @@ def logout():
     db.session.commit()
     logout_user()
     return redirect(url_for("auth.login"))
+
 
 
 

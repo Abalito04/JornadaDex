@@ -40,6 +40,19 @@ def create_app(config_class=Config):
 
     @app.after_request
     def security_headers(response):
+        csp = (
+            "default-src 'self'; "
+            "script-src 'self' 'unsafe-inline' https://unpkg.com https://challenges.cloudflare.com; "
+            "style-src 'self' 'unsafe-inline' https://api.fontshare.com https://fonts.googleapis.com; "
+            "font-src 'self' https://api.fontshare.com https://fonts.gstatic.com data:; "
+            "img-src 'self' data:; "
+            "connect-src 'self' https://challenges.cloudflare.com; "
+            "frame-src https://challenges.cloudflare.com; "
+            "frame-ancestors 'none'; "
+            "base-uri 'self'; "
+            "form-action 'self'"
+        )
+        response.headers.setdefault("Content-Security-Policy", csp)
         response.headers.setdefault("X-Content-Type-Options", "nosniff")
         response.headers.setdefault("X-Frame-Options", "DENY")
         response.headers.setdefault("Referrer-Policy", "same-origin")
@@ -268,5 +281,6 @@ def bootstrap_platform_admin():
     developer.set_password(password)
     db.session.add(developer)
     db.session.commit()
+
 
 
