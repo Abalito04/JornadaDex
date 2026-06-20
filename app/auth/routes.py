@@ -14,12 +14,12 @@ from app.services.audit_service import write_audit
 from app.services.company_service import create_company_with_owner
 from app.services.email_service import send_email
 from app.services.password_policy import validate_password_strength
+from app.services.rate_limit_service import clear_attempts, is_limited, record_attempt
+from app.services.security_event_service import log_security_event
 from app.services.token_service import create_security_token, load_security_token
 
 auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
 
-_LOGIN_FAILURES = {}
-_SIGNUP_ATTEMPTS = {}
 
 
 def _client_ip():
@@ -31,38 +31,33 @@ def _login_rate_key(username):
 
 
 def _is_login_limited(username):
-    key = _login_rate_key(username)
-    window = current_app.config["LOGIN_RATE_LIMIT_WINDOW"]
-    max_attempts = current_app.config["LOGIN_RATE_LIMIT_ATTEMPTS"]
-    now = datetime.now(timezone.utc)
-    attempts = [attempt for attempt in _LOGIN_FAILURES.get(key, []) if now - attempt < window]
-    _LOGIN_FAILURES[key] = attempts
-    return len(attempts) >= max_attempts
+    return is_limited(
+        "login_failed",
+        _login_rate_key(username),
+        current_app.config["LOGIN_RATE_LIMIT_ATTEMPTS"],
+        current_app.config["LOGIN_RATE_LIMIT_WINDOW"],
+    )
 
 
 def _record_failed_login(username):
-    key = _login_rate_key(username)
-    attempts = _LOGIN_FAILURES.setdefault(key, [])
-    attempts.append(datetime.now(timezone.utc))
+    record_attempt("login_failed", _login_rate_key(username))
 
 
 def _clear_failed_logins(username):
-    _LOGIN_FAILURES.pop(_login_rate_key(username), None)
+    clear_attempts("login_failed", _login_rate_key(username))
 
 
 def _is_signup_limited():
-    key = _client_ip()
-    window = current_app.config["SIGNUP_RATE_LIMIT_WINDOW"]
-    max_attempts = current_app.config["SIGNUP_RATE_LIMIT_ATTEMPTS"]
-    now = datetime.now(timezone.utc)
-    attempts = [attempt for attempt in _SIGNUP_ATTEMPTS.get(key, []) if now - attempt < window]
-    _SIGNUP_ATTEMPTS[key] = attempts
-    return len(attempts) >= max_attempts
+    return is_limited(
+        "signup_attempt",
+        _client_ip(),
+        current_app.config["SIGNUP_RATE_LIMIT_ATTEMPTS"],
+        current_app.config["SIGNUP_RATE_LIMIT_WINDOW"],
+    )
 
 
 def _record_signup_attempt():
-    attempts = _SIGNUP_ATTEMPTS.setdefault(_client_ip(), [])
-    attempts.append(datetime.now(timezone.utc))
+    record_attempt("signup_attempt", _client_ip())
 
 
 def _turnstile_configured():
@@ -151,11 +146,13 @@ def signup():
     if request.method == "POST":
         try:
             if _is_signup_limited():
+                log_security_event("signup_rate_limited", metadata={"ip": _client_ip()})
                 flash("Demasiadas altas desde esta red. Proba de nuevo mas tarde.", "danger")
                 return render_template("auth/signup.html"), 429
             _record_signup_attempt()
 
             if not _verify_turnstile():
+                log_security_event("signup_captcha_failed", metadata={"ip": _client_ip()})
                 raise ValueError("No pudimos validar el captcha. Intentalo nuevamente.")
 
             company, user = create_company_with_owner(
@@ -218,6 +215,7 @@ def login():
         username = request.form.get("username", "").strip().lower()
         password = request.form.get("password", "")
         if _is_login_limited(username):
+            log_security_event("login_rate_limited", identifier=username, metadata={"ip": _client_ip()})
             flash("Demasiados intentos fallidos. Proba de nuevo en unos minutos.", "danger")
             return render_template("auth/login.html"), 429
 
@@ -238,6 +236,7 @@ def login():
             return redirect(url_for("dashboard.index"))
 
         _record_failed_login(username)
+        log_security_event("login_failed", identifier=username, metadata={"ip": _client_ip()})
         flash("Usuario o clave invalida.", "danger")
 
     return render_template("auth/login.html")
@@ -256,7 +255,8 @@ def request_password_reset():
             or_(User.username == identifier, User.email == identifier),
         ).first()
         if user:
-            _send_password_reset_email(user)
+            sent = _send_password_reset_email(user)
+            log_security_event("password_reset_requested", identifier=identifier, user=user, metadata={"email_sent": sent})
             write_audit("PASSWORD_RESET_REQUEST", "users", user.id, company_id=user.company_id)
             db.session.commit()
         flash("Si existe una cuenta activa con esos datos, te enviamos un enlace para restablecer la clave.", "success")
@@ -288,6 +288,7 @@ def reset_password(token):
             validate_password_strength(password)
             user.set_password(password)
             user.email_verified_at = user.email_verified_at or datetime.now(timezone.utc)
+            log_security_event("password_reset_completed", identifier=user.username, user=user)
             write_audit("PASSWORD_RESET", "users", user.id, company_id=user.company_id)
             db.session.commit()
             flash("Clave actualizada. Ya podes iniciar sesion.", "success")
@@ -308,4 +309,8 @@ def logout():
     db.session.commit()
     logout_user()
     return redirect(url_for("auth.login"))
+
+
+
+
 

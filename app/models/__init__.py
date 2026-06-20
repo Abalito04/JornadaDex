@@ -202,3 +202,28 @@ class AuditLog(db.Model):
 
     user = db.relationship("User", foreign_keys=[user_id])
 
+
+
+class SecurityEvent(db.Model):
+    __tablename__ = "security_events"
+
+    id = db.Column(db.Integer, primary_key=True)
+    event_type = db.Column(db.String(80), nullable=False)
+    identifier = db.Column(db.String(255), nullable=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+    company_id = db.Column(db.Integer, db.ForeignKey("companies.id"), nullable=True)
+    ip_address = db.Column(db.String(64), nullable=True)
+    user_agent = db.Column(db.String(500), nullable=True)
+    event_metadata = db.Column(db.JSON, nullable=True)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)
+
+    user = db.relationship("User", foreign_keys=[user_id])
+
+
+class RateLimitEvent(db.Model):
+    __tablename__ = "rate_limit_events"
+
+    id = db.Column(db.Integer, primary_key=True)
+    event_type = db.Column(db.String(80), nullable=False, index=True)
+    rate_key = db.Column(db.String(255), nullable=False, index=True)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), nullable=False, index=True)

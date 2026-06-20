@@ -119,16 +119,23 @@ def _filtered_records():
         else:
             query = query.filter(TimeRecord.employee_id == employee.id)
     if supervisor_id and can_filter_supervisor:
-        query = query.filter(TimeRecord.supervisor_id == int(supervisor_id))
+        supervisor = _company_supervisor(int(supervisor_id))
+        query = query.filter(TimeRecord.supervisor_id == supervisor.id if supervisor else 0)
     if accounting_client_id:
-        query = query.filter(TimeRecord.accounting_client_id == int(accounting_client_id))
+        client = AccountingClient.query.filter_by(id=int(accounting_client_id), company_id=current_company_id(), deleted_at=None).first()
+        query = query.filter(TimeRecord.accounting_client_id == client.id if client else 0)
     if area_id:
-        query = query.filter(TimeRecord.area_id == int(area_id))
+        area = Area.query.filter_by(id=int(area_id), company_id=current_company_id(), deleted_at=None).first()
+        query = query.filter(TimeRecord.area_id == area.id if area else 0)
     if date_from:
         query = query.filter(TimeRecord.record_date >= parse_date(date_from))
     if date_to:
         query = query.filter(TimeRecord.record_date <= parse_date(date_to))
     return query.order_by(TimeRecord.record_date.desc(), TimeRecord.start_time.desc())
+
+
+def _company_supervisor(supervisor_id):
+    return next((supervisor for supervisor in supervisors_for_company(current_company_id()) if supervisor.id == supervisor_id), None)
 
 
 def _is_employee_scope():
@@ -182,3 +189,5 @@ def _supervisor_name(record):
     if not record.supervisor:
         return ""
     return record.supervisor.employee.full_name if record.supervisor.employee else record.supervisor.username
+
+

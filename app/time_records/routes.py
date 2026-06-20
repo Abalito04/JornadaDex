@@ -323,13 +323,17 @@ def _apply_record_filters(query, can_choose_employee):
         else:
             query = query.filter(TimeRecord.employee_id == 0)
     if supervisor_id:
-        query = query.filter(TimeRecord.supervisor_id == supervisor_id)
+        supervisor = supervisor_for_company(current_company_id(), supervisor_id)
+        query = query.filter(TimeRecord.supervisor_id == supervisor.id if supervisor else 0)
     if client_id:
-        query = query.filter(TimeRecord.accounting_client_id == client_id)
+        client = AccountingClient.query.filter_by(id=client_id, company_id=current_company_id(), deleted_at=None).first()
+        query = query.filter(TimeRecord.accounting_client_id == client.id if client else 0)
     if area_id:
-        query = query.filter(TimeRecord.area_id == area_id)
+        area = Area.query.filter_by(id=area_id, company_id=current_company_id(), deleted_at=None).first()
+        query = query.filter(TimeRecord.area_id == area.id if area else 0)
     if task_id:
-        query = query.filter(TimeRecord.task_id == task_id)
+        task = Task.query.join(Area).filter(Task.id == task_id, Area.company_id == current_company_id(), Task.deleted_at.is_(None)).first()
+        query = query.filter(TimeRecord.task_id == task.id if task else 0)
     if date_from:
         query = query.filter(TimeRecord.record_date >= parse_date(date_from))
     if date_to:
@@ -350,3 +354,5 @@ def _has_record_filters():
             "record_date_to",
         )
     )
+
+
