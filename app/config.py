@@ -38,5 +38,8 @@ class Config:
     LOGIN_RATE_LIMIT_WINDOW = timedelta(minutes=int(clean_env_value(os.getenv("LOGIN_RATE_LIMIT_WINDOW_MINUTES", "15"))))
     MAX_CONTENT_LENGTH = int(clean_env_value(os.getenv("MAX_CONTENT_LENGTH", str(4 * 1024 * 1024))))
     CLIENT_IMPORT_MAX_ROWS = int(clean_env_value(os.getenv("CLIENT_IMPORT_MAX_ROWS", "2000")))
+    TURNSTILE_SITE_KEY = clean_env_value(os.getenv("TURNSTILE_SITE_KEY", ""))
+    TURNSTILE_SECRET_KEY = clean_env_value(os.getenv("TURNSTILE_SECRET_KEY", ""))
+
 
 

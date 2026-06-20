@@ -4,16 +4,16 @@
 <section class="auth-shell signup-shell">
   <div class="auth-copy">
     <div class="auth-logo-card">
-      <img class="logo-light" src="{{ url_for('static', filename='img/jornadadex-logo.svg') }}" alt="JornadaDex Gestión de Colaboradores">
-      <img class="logo-dark" src="{{ url_for('static', filename='img/jornadadex-logo-dark.svg') }}" alt="JornadaDex Gestión de Colaboradores">
+      <img class="logo-light" src="{{ url_for('static', filename='img/jornadadex-logo.svg') }}" alt="JornadaDex Gestion de Colaboradores">
+      <img class="logo-dark" src="{{ url_for('static', filename='img/jornadadex-logo-dark.svg') }}" alt="JornadaDex Gestion de Colaboradores">
     </div>
     <span class="auth-eyebrow">Nueva cuenta</span>
     <h1>Crear empresa</h1>
-    <p>El primer usuario será el Administrador y podrá administrar colaboradores, clientes, áreas, tareas y permisos.</p>
+    <p>El primer usuario sera el Administrador y podra administrar colaboradores, clientes, areas, tareas y permisos.</p>
   </div>
 
   <section class="auth-card wide">
-    <div class="auth-card-kicker">Configuración inicial</div>
+    <div class="auth-card-kicker">Configuracion inicial</div>
     <h2>Datos iniciales</h2>
     <form method="post" class="grid-form">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
@@ -41,17 +41,25 @@
         <label>Clave</label>
         <input name="password" type="password" autocomplete="new-password" required>
       </div>
+      {% if config.TURNSTILE_SITE_KEY %}
+        <div class="full">
+          <div class="cf-turnstile" data-sitekey="{{ config.TURNSTILE_SITE_KEY }}"></div>
+        </div>
+      {% endif %}
       <div class="full form-actions">
         <button type="submit"><i data-lucide="building-2"></i>Crear empresa</button>
         <a class="button ghost" href="{{ url_for('auth.login') }}">Volver al ingreso</a>
       </div>
     </form>
     <p class="auth-legal-note">
-      Al crear la empresa, aceptás los
-      <a href="{{ url_for('dashboard.terms_conditions') }}">Términos y condiciones</a>
+      Al crear la empresa, aceptas los
+      <a href="{{ url_for('dashboard.terms_conditions') }}">Terminos y condiciones</a>
       y la
-      <a href="{{ url_for('dashboard.privacy_policy') }}">Política de privacidad</a>.
+      <a href="{{ url_for('dashboard.privacy_policy') }}">Politica de privacidad</a>.
     </p>
   </section>
 </section>
+{% if config.TURNSTILE_SITE_KEY %}
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+{% endif %}
 {% endblock %}

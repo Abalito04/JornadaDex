@@ -1,4 +1,7 @@
 from datetime import datetime, timezone
+import json
+from urllib import parse, request as urlrequest
+from urllib.error import URLError
 
 from flask import Blueprint, abort, current_app, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required, login_user, logout_user
@@ -39,6 +42,43 @@ def _clear_failed_logins(username):
     _LOGIN_FAILURES.pop(_login_rate_key(username), None)
 
 
+def _turnstile_configured():
+    site_key = current_app.config["TURNSTILE_SITE_KEY"]
+    secret_key = current_app.config["TURNSTILE_SECRET_KEY"]
+    if bool(site_key) != bool(secret_key):
+        raise RuntimeError("TURNSTILE_SITE_KEY and TURNSTILE_SECRET_KEY must be configured together.")
+    return bool(site_key and secret_key)
+
+
+def _verify_turnstile():
+    if not _turnstile_configured():
+        return True
+
+    token = request.form.get("cf-turnstile-response", "")
+    if not token:
+        return False
+
+    payload = parse.urlencode(
+        {
+            "secret": current_app.config["TURNSTILE_SECRET_KEY"],
+            "response": token,
+            "remoteip": request.remote_addr or "",
+        }
+    ).encode("utf-8")
+    verification_request = urlrequest.Request(
+        "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+        data=payload,
+        headers={"Content-Type": "application/x-www-form-urlencoded"},
+    )
+    try:
+        with urlrequest.urlopen(verification_request, timeout=5) as response:
+            result = json.loads(response.read().decode("utf-8"))
+    except (OSError, URLError, ValueError):
+        return False
+    return bool(result.get("success"))
+
+
+
 @auth_bp.route("/signup", methods=["GET", "POST"])
 def signup():
     if not current_app.config["PUBLIC_SIGNUP_ENABLED"]:
@@ -48,6 +88,9 @@ def signup():
 
     if request.method == "POST":
         try:
+            if not _verify_turnstile():
+                raise ValueError("No pudimos validar el captcha. Intentalo nuevamente.")
+
             company, user = create_company_with_owner(
                 company_name=request.form.get("company_name", "").strip(),
                 tax_id=request.form.get("tax_id", "").strip(),
@@ -105,4 +148,7 @@ def logout():
     db.session.commit()
     logout_user()
     return redirect(url_for("auth.login"))
+
+
+
 

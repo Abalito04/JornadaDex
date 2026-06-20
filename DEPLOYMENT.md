@@ -8,14 +8,20 @@ Use `.env.example` as base:
 SECRET_KEY=replace-with-a-long-random-secret
 DATABASE_URL=sqlite:///time_control.db
 SESSION_COOKIE_SECURE=false
+PUBLIC_SIGNUP_ENABLED=true
+ENABLE_DEVELOPER_BOOTSTRAP=false
+TURNSTILE_SITE_KEY=
+TURNSTILE_SECRET_KEY=
 ```
 
 For production:
 
 ```text
 SESSION_COOKIE_SECURE=true
-PUBLIC_SIGNUP_ENABLED=false
+PUBLIC_SIGNUP_ENABLED=true
 ENABLE_DEVELOPER_BOOTSTRAP=false
+TURNSTILE_SITE_KEY=your-cloudflare-turnstile-site-key
+TURNSTILE_SECRET_KEY=your-cloudflare-turnstile-secret-key
 DATABASE_URL=postgresql+psycopg://user:password@db:5432/time_control
 ```
 
@@ -40,8 +46,13 @@ Then create the first company owner from `/auth/signup`.
 1. Use PostgreSQL.
 2. Set a strong `SECRET_KEY`.
 3. Enable secure cookies.
-4. Run behind a reverse proxy with HTTPS.
-5. Schedule database backups.
-6. Use migrations for schema changes.
-7. Restrict access to server logs and environment files.
+4. Configure Cloudflare Turnstile keys when public signup is enabled.
+5. Run behind a reverse proxy with HTTPS.
+6. Schedule database backups.
+7. Use migrations for schema changes.
+8. Restrict access to server logs and environment files.
+
+
+
+
 
