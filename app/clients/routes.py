@@ -3,7 +3,7 @@ from decimal import Decimal, InvalidOperation
 from io import BytesIO, StringIO
 import unicodedata
 
-from flask import Blueprint, Response, flash, redirect, render_template, request, send_file, url_for
+from flask import Blueprint, Response, current_app, flash, redirect, render_template, request, send_file, url_for
 from flask_login import current_user
 from openpyxl import Workbook, load_workbook
 from openpyxl.styles import Font, PatternFill
@@ -145,6 +145,7 @@ def import_clients():
         else:
             raise ValueError("El archivo debe tener formato .csv o .xlsx.")
 
+        _validate_import_row_count(rows)
         created, updated, skipped, errors = _import_client_rows(rows)
         db.session.commit()
     except (IntegrityError, ValueError) as exc:
@@ -276,6 +277,12 @@ def _save_client(client, success_message, audit_action):
         db.session.rollback()
         flash(str(getattr(exc, "orig", exc)), "danger")
         return _render_form(client)
+
+
+def _validate_import_row_count(rows):
+    max_rows = current_app.config["CLIENT_IMPORT_MAX_ROWS"]
+    if rows is not None and len(rows) > max_rows:
+        raise ValueError(f"El archivo supera el maximo de {max_rows} filas permitidas.")
 
 
 def _import_client_rows(rows):
@@ -774,3 +781,4 @@ def _build_template_workbook():
     notes.column_dimensions["A"].width = 28
     notes.column_dimensions["B"].width = 76
     return workbook
+

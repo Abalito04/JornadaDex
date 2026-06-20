@@ -38,6 +38,16 @@ def create_app(config_class=Config):
             bootstrap_platform_admin()
         _database_checked = True
 
+    @app.after_request
+    def security_headers(response):
+        response.headers.setdefault("X-Content-Type-Options", "nosniff")
+        response.headers.setdefault("X-Frame-Options", "DENY")
+        response.headers.setdefault("Referrer-Policy", "same-origin")
+        response.headers.setdefault("Permissions-Policy", "camera=(), microphone=(), geolocation=()")
+        if app.config.get("SESSION_COOKIE_SECURE"):
+            response.headers.setdefault("Strict-Transport-Security", "max-age=31536000; includeSubDomains")
+        return response
+
     login_manager.login_view = "auth.login"
     login_manager.login_message = None
 
@@ -168,6 +178,9 @@ def ensure_runtime_schema():
 def bootstrap_platform_admin():
     from app.config import clean_env_value
 
+    if clean_env_value(os.getenv("ENABLE_DEVELOPER_BOOTSTRAP", "false")).lower() != "true":
+        return
+
     username = clean_env_value(os.getenv("DEVELOPER_USERNAME"))
     password = clean_env_value(os.getenv("DEVELOPER_PASSWORD"))
     email = clean_env_value(os.getenv("DEVELOPER_EMAIL")) or "developer@jornadadex.local"
@@ -255,3 +268,5 @@ def bootstrap_platform_admin():
     developer.set_password(password)
     db.session.add(developer)
     db.session.commit()
+
+

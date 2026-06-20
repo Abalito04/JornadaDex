@@ -28,10 +28,10 @@ def create_demo():
         owner_name="Jefe Demo",
         email="jefe@demo.local",
         username="jefe",
-        password="admin123",
+        password="DemoAdmin123",
     )
     db.session.commit()
-    click.echo("Demo created: user=jefe password=admin123")
+    click.echo("Demo created: user=jefe password=DemoAdmin123")
 
 
 @click.command("create-developer")
@@ -116,3 +116,4 @@ def create_developer(username, email, password):
         duplicate.soft_delete(user.id)
     db.session.commit()
     click.echo(f"Developer user ready: {username}")
+

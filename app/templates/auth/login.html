@@ -34,7 +34,9 @@
       <button type="submit"><i data-lucide="log-in"></i>Entrar</button>
       <a class="button ghost" href="{{ url_for('dashboard.landing') }}"><i data-lucide="arrow-left"></i>Volver al inicio</a>
     </form>
-    <p class="auth-link">¿No tenés empresa creada? <a href="{{ url_for('auth.signup') }}">Crear empresa y Administrador</a></p>
+    {% if config.PUBLIC_SIGNUP_ENABLED %}
+      <p class="auth-link">¿No tenés empresa creada? <a href="{{ url_for('auth.signup') }}">Crear empresa y Administrador</a></p>
+    {% endif %}
     <nav class="auth-legal-links" aria-label="Información legal">
       <a href="{{ url_for('dashboard.privacy_policy') }}">Política de privacidad</a>
       <a href="{{ url_for('dashboard.terms_conditions') }}">Términos y condiciones</a>
@@ -42,3 +44,5 @@
   </section>
 </section>
 {% endblock %}
+
+

@@ -8,6 +8,7 @@ from app.models import Employee, User
 from app.permissions.decorators import manager_required
 from app.roles import ROLE_EMPLOYEE, ROLE_SUPERVISOR
 from app.services.audit_service import write_audit
+from app.services.password_policy import validate_password_strength
 from app.services.visibility_service import employee_is_visible, visible_employees_query
 
 employees_bp = Blueprint("employees", __name__, url_prefix="/employees")
@@ -103,6 +104,7 @@ def create():
                         role=role,
                         created_by=current_user.id,
                     )
+                validate_password_strength(password)
                 user.set_password(password)
                 db.session.add(user)
 
@@ -170,6 +172,7 @@ def edit(employee_id):
                 employee.user.updated_by = current_user.id
                 new_password = request.form.get("password", "")
                 if new_password:
+                    validate_password_strength(new_password)
                     employee.user.set_password(new_password)
                     write_audit(
                         "PASSWORD_CHANGE",
@@ -209,6 +212,7 @@ def edit(employee_id):
                         role=role,
                         created_by=current_user.id,
                     )
+                validate_password_strength(password)
                 user.set_password(password)
                 db.session.add(user)
 
@@ -254,3 +258,5 @@ def delete(employee_id):
     db.session.commit()
     flash("Colaborador eliminado lógicamente.", "success")
     return redirect(url_for("employees.index"))
+
+

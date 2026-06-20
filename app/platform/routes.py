@@ -8,6 +8,7 @@ from app.context import is_platform_admin
 from app.models import AccountingClient, Company, TimeRecord, User
 from app.roles import ROLE_DEVELOPER, ROLE_OWNER, normalize_role
 from app.services.audit_service import write_audit
+from app.services.password_policy import password_strength_error
 
 platform_bp = Blueprint("platform", __name__, url_prefix="/platform")
 
@@ -192,6 +193,10 @@ def edit_user(user_id):
         user.is_company_owner = user.role == ROLE_OWNER and not user.is_platform_admin
         password = request.form.get("password", "")
         if password:
+            password_error = password_strength_error(password)
+            if password_error:
+                flash(password_error, "danger")
+                return redirect(url_for("platform.edit_user", user_id=user.id))
             user.set_password(password)
             write_audit("PASSWORD_CHANGE", "users", user.id, new_values={"reset_by": "Developer"})
         if not user.username or not user.email:
@@ -258,3 +263,6 @@ def select_company(company_id):
     session["active_company_id"] = company.id
     flash(f"Empresa activa: {company.name}", "success")
     return redirect(url_for("platform.companies"))
+
+
+

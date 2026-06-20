@@ -2,6 +2,7 @@ from app.extensions import db
 from app.models import Area, Company, Task
 from app.roles import ROLE_OWNER
 from app.seed_data import INITIAL_DEFINITION
+from app.services.password_policy import validate_password_strength
 
 
 def seed_company_catalog(company_id, user_id=None):
@@ -44,6 +45,7 @@ def create_company_with_owner(company_name, tax_id, owner_name, email, username,
         is_company_owner=True,
         created_by=None,
     )
+    validate_password_strength(password)
     user.set_password(password)
     db.session.add(user)
     db.session.flush()
@@ -53,3 +55,5 @@ def create_company_with_owner(company_name, tax_id, owner_name, email, username,
     user.created_by = user.id
     seed_company_catalog(company.id, user.id)
     return company, user
+
+
