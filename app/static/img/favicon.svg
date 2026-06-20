@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="JornadaDex">
+  <rect width="64" height="64" rx="14" fill="#07191B"/>
+  <path d="M37.8 10.2A22.2 22.2 0 1 0 43 18" fill="none" stroke="#DDFBF0" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M37.8 10.2A22.2 22.2 0 0 1 47.2 20.8" fill="none" stroke="#42E6A4" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M49.2 16.3 48 28.3 38.5 21.2Z" fill="#42E6A4"/>
+  <circle cx="37" cy="11.5" r="4.6" fill="#07191B" stroke="#42E6A4" stroke-width="3"/>
+  <circle cx="24" cy="29" r="6.3" fill="#DDFBF0"/>
+  <path d="M13.4 49c0-9.4 4.1-15.2 10.6-15.2S34.6 39.6 34.6 49Z" fill="#DDFBF0"/>
+  <circle cx="12.8" cy="37.2" r="5" fill="#42E6A4"/>
+  <path d="M5 49c0-7.3 3-10.8 7.8-10.8S20.6 41.7 20.6 49Z" fill="#42E6A4"/>
+  <circle cx="43.8" cy="37.2" r="5" fill="#42E6A4"/>
+  <path d="M36 49c0-7.3 3-10.8 7.8-10.8S51.6 41.7 51.6 49Z" fill="#42E6A4"/>
+</svg>
