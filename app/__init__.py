@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, request
+from flask import Flask, request, send_from_directory
 from sqlalchemy import func, inspect, or_, text
 
 from app.config import Config
@@ -16,6 +16,10 @@ def create_app(config_class=Config):
     @app.get("/healthz")
     def healthz():
         return {"status": "ok"}, 200
+
+    @app.get("/service-worker.js")
+    def service_worker():
+        return send_from_directory(app.static_folder, "service-worker.js", mimetype="application/javascript")
 
     db.init_app(app)
     migrate.init_app(app, db)
