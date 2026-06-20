@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 360" role="img" aria-labelledby="title desc">
-  <title id="title">TrazaLab - Gestion de Colaboradores</title>
-  <desc id="desc">Logo de TrazaLab adaptado para modo oscuro.</desc>
+  <title id="title">JornadaDex - Gestion de Colaboradores</title>
+  <desc id="desc">Logo de JornadaDex adaptado para modo oscuro.</desc>
 
   <defs>
     <linearGradient id="cyanGreen" x1="0" y1="0" x2="1" y2="1">
@@ -42,9 +42,9 @@
   </g>
 
   <g transform="translate(430 137)">
-    <text x="0" y="75" font-family="Montserrat, Poppins, Avenir Next, Arial, sans-serif" font-size="112" font-weight="800" letter-spacing="-5" fill="#DDFBF0">Traza</text>
-    <text x="463" y="75" font-family="Montserrat, Poppins, Avenir Next, Arial, sans-serif" font-size="112" font-weight="400" letter-spacing="-5" fill="#42E6A4">Lab</text>
-    <line x1="434" y1="-4" x2="434" y2="76" stroke="#42E6A4" stroke-width="8" stroke-linecap="round"/>
+    <text x="0" y="75" font-family="Montserrat, Poppins, Avenir Next, Arial, sans-serif" font-size="96" font-weight="800" letter-spacing="-5" fill="#DDFBF0">Jornada</text>
+    <text x="382" y="75" font-family="Montserrat, Poppins, Avenir Next, Arial, sans-serif" font-size="96" font-weight="400" letter-spacing="-5" fill="#42E6A4">Dex</text>
+    <line x1="358" y1="-4" x2="358" y2="76" stroke="#42E6A4" stroke-width="8" stroke-linecap="round"/>
     <text x="6" y="140" font-family="Montserrat, Poppins, Avenir Next, Arial, sans-serif" font-size="36" font-weight="400" letter-spacing="14" fill="#A7DCCB">Gestion de Colaboradores</text>
   </g>
 </svg>

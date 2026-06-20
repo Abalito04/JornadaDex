@@ -12,7 +12,7 @@ const timeBudgetInputs = document.querySelectorAll("[data-time-budget-input]");
 const currencyInputs = document.querySelectorAll("[data-currency-input]");
 const sortableTables = document.querySelectorAll("[data-sortable-table]");
 const root = document.documentElement;
-const themeStorageKey = "trazalab-theme";
+const themeStorageKey = "jornadadex-theme";
 
 let themePreference = localStorage.getItem(themeStorageKey) || "system";
 

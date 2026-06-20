@@ -166,7 +166,7 @@ def bootstrap_platform_admin():
 
     username = clean_env_value(os.getenv("DEVELOPER_USERNAME"))
     password = clean_env_value(os.getenv("DEVELOPER_PASSWORD"))
-    email = clean_env_value(os.getenv("DEVELOPER_EMAIL")) or "developer@trazalab.local"
+    email = clean_env_value(os.getenv("DEVELOPER_EMAIL")) or "developer@jornadadex.local"
     if not username or not password:
         return
     username = username.strip().lower()
@@ -185,9 +185,9 @@ def bootstrap_platform_admin():
         db.session.commit()
         return
 
-    company = Company.query.filter_by(name="TrazaLab Developer").first()
+    company = Company.query.filter_by(name="JornadaDex Developer").first()
     if not company:
-        company = Company(name="TrazaLab Developer", active=True)
+        company = Company(name="JornadaDex Developer", active=True)
         db.session.add(company)
         db.session.flush()
 

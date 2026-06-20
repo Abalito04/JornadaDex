@@ -1,12 +1,12 @@
 {% extends "base.html" %}
-{% block title %}TrazaLab | Gestión y trazabilidad empresarial{% endblock %}
+{% block title %}JornadaDex | Gestión y trazabilidad empresarial{% endblock %}
 {% block content %}
 <section class="landing-page landing-v2">
   <section class="landing-hero-band">
     <header class="landing-nav landing-container">
-      <a class="landing-brand" href="{{ url_for('dashboard.landing') }}" aria-label="TrazaLab">
-        <img class="logo-light" src="{{ url_for('static', filename='img/trazalab-logo.svg') }}" alt="TrazaLab">
-        <img class="logo-dark" src="{{ url_for('static', filename='img/trazalab-logo-dark.svg') }}" alt="TrazaLab">
+      <a class="landing-brand" href="{{ url_for('dashboard.landing') }}" aria-label="JornadaDex">
+        <img class="logo-light" src="{{ url_for('static', filename='img/jornadadex-logo.svg') }}" alt="JornadaDex">
+        <img class="logo-dark" src="{{ url_for('static', filename='img/jornadadex-logo-dark.svg') }}" alt="JornadaDex">
       </a>
       <nav class="landing-menu" aria-label="Secciones">
         <a href="#funciones">Funciones</a>
@@ -28,9 +28,9 @@
 
     <div class="landing-hero landing-container">
       <div class="landing-copy">
-        <h1>TrazaLab</h1>
+        <h1>JornadaDex</h1>
         <p class="landing-lead">
-          TrazaLab te permite gestionar tareas, tiempos y actividades de tu equipo con precisión, orden y evidencia.
+          JornadaDex te permite gestionar tareas, tiempos y actividades de tu equipo con precisión, orden y evidencia.
           Información clara para decidir mejor.
         </p>
         <div class="landing-checks">
@@ -48,7 +48,7 @@
         </div>
       </div>
 
-      <div class="hero-dashboard" aria-label="Vista resumen de TrazaLab">
+      <div class="hero-dashboard" aria-label="Vista resumen de JornadaDex">
         <div class="hero-dashboard-head">
           <strong>Resumen de hoy</strong>
           <span>Hora actual 09:15hs</span>
@@ -78,7 +78,7 @@
 
   <section class="landing-demo landing-container" id="funciones">
     <div class="center-title">
-      <h2>Un vistazo a <span>TrazaLab</span> en acción</h2>
+      <h2>Un vistazo a <span>JornadaDex</span> en acción</h2>
     </div>
     <div class="demo-tabs" role="tablist" aria-label="Vista previa">
       <button class="active" type="button" data-preview-tab="tiempos"><i data-lucide="clock-3"></i>Tiempos</button>
@@ -172,7 +172,7 @@
   <section class="landing-evidence landing-container" id="reportes">
     <div>
       <h2>Evidencia clara, <span>decisiones seguras</span></h2>
-      <p>TrazaLab convierte la actividad diaria en información valiosa y auditable. Todo queda registrado: quién, qué, cuándo y por cuánto tiempo.</p>
+      <p>JornadaDex convierte la actividad diaria en información valiosa y auditable. Todo queda registrado: quién, qué, cuándo y por cuánto tiempo.</p>
       <div class="evidence-points">
         <span><i data-lucide="user-check"></i>Trazabilidad completa</span>
         <span><i data-lucide="shield-check"></i>Información confiable</span>
@@ -212,8 +212,8 @@
 
   <section class="final-cta landing-container" id="beneficios">
     <div class="final-logo">
-      <img class="logo-light" src="{{ url_for('static', filename='img/trazalab-logo.svg') }}" alt="TrazaLab">
-      <img class="logo-dark" src="{{ url_for('static', filename='img/trazalab-logo-dark.svg') }}" alt="TrazaLab">
+      <img class="logo-light" src="{{ url_for('static', filename='img/jornadadex-logo.svg') }}" alt="JornadaDex">
+      <img class="logo-dark" src="{{ url_for('static', filename='img/jornadadex-logo-dark.svg') }}" alt="JornadaDex">
     </div>
     <div>
       <h2>Listo para llevar el control de tu equipo al siguiente nivel.</h2>
@@ -232,7 +232,7 @@
       <a href="{{ url_for('dashboard.privacy_policy') }}">Privacidad</a>
       <a href="{{ url_for('dashboard.terms_conditions') }}">Términos</a>
     </nav>
-    <span>© 2026 TrazaLab · Todos los derechos reservados.</span>
+    <span>© 2026 JornadaDex · Todos los derechos reservados.</span>
   </footer>
 </section>
 {% endblock %}

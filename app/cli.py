@@ -43,9 +43,9 @@ def create_developer(username, email, password):
     from app.models import Company, User
 
     db.create_all()
-    company = Company.query.filter_by(name="TrazaLab Developer").first()
+    company = Company.query.filter_by(name="JornadaDex Developer").first()
     if not company:
-        company = Company(name="TrazaLab Developer", active=True)
+        company = Company(name="JornadaDex Developer", active=True)
         db.session.add(company)
         db.session.flush()
 

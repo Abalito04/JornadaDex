@@ -1,11 +1,12 @@
-# 🔬 TrazaLab
+# JornadaDex
 
-Python-based laboratory traceability system for managing samples, processes, and results.
+Web platform for managing tasks, work time, collaborators, clients, reports, and operational traceability.
 
 ## ✨ Features
 
-- Sample and process traceability management
-- Result logging and tracking
+- Task and time tracking
+- Collaborator, client, area, and task management
+- Operational reports and audit trail
 - Clean web interface
 - Python/Flask backend
 
@@ -19,8 +20,8 @@ Python-based laboratory traceability system for managing samples, processes, and
 
 ```bash
 # Clone the repo
-git clone https://github.com/Abalito04/TrazaLab.git
-cd TrazaLab
+git clone https://github.com/Abalito04/JornadaDex.git
+cd JornadaDex
 
 # Install dependencies
 pip install -r requirements.txt
