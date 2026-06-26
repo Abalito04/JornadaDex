@@ -171,6 +171,20 @@ def index():
     employee_task_week_chart = []
     employee_task_month_chart = []
     personal_client_chart = _chart_rows(_hours_by_client(personal_base.join(AccountingClient, TimeRecord.accounting_client_id == AccountingClient.id)))
+    personal_client_week_chart = _chart_rows(
+        _hours_by_client(
+            personal_base.filter(TimeRecord.record_date >= personal_week_start, TimeRecord.record_date <= personal_reference_date).join(
+                AccountingClient, TimeRecord.accounting_client_id == AccountingClient.id
+            )
+        )
+    )
+    personal_client_month_chart = _chart_rows(
+        _hours_by_client(
+            personal_base.filter(TimeRecord.record_date >= personal_month_start).join(
+                AccountingClient, TimeRecord.accounting_client_id == AccountingClient.id
+            )
+        )
+    )
     if dashboard_role in ("employee", "supervisor"):
         area_records = personal_base.join(
             Area,
@@ -211,6 +225,8 @@ def index():
         personal_open_records=personal_open_records,
         personal_recent_records=personal_recent_records,
         personal_client_chart=personal_client_chart,
+        personal_client_week_chart=personal_client_week_chart,
+        personal_client_month_chart=personal_client_month_chart,
         employee_area_week_chart=employee_area_week_chart,
         employee_area_month_chart=employee_area_month_chart,
         employee_task_week_chart=employee_task_week_chart,

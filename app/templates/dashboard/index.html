@@ -74,10 +74,18 @@
     </div>
   </section>
 
-  <section class="panel">
-    <h2>Mis horas por cliente</h2>
-    {% set chart_rows = client_chart %}
-    {% include "dashboard/_bar_chart.html" %}
+  <section class="two-columns">
+    <div class="panel">
+      <h2>Horas Clientes últimos 7 días</h2>
+      {% set chart_rows = client_week_chart %}
+      {% include "dashboard/_bar_chart.html" %}
+    </div>
+
+    <div class="panel">
+      <h2>Horas Clientes mensual</h2>
+      {% set chart_rows = client_month_chart %}
+      {% include "dashboard/_bar_chart.html" %}
+    </div>
   </section>
 
   <details class="panel records-panel">
@@ -163,10 +171,18 @@
           </div>
         </section>
 
-        <section class="panel">
-          <h2>Mis horas por cliente</h2>
-          {% set chart_rows = personal_client_chart %}
-          {% include "dashboard/_bar_chart.html" %}
+        <section class="two-columns">
+          <div class="panel">
+            <h2>Horas Clientes últimos 7 días</h2>
+            {% set chart_rows = personal_client_week_chart %}
+            {% include "dashboard/_bar_chart.html" %}
+          </div>
+
+          <div class="panel">
+            <h2>Horas Clientes mensual</h2>
+            {% set chart_rows = personal_client_month_chart %}
+            {% include "dashboard/_bar_chart.html" %}
+          </div>
         </section>
 
         <details class="panel records-panel">
