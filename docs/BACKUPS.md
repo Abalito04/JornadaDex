@@ -28,7 +28,7 @@ Cerra y abri PowerShell para que tome la variable nueva. No guardes esa URL en G
 Desde la carpeta del proyecto:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\backup_database.ps1
+powershell -ExecutionPolicy Bypass -File .\scripts\backup_database.ps1 -PgDumpPath "C:\Program Files\PostgreSQL\18\bin\pg_dump.exe"
 ```
 
 Esto crea archivos en `backups/`:
@@ -71,4 +71,5 @@ powershell -ExecutionPolicy Bypass -File .\scripts\restore_database.ps1 -BackupF
 - Restore de prueba una vez por mes.
 - Copia adicional fuera de la PC, por ejemplo Google Drive, OneDrive o un storage dedicado.
 - Mas adelante: automatizar subida a Cloudflare R2, S3 o similar para no depender de tu computadora.
+
 

@@ -27,7 +27,7 @@ $trigger = New-ScheduledTaskTrigger -Daily -At $Time
 $argument = "-NoProfile -ExecutionPolicy Bypass -File `"$backupScript`" -BackupDir `"$BackupDir`" -PgDumpPath `"$resolvedPgDumpPath`" -KeepDays $KeepDays"
 $action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument $argument
 $userId = [System.Security.Principal.WindowsIdentity]::GetCurrent().Name
-$principal = New-ScheduledTaskPrincipal -UserId $userId -LogonType Interactive -RunLevel LeastPrivilege
+$principal = New-ScheduledTaskPrincipal -UserId $userId -LogonType Interactive -RunLevel Limited
 $settings = New-ScheduledTaskSettingsSet -StartWhenAvailable -MultipleInstances IgnoreNew -ExecutionTimeLimit (New-TimeSpan -Hours 2)
 
 Register-ScheduledTask -TaskName $TaskName -Trigger $trigger -Action $action -Principal $principal -Settings $settings -Force | Out-Null
@@ -37,3 +37,4 @@ Write-Host "Horario diario: $Time"
 Write-Host "Carpeta de backups: $BackupDir"
 Write-Host "pg_dump: $resolvedPgDumpPath"
 Write-Host "Para probar ahora: powershell -ExecutionPolicy Bypass -File `"$backupScript`" -PgDumpPath `"$resolvedPgDumpPath`""
+
