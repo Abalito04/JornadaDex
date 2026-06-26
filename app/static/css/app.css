@@ -31,9 +31,9 @@
   --color-success: #16804a;
   --color-warning: #a97906;
   --color-error: #b63434;
-  --color-bg: #dcefd7;
+  --color-bg: #d4e6c7;
   --color-surface: #f0e7d3;
-  --color-surface-2: #d4e6c7;
+  --color-surface-2: #e6dcc5;
   --color-surface-offset: #bdd8b8;
   --color-surface-dynamic: #eadfc8;
   --color-text: #17342a;
@@ -83,9 +83,9 @@ body {
   min-height: 100vh;
   margin: 0;
   background:
-    radial-gradient(circle at 0% 0%, color-mix(in oklch, var(--color-accent-green) 16%, transparent), transparent 34rem),
-    radial-gradient(circle at 100% 0%, color-mix(in oklch, var(--color-accent-blue) 6%, transparent), transparent 34rem),
-    linear-gradient(180deg, color-mix(in oklch, var(--color-surface) 55%, transparent), transparent 360px),
+    radial-gradient(circle at 0% 0%, color-mix(in oklch, var(--color-accent-green) 18%, transparent), transparent 34rem),
+    radial-gradient(circle at 100% 0%, color-mix(in oklch, var(--color-accent-blue) 13%, transparent), transparent 34rem),
+    linear-gradient(180deg, color-mix(in oklch, var(--color-surface-offset) 32%, transparent), transparent 360px),
     var(--color-bg);
   color: var(--color-text);
   font-size: var(--text-md);
@@ -132,7 +132,7 @@ p { margin: 0; }
   width: var(--sidebar-width);
   padding: var(--space-4);
   border-right: 1px solid var(--color-divider-soft);
-  background: color-mix(in oklch, var(--color-surface) 54%, var(--color-bg));
+  background: color-mix(in oklch, var(--color-bg) 84%, var(--color-surface));
 }
 
 .brand {
@@ -156,7 +156,7 @@ p { margin: 0; }
   padding: 5px 8px;
   border: 1px solid var(--color-divider);
   border-radius: var(--radius-lg);
-  background: color-mix(in oklch, var(--color-surface) 90%, var(--color-bg));
+  background: var(--color-surface);
   box-shadow: var(--shadow-sm);
 }
 
@@ -184,7 +184,7 @@ p { margin: 0; }
 }
 
 .brand-logo-frame {
-  background: color-mix(in oklch, var(--color-surface) 90%, var(--color-bg));
+  background: var(--color-surface);
 }
 
 [data-theme="dark"] .brand-logo-frame {
@@ -263,7 +263,7 @@ p { margin: 0; }
   height: var(--topbar-height);
   padding: 0 var(--space-6);
   border-bottom: 1px solid var(--color-divider-soft);
-  background: color-mix(in oklch, var(--color-surface) 58%, var(--color-bg));
+  background: color-mix(in oklch, var(--color-bg) 72%, var(--color-surface));
   backdrop-filter: blur(12px);
 }
 
@@ -366,8 +366,8 @@ main.auth-main {
   padding: var(--space-8) var(--space-5);
   background:
     radial-gradient(circle at 18% 18%, color-mix(in oklch, var(--color-accent-green) 22%, transparent), transparent 28rem),
-    radial-gradient(circle at 88% 12%, color-mix(in oklch, var(--color-accent-blue) 7%, transparent), transparent 30rem),
-    linear-gradient(135deg, color-mix(in oklch, var(--color-surface) 92%, var(--color-bg)), var(--color-bg));
+    radial-gradient(circle at 88% 12%, color-mix(in oklch, var(--color-accent-blue) 14%, transparent), transparent 30rem),
+    linear-gradient(135deg, color-mix(in oklch, var(--color-bg) 82%, var(--color-surface-offset)), var(--color-bg));
 }
 
 main.auth-main:has(.landing-page) {
@@ -397,7 +397,7 @@ main.auth-main:has(.landing-page) {
   padding: 6px 10px;
   border: 1px solid var(--color-divider);
   border-radius: var(--radius-lg);
-  background: color-mix(in oklch, var(--color-surface) 90%, var(--color-bg));
+  background: var(--color-surface);
   box-shadow: var(--shadow-sm);
 }
 
@@ -1182,7 +1182,7 @@ main.auth-main:has(.landing-page) {
   padding: var(--space-4);
   border: 1px solid var(--color-divider);
   border-radius: var(--radius-lg);
-  background: color-mix(in oklch, var(--color-surface) 90%, var(--color-bg));
+  background: var(--color-surface);
   box-shadow: var(--shadow-sm);
 }
 
@@ -1194,7 +1194,7 @@ main.auth-main:has(.landing-page) {
 }
 
 .auth-logo-card {
-  background: color-mix(in oklch, var(--color-surface) 90%, var(--color-bg));
+  background: var(--color-surface);
 }
 
 [data-theme="dark"] .auth-logo-card {
