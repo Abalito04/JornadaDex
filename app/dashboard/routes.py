@@ -8,7 +8,7 @@ from sqlalchemy import and_, func
 from app.context import current_company_id, is_platform_admin
 from app.models import AccountingClient, Area, Employee, Task, TimeRecord
 from app.roles import ROLE_EMPLOYEE, ROLE_SUPERVISOR
-from app.services.visibility_service import visible_company_time_records_query, visible_employees_query, visible_time_records_query
+from app.services.visibility_service import visible_employees_query, visible_time_records_query
 from app.utils.datetime import argentina_now
 
 dashboard_bp = Blueprint("dashboard", __name__)
@@ -38,16 +38,20 @@ def index():
     company_id = current_company_id()
     base = TimeRecord.query.filter_by(company_id=company_id, deleted_at=None)
     dashboard_role = _dashboard_role()
+    personal_base = base.filter(TimeRecord.employee_id == current_user.employee_id)
     if dashboard_role == "employee":
-        base = base.filter(TimeRecord.employee_id == current_user.employee_id)
+        base = personal_base
     elif dashboard_role == "supervisor":
-        base = visible_company_time_records_query(base)
+        base = visible_time_records_query(base)
     else:
         base = visible_time_records_query(base)
 
     reference_date = base.with_entities(func.max(TimeRecord.record_date)).scalar() or today
     week_start = reference_date - timedelta(days=6)
     month_start = reference_date.replace(day=1)
+    personal_reference_date = personal_base.with_entities(func.max(TimeRecord.record_date)).scalar() or today
+    personal_week_start = personal_reference_date - timedelta(days=6)
+    personal_month_start = personal_reference_date.replace(day=1)
     active_employees_query = Employee.query.filter_by(company_id=company_id, active=True, deleted_at=None)
     open_records = base.filter(TimeRecord.end_time.is_(None)).order_by(TimeRecord.record_date.desc(), TimeRecord.start_time.desc()).limit(8).all()
     recent_records = base.filter(TimeRecord.end_time.isnot(None)).order_by(TimeRecord.record_date.desc(), TimeRecord.start_time.desc()).limit(8).all()
@@ -64,6 +68,13 @@ def index():
         "active_areas": Area.query.filter_by(company_id=company_id, active=True, deleted_at=None).count(),
         "active_tasks": Task.query.join(Area).filter(Area.company_id == company_id, Task.active.is_(True), Task.deleted_at.is_(None)).count(),
     }
+    personal_metrics = {
+        "total_hours_today": _sum_hours(personal_base.filter(TimeRecord.record_date == today)),
+        "total_hours_week": _sum_hours(personal_base.filter(TimeRecord.record_date >= personal_week_start, TimeRecord.record_date <= personal_reference_date)),
+        "total_hours_month": _sum_hours(personal_base.filter(TimeRecord.record_date >= personal_month_start)),
+    }
+    personal_open_records = personal_base.filter(TimeRecord.end_time.is_(None)).order_by(TimeRecord.record_date.desc(), TimeRecord.start_time.desc()).limit(8).all()
+    personal_recent_records = personal_base.filter(TimeRecord.end_time.isnot(None)).order_by(TimeRecord.record_date.desc(), TimeRecord.start_time.desc()).limit(8).all()
 
     by_area = (
         base.join(Area, TimeRecord.area_id == Area.id)
@@ -71,6 +82,24 @@ def index():
         .group_by(Area.name)
         .order_by(func.sum(TimeRecord.hours).desc())
         .limit(6)
+        .all()
+    )
+    by_client_week = (
+        base.filter(TimeRecord.record_date >= week_start, TimeRecord.record_date <= reference_date)
+        .join(AccountingClient, TimeRecord.accounting_client_id == AccountingClient.id)
+        .with_entities(AccountingClient.name, func.sum(TimeRecord.hours))
+        .group_by(AccountingClient.name)
+        .order_by(func.sum(TimeRecord.hours).desc())
+        .limit(8)
+        .all()
+    )
+    by_client_month = (
+        base.filter(TimeRecord.record_date >= month_start)
+        .join(AccountingClient, TimeRecord.accounting_client_id == AccountingClient.id)
+        .with_entities(AccountingClient.name, func.sum(TimeRecord.hours))
+        .group_by(AccountingClient.name)
+        .order_by(func.sum(TimeRecord.hours).desc())
+        .limit(8)
         .all()
     )
     by_area_week = (
@@ -121,21 +150,24 @@ def index():
     area_week_chart = _chart_rows([(name, hours) for name, hours in by_area_week])
     area_month_chart = _chart_rows([(name, hours) for name, hours in by_area_month])
     client_chart = _chart_rows([(name, hours) for name, hours in by_client])
+    client_week_chart = _chart_rows([(name, hours) for name, hours in by_client_week])
+    client_month_chart = _chart_rows([(name, hours) for name, hours in by_client_month])
     employee_week_chart = _chart_rows([(f"{first} {last}", hours) for first, last, hours in by_employee_week])
     employee_chart = _chart_rows([(f"{first} {last}", hours) for first, last, hours in by_employee])
     employee_area_week_chart = []
     employee_area_month_chart = []
     employee_task_week_chart = []
     employee_task_month_chart = []
-    if dashboard_role == "employee":
-        area_records = base.join(
+    personal_client_chart = _chart_rows(_hours_by_client(personal_base.join(AccountingClient, TimeRecord.accounting_client_id == AccountingClient.id)))
+    if dashboard_role in ("employee", "supervisor"):
+        area_records = personal_base.join(
             Area,
             and_(
                 TimeRecord.area_id == Area.id,
                 Area.company_id == company_id,
             ),
         )
-        task_records = base.join(
+        task_records = personal_base.join(
             Task,
             and_(
                 TimeRecord.task_id == Task.id,
@@ -157,8 +189,14 @@ def index():
         area_week_chart=area_week_chart,
         area_month_chart=area_month_chart,
         client_chart=client_chart,
+        client_week_chart=client_week_chart,
+        client_month_chart=client_month_chart,
         employee_week_chart=employee_week_chart,
         employee_chart=employee_chart,
+        personal_metrics=personal_metrics,
+        personal_open_records=personal_open_records,
+        personal_recent_records=personal_recent_records,
+        personal_client_chart=personal_client_chart,
         employee_area_week_chart=employee_area_week_chart,
         employee_area_month_chart=employee_area_month_chart,
         employee_task_week_chart=employee_task_week_chart,
@@ -199,6 +237,16 @@ def _hours_by_task(query, limit=8):
     return (
         query.with_entities(Task.name, func.sum(TimeRecord.hours))
         .group_by(Task.name)
+        .order_by(func.sum(TimeRecord.hours).desc())
+        .limit(limit)
+        .all()
+    )
+
+
+def _hours_by_client(query, limit=8):
+    return (
+        query.with_entities(AccountingClient.name, func.sum(TimeRecord.hours))
+        .group_by(AccountingClient.name)
         .order_by(func.sum(TimeRecord.hours).desc())
         .limit(limit)
         .all()
