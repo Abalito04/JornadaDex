@@ -3,7 +3,7 @@ from decimal import Decimal
 
 from flask import Blueprint, redirect, render_template, url_for
 from flask_login import current_user, login_required
-from sqlalchemy import func
+from sqlalchemy import and_, func
 
 from app.context import current_company_id, is_platform_admin
 from app.models import AccountingClient, Area, Employee, Task, TimeRecord
@@ -126,8 +126,20 @@ def index():
     employee_area_hours = {"day": Decimal("0.00"), "week": Decimal("0.00"), "month": Decimal("0.00")}
     employee_task_hours = {"day": Decimal("0.00"), "week": Decimal("0.00"), "month": Decimal("0.00")}
     if dashboard_role == "employee":
-        area_records = base.join(Area, TimeRecord.area_id == Area.id)
-        task_records = base.join(Task, TimeRecord.task_id == Task.id)
+        area_records = base.join(
+            Area,
+            and_(
+                TimeRecord.area_id == Area.id,
+                Area.company_id == company_id,
+            ),
+        )
+        task_records = base.join(
+            Task,
+            and_(
+                TimeRecord.task_id == Task.id,
+                Task.area_id == TimeRecord.area_id,
+            ),
+        )
         employee_area_hours = {
             "day": _sum_hours(area_records.filter(TimeRecord.record_date == today)),
             "week": _sum_hours(area_records.filter(TimeRecord.record_date >= week_start, TimeRecord.record_date <= reference_date)),
