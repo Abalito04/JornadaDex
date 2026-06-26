@@ -13,7 +13,7 @@
 </section>
 
 {% if dashboard_role == "employee" %}
-  <section class="metric-grid">
+  <section class="metric-grid employee-metric-grid">
     <article><span>Horas hoy</span><strong>{{ format_duration_hs(metrics.total_hours_today) }}</strong></article>
     <article><span>Horas últimos 7 días</span><strong>{{ format_duration_hs(metrics.total_hours_week) }}</strong></article>
     <article><span>Horas mes</span><strong>{{ format_duration_hs(metrics.total_hours_month) }}</strong></article>
@@ -77,7 +77,7 @@
 
     <div class="panel">
       <h2>Tareas abiertas</h2>
-      <div class="metric-grid compact-metrics">
+      <div class="metric-grid compact-metrics single-metric">
         <article><span>Tareas abiertas</span><strong>{{ metrics.open_records }}</strong></article>
       </div>
     </div>
