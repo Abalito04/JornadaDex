@@ -1462,19 +1462,6 @@ main.auth-main:has(.landing-page) {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
-.open-tasks-summary {
-  display: flex;
-  align-items: end;
-  min-height: 96px;
-  padding-bottom: var(--space-2);
-}
-
-.open-tasks-summary strong {
-  font-size: var(--text-2xl);
-  line-height: 1;
-  font-variant-numeric: tabular-nums;
-}
-
 .two-columns {
   display: grid;
   grid-template-columns: repeat(2, minmax(320px, 1fr));

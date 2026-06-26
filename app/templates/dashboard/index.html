@@ -13,6 +13,33 @@
 </section>
 
 {% if dashboard_role == "employee" %}
+  <section class="panel">
+    <h2>Tarea en curso</h2>
+    <div class="dashboard-list">
+      {% for record in open_records %}
+        <article class="dashboard-row">
+          <div>
+            <strong>{{ record.task.name }}</strong>
+            <span>{{ record.area.name }}{% if record.accounting_client %} · {{ record.accounting_client.name }}{% endif %}{% if record.supervisor %} · Encargado: {{ record.supervisor.employee.full_name if record.supervisor.employee else record.supervisor.username }}{% endif %}</span>
+          </div>
+          <div class="table-actions">
+            <span class="status-badge {{ 'blocked' if record.is_paused else 'en-curso' }}">{{ "Pausada" if record.is_paused else format_time_hs(record.start_time) }}</span>
+            <form method="post" action="{{ url_for('time_records.toggle_pause', record_id=record.id) }}">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button class="small secondary" type="submit">{{ "Reanudar" if record.is_paused else "Pausar" }}</button>
+            </form>
+          </div>
+        </article>
+      {% else %}
+        <div class="empty-state compact">
+          <i data-lucide="timer-off"></i>
+          <strong>No tenés tareas abiertas.</strong>
+          <span>Cuando inicies una tarea va a aparecer acá.</span>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+
   <section class="metric-grid employee-metric-grid">
     <article><span>Horas hoy</span><strong>{{ format_duration_hs(metrics.total_hours_today) }}</strong></article>
     <article><span>Horas últimos 7 días</span><strong>{{ format_duration_hs(metrics.total_hours_week) }}</strong></article>
@@ -44,42 +71,6 @@
       <h2>Horas por tarea mensual</h2>
       {% set chart_rows = employee_task_month_chart %}
       {% include "dashboard/_bar_chart.html" %}
-    </div>
-  </section>
-
-  <section class="two-columns">
-    <div class="panel">
-      <h2>Tarea en curso</h2>
-      <div class="dashboard-list">
-        {% for record in open_records %}
-          <article class="dashboard-row">
-            <div>
-              <strong>{{ record.task.name }}</strong>
-              <span>{{ record.area.name }}{% if record.accounting_client %} · {{ record.accounting_client.name }}{% endif %}{% if record.supervisor %} · Encargado: {{ record.supervisor.employee.full_name if record.supervisor.employee else record.supervisor.username }}{% endif %}</span>
-            </div>
-            <div class="table-actions">
-              <span class="status-badge {{ 'blocked' if record.is_paused else 'en-curso' }}">{{ "Pausada" if record.is_paused else format_time_hs(record.start_time) }}</span>
-              <form method="post" action="{{ url_for('time_records.toggle_pause', record_id=record.id) }}">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <button class="small secondary" type="submit">{{ "Reanudar" if record.is_paused else "Pausar" }}</button>
-              </form>
-            </div>
-          </article>
-        {% else %}
-          <div class="empty-state compact">
-            <i data-lucide="timer-off"></i>
-            <strong>No tenés tareas abiertas.</strong>
-            <span>Cuando inicies una tarea va a aparecer acá.</span>
-          </div>
-        {% endfor %}
-      </div>
-    </div>
-
-    <div class="panel">
-      <h2>Tareas abiertas</h2>
-      <div class="open-tasks-summary">
-        <strong>{{ metrics.open_records }}</strong>
-      </div>
     </div>
   </section>
 
