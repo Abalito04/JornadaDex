@@ -193,6 +193,34 @@
 
         <section class="two-columns">
           <div class="panel">
+            <h2>Horas por área últimos 7 días</h2>
+            {% set chart_rows = area_week_chart %}
+            {% include "dashboard/_bar_chart.html" %}
+          </div>
+
+          <div class="panel">
+            <h2>Horas por área mensual</h2>
+            {% set chart_rows = area_month_chart %}
+            {% include "dashboard/_bar_chart.html" %}
+          </div>
+        </section>
+
+        <section class="two-columns">
+          <div class="panel">
+            <h2>Horas por tarea últimos 7 días</h2>
+            {% set chart_rows = team_task_week_chart %}
+            {% include "dashboard/_bar_chart.html" %}
+          </div>
+
+          <div class="panel">
+            <h2>Horas por tarea mensual</h2>
+            {% set chart_rows = team_task_month_chart %}
+            {% include "dashboard/_bar_chart.html" %}
+          </div>
+        </section>
+
+        <section class="two-columns">
+          <div class="panel">
             <h2>Ranking últimos 7 días por colaborador</h2>
             {% set chart_rows = employee_week_chart %}
             {% include "dashboard/_bar_chart.html" %}

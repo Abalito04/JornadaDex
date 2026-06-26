@@ -154,6 +154,18 @@ def index():
     client_month_chart = _chart_rows([(name, hours) for name, hours in by_client_month])
     employee_week_chart = _chart_rows([(f"{first} {last}", hours) for first, last, hours in by_employee_week])
     employee_chart = _chart_rows([(f"{first} {last}", hours) for first, last, hours in by_employee])
+    team_task_week_chart = []
+    team_task_month_chart = []
+    if dashboard_role == "supervisor":
+        team_task_records = base.join(
+            Task,
+            and_(
+                TimeRecord.task_id == Task.id,
+                Task.area_id == TimeRecord.area_id,
+            ),
+        )
+        team_task_week_chart = _chart_rows(_hours_by_task(team_task_records.filter(TimeRecord.record_date >= week_start, TimeRecord.record_date <= reference_date)))
+        team_task_month_chart = _chart_rows(_hours_by_task(team_task_records.filter(TimeRecord.record_date >= month_start)))
     employee_area_week_chart = []
     employee_area_month_chart = []
     employee_task_week_chart = []
@@ -193,6 +205,8 @@ def index():
         client_month_chart=client_month_chart,
         employee_week_chart=employee_week_chart,
         employee_chart=employee_chart,
+        team_task_week_chart=team_task_week_chart,
+        team_task_month_chart=team_task_month_chart,
         personal_metrics=personal_metrics,
         personal_open_records=personal_open_records,
         personal_recent_records=personal_recent_records,
