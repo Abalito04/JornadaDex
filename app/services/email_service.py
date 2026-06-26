@@ -1,11 +1,71 @@
+import json
 import smtplib
 from email.message import EmailMessage
+from urllib import request as urlrequest
+from urllib.error import HTTPError, URLError
 
 from flask import current_app
 
 
 def email_configured():
-    return bool(current_app.config["SMTP_HOST"] and current_app.config["SMTP_FROM_EMAIL"])
+    return bool(
+        current_app.config["SMTP_FROM_EMAIL"]
+        and (
+            current_app.config.get("RESEND_API_KEY")
+            or current_app.config["SMTP_HOST"]
+        )
+    )
+
+
+def _resend_api_key():
+    api_key = current_app.config.get("RESEND_API_KEY")
+    if api_key:
+        return api_key
+    if current_app.config["SMTP_HOST"] == "smtp.resend.com":
+        return current_app.config["SMTP_PASSWORD"]
+    return ""
+
+
+def _send_resend_email(to_email, subject, body):
+    payload = json.dumps(
+        {
+            "from": current_app.config["SMTP_FROM_EMAIL"],
+            "to": [to_email],
+            "subject": subject,
+            "text": body,
+        }
+    ).encode("utf-8")
+    resend_request = urlrequest.Request(
+        "https://api.resend.com/emails",
+        data=payload,
+        headers={
+            "Authorization": f"Bearer {_resend_api_key()}",
+            "Content-Type": "application/json",
+        },
+        method="POST",
+    )
+    try:
+        with urlrequest.urlopen(resend_request, timeout=10) as response:
+            response.read()
+    except HTTPError as exc:
+        details = exc.read().decode("utf-8", errors="replace")
+        current_app.logger.warning(
+            "Resend email API failed from=%s to=%s status=%s: %s",
+            current_app.config["SMTP_FROM_EMAIL"],
+            to_email,
+            exc.code,
+            details,
+        )
+        return False
+    except (OSError, URLError) as exc:
+        current_app.logger.warning(
+            "Resend email API delivery failed from=%s to=%s: %s",
+            current_app.config["SMTP_FROM_EMAIL"],
+            to_email,
+            exc,
+        )
+        return False
+    return True
 
 
 def send_email(to_email, subject, body):
@@ -14,6 +74,8 @@ def send_email(to_email, subject, body):
             "SMTP email delivery skipped because SMTP_HOST or SMTP_FROM_EMAIL is not configured."
         )
         return False
+    if _resend_api_key():
+        return _send_resend_email(to_email, subject, body)
 
     message = EmailMessage()
     message["Subject"] = subject

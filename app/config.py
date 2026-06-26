@@ -52,6 +52,7 @@ class Config:
     SMTP_PASSWORD = clean_env_value(os.getenv("SMTP_PASSWORD", ""))
     SMTP_FROM_EMAIL = clean_env_value(os.getenv("SMTP_FROM_EMAIL", ""))
     SMTP_USE_TLS = clean_env_value(os.getenv("SMTP_USE_TLS", "true")).lower() == "true"
+    RESEND_API_KEY = clean_env_value(os.getenv("RESEND_API_KEY", ""))
 
 
 
