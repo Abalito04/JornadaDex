@@ -123,6 +123,19 @@ def index():
     client_chart = _chart_rows([(name, hours) for name, hours in by_client])
     employee_week_chart = _chart_rows([(f"{first} {last}", hours) for first, last, hours in by_employee_week])
     employee_chart = _chart_rows([(f"{first} {last}", hours) for first, last, hours in by_employee])
+    employee_area_day_chart = []
+    employee_area_week_chart = []
+    employee_area_month_chart = []
+    employee_task_day_chart = []
+    employee_task_week_chart = []
+    employee_task_month_chart = []
+    if dashboard_role == "employee":
+        employee_area_day_chart = _chart_rows(_hours_by_area(base.filter(TimeRecord.record_date == today)))
+        employee_area_week_chart = _chart_rows(_hours_by_area(base.filter(TimeRecord.record_date >= week_start, TimeRecord.record_date <= reference_date)))
+        employee_area_month_chart = _chart_rows(_hours_by_area(base.filter(TimeRecord.record_date >= month_start)))
+        employee_task_day_chart = _chart_rows(_hours_by_task(base.filter(TimeRecord.record_date == today)))
+        employee_task_week_chart = _chart_rows(_hours_by_task(base.filter(TimeRecord.record_date >= week_start, TimeRecord.record_date <= reference_date)))
+        employee_task_month_chart = _chart_rows(_hours_by_task(base.filter(TimeRecord.record_date >= month_start)))
     return render_template(
         "dashboard/index.html",
         dashboard_role=dashboard_role,
@@ -136,6 +149,12 @@ def index():
         client_chart=client_chart,
         employee_week_chart=employee_week_chart,
         employee_chart=employee_chart,
+        employee_area_day_chart=employee_area_day_chart,
+        employee_area_week_chart=employee_area_week_chart,
+        employee_area_month_chart=employee_area_month_chart,
+        employee_task_day_chart=employee_task_day_chart,
+        employee_task_week_chart=employee_task_week_chart,
+        employee_task_month_chart=employee_task_month_chart,
         open_records=open_records,
         recent_records=recent_records,
     )
@@ -156,6 +175,28 @@ def _chart_rows(rows):
         }
         for label, value in normalized
     ]
+
+
+def _hours_by_area(query, limit=8):
+    return (
+        query.join(Area, TimeRecord.area_id == Area.id)
+        .with_entities(Area.name, func.sum(TimeRecord.hours))
+        .group_by(Area.name)
+        .order_by(func.sum(TimeRecord.hours).desc())
+        .limit(limit)
+        .all()
+    )
+
+
+def _hours_by_task(query, limit=8):
+    return (
+        query.join(Task, TimeRecord.task_id == Task.id)
+        .with_entities(Task.name, func.sum(TimeRecord.hours))
+        .group_by(Task.name)
+        .order_by(func.sum(TimeRecord.hours).desc())
+        .limit(limit)
+        .all()
+    )
 
 
 def _dashboard_role():

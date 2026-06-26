@@ -20,6 +20,50 @@
     <article><span>Tareas abiertas</span><strong>{{ metrics.open_records }}</strong></article>
   </section>
 
+  <section class="two-columns employee-period-panels">
+    <div class="panel">
+      <h2>Horas por área</h2>
+      <div class="period-chart-grid">
+        <section class="period-chart-card">
+          <h3>Día</h3>
+          {% set chart_rows = employee_area_day_chart %}
+          {% include "dashboard/_bar_chart.html" %}
+        </section>
+        <section class="period-chart-card">
+          <h3>Semana</h3>
+          {% set chart_rows = employee_area_week_chart %}
+          {% include "dashboard/_bar_chart.html" %}
+        </section>
+        <section class="period-chart-card">
+          <h3>Mes</h3>
+          {% set chart_rows = employee_area_month_chart %}
+          {% include "dashboard/_bar_chart.html" %}
+        </section>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Horas por tarea</h2>
+      <div class="period-chart-grid">
+        <section class="period-chart-card">
+          <h3>Día</h3>
+          {% set chart_rows = employee_task_day_chart %}
+          {% include "dashboard/_bar_chart.html" %}
+        </section>
+        <section class="period-chart-card">
+          <h3>Semana</h3>
+          {% set chart_rows = employee_task_week_chart %}
+          {% include "dashboard/_bar_chart.html" %}
+        </section>
+        <section class="period-chart-card">
+          <h3>Mes</h3>
+          {% set chart_rows = employee_task_month_chart %}
+          {% include "dashboard/_bar_chart.html" %}
+        </section>
+      </div>
+    </div>
+  </section>
+
   <section class="two-columns">
     <div class="panel">
       <h2>Tarea en curso</h2>

@@ -1460,6 +1460,42 @@ main.auth-main:has(.landing-page) {
   gap: var(--space-5);
 }
 
+.employee-period-panels {
+  align-items: start;
+}
+
+.period-chart-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+.period-chart-card {
+  display: grid;
+  gap: var(--space-3);
+  min-width: 0;
+  padding: var(--space-4);
+  border: 1px solid var(--color-divider-soft);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-2);
+}
+
+.period-chart-card h3 {
+  margin: 0;
+  color: var(--color-text);
+  font-size: var(--text-sm);
+  font-weight: 900;
+}
+
+.period-chart-card .bar-chart {
+  gap: var(--space-3);
+}
+
+.period-chart-card .empty-state.compact {
+  min-height: 144px;
+  padding: var(--space-4);
+}
+
 .dashboard-list {
   display: grid;
   gap: var(--space-3);
@@ -2438,6 +2474,10 @@ details.area-block:not([open]) .accordion-indicator::after { content: " tareas";
   }
 
   .two-columns {
+    grid-template-columns: 1fr;
+  }
+
+  .period-chart-grid {
     grid-template-columns: 1fr;
   }
 
