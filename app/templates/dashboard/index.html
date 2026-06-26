@@ -17,7 +17,6 @@
     <article><span>Horas hoy</span><strong>{{ format_duration_hs(metrics.total_hours_today) }}</strong></article>
     <article><span>Horas últimos 7 días</span><strong>{{ format_duration_hs(metrics.total_hours_week) }}</strong></article>
     <article><span>Horas mes</span><strong>{{ format_duration_hs(metrics.total_hours_month) }}</strong></article>
-    <article><span>Tareas abiertas</span><strong>{{ metrics.open_records }}</strong></article>
   </section>
 
   <section class="two-columns">
@@ -77,9 +76,16 @@
     </div>
 
     <div class="panel">
-      <h2>Mis horas por cliente</h2>
-      {% include "dashboard/_bar_chart.html" with context %}
+      <h2>Tareas abiertas</h2>
+      <div class="metric-grid compact-metrics">
+        <article><span>Tareas abiertas</span><strong>{{ metrics.open_records }}</strong></article>
+      </div>
     </div>
+  </section>
+
+  <section class="panel">
+    <h2>Mis horas por cliente</h2>
+    {% include "dashboard/_bar_chart.html" with context %}
   </section>
 
   <details class="panel records-panel">
