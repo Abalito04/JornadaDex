@@ -76,7 +76,8 @@
 
   <section class="panel">
     <h2>Mis horas por cliente</h2>
-    {% include "dashboard/_bar_chart.html" with context %}
+    {% set chart_rows = client_chart %}
+    {% include "dashboard/_bar_chart.html" %}
   </section>
 
   <details class="panel records-panel">
