@@ -49,14 +49,14 @@
 
 [data-theme="dark"] {
   color-scheme: dark;
-  --color-bg: oklch(0.18 0.018 230);
-  --color-surface: oklch(0.225 0.02 230);
-  --color-surface-2: oklch(0.265 0.018 230);
-  --color-surface-offset: oklch(0.315 0.018 230);
-  --color-surface-dynamic: oklch(0.37 0.015 230);
-  --color-text: oklch(0.91 0.012 220);
-  --color-text-muted: oklch(0.72 0.016 220);
-  --color-text-faint: oklch(0.55 0.016 220);
+  --color-bg: oklch(0.255 0.018 230);
+  --color-surface: oklch(0.305 0.02 230);
+  --color-surface-2: oklch(0.345 0.018 230);
+  --color-surface-offset: oklch(0.405 0.018 230);
+  --color-surface-dynamic: oklch(0.46 0.015 230);
+  --color-text: oklch(0.875 0.012 220);
+  --color-text-muted: oklch(0.755 0.016 220);
+  --color-text-faint: oklch(0.62 0.016 220);
   --color-primary: #4bc58b;
   --color-primary-hover: #72d7a6;
   --color-accent-green: #4bc58b;
