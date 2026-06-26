@@ -48,13 +48,13 @@
 
   <section class="two-columns">
     <div class="panel">
-      <h2>Horas por área últimos 7 días</h2>
+      <h2>Horas Área últimos 7 días</h2>
       {% set chart_rows = employee_area_week_chart %}
       {% include "dashboard/_bar_chart.html" %}
     </div>
 
     <div class="panel">
-      <h2>Horas por área mensual</h2>
+      <h2>Horas Área mensual</h2>
       {% set chart_rows = employee_area_month_chart %}
       {% include "dashboard/_bar_chart.html" %}
     </div>
@@ -62,13 +62,13 @@
 
   <section class="two-columns">
     <div class="panel">
-      <h2>Horas por tarea últimos 7 días</h2>
+      <h2>Horas Tarea últimos 7 días</h2>
       {% set chart_rows = employee_task_week_chart %}
       {% include "dashboard/_bar_chart.html" %}
     </div>
 
     <div class="panel">
-      <h2>Horas por tarea mensual</h2>
+      <h2>Horas Tarea mensual</h2>
       {% set chart_rows = employee_task_month_chart %}
       {% include "dashboard/_bar_chart.html" %}
     </div>
@@ -88,11 +88,11 @@
   </details>
 {% elif dashboard_role == "supervisor" %}
   <div class="dashboard-tabs">
-    <input class="dashboard-tab-control" type="radio" name="supervisor_dashboard_tab" id="supervisor-work-tab" checked>
-    <input class="dashboard-tab-control" type="radio" name="supervisor_dashboard_tab" id="supervisor-team-tab">
+    <input class="dashboard-tab-control" type="radio" name="supervisor_dashboard_tab" id="supervisor-team-tab" checked>
+    <input class="dashboard-tab-control" type="radio" name="supervisor_dashboard_tab" id="supervisor-work-tab">
     <div class="dashboard-tab-labels" role="tablist" aria-label="Dashboard encargado">
-      <label for="supervisor-work-tab" role="tab">Dashboard laboral</label>
       <label for="supervisor-team-tab" role="tab">Dashboard supervisión</label>
+      <label for="supervisor-work-tab" role="tab">Dashboard laboral</label>
     </div>
 
     <div class="dashboard-tab-panels">
@@ -136,13 +136,13 @@
 
         <section class="two-columns">
           <div class="panel">
-            <h2>Horas por área últimos 7 días</h2>
+            <h2>Horas Área últimos 7 días</h2>
             {% set chart_rows = employee_area_week_chart %}
             {% include "dashboard/_bar_chart.html" %}
           </div>
 
           <div class="panel">
-            <h2>Horas por área mensual</h2>
+            <h2>Horas Área mensual</h2>
             {% set chart_rows = employee_area_month_chart %}
             {% include "dashboard/_bar_chart.html" %}
           </div>
@@ -150,13 +150,13 @@
 
         <section class="two-columns">
           <div class="panel">
-            <h2>Horas por tarea últimos 7 días</h2>
+            <h2>Horas Tarea últimos 7 días</h2>
             {% set chart_rows = employee_task_week_chart %}
             {% include "dashboard/_bar_chart.html" %}
           </div>
 
           <div class="panel">
-            <h2>Horas por tarea mensual</h2>
+            <h2>Horas Tarea mensual</h2>
             {% set chart_rows = employee_task_month_chart %}
             {% include "dashboard/_bar_chart.html" %}
           </div>
@@ -193,13 +193,13 @@
 
         <section class="two-columns">
           <div class="panel">
-            <h2>Ranking últimos 7 días por colaborador</h2>
+            <h2>Ranking últimos 7 días Colaborador</h2>
             {% set chart_rows = employee_week_chart %}
             {% include "dashboard/_bar_chart.html" %}
           </div>
 
           <div class="panel">
-            <h2>Ranking mensual por colaborador</h2>
+            <h2>Ranking mensual Colaborador</h2>
             {% set chart_rows = employee_chart %}
             {% include "dashboard/_bar_chart.html" %}
           </div>
@@ -207,13 +207,13 @@
 
         <section class="two-columns">
           <div class="panel">
-            <h2>Horas por cliente últimos 7 días</h2>
+            <h2>Horas Cliente últimos 7 días</h2>
             {% set chart_rows = client_week_chart %}
             {% include "dashboard/_bar_chart.html" %}
           </div>
 
           <div class="panel">
-            <h2>Horas por cliente mensual</h2>
+            <h2>Horas Cliente mensual</h2>
             {% set chart_rows = client_month_chart %}
             {% include "dashboard/_bar_chart.html" %}
           </div>
@@ -221,13 +221,13 @@
 
         <section class="two-columns">
           <div class="panel">
-            <h2>Horas por área últimos 7 días</h2>
+            <h2>Horas Área últimos 7 días</h2>
             {% set chart_rows = area_week_chart %}
             {% include "dashboard/_bar_chart.html" %}
           </div>
 
           <div class="panel">
-            <h2>Horas por área mensual</h2>
+            <h2>Horas Área mensual</h2>
             {% set chart_rows = area_month_chart %}
             {% include "dashboard/_bar_chart.html" %}
           </div>
@@ -235,13 +235,13 @@
 
         <section class="two-columns">
           <div class="panel">
-            <h2>Horas por tarea últimos 7 días</h2>
+            <h2>Horas Tarea últimos 7 días</h2>
             {% set chart_rows = team_task_week_chart %}
             {% include "dashboard/_bar_chart.html" %}
           </div>
 
           <div class="panel">
-            <h2>Horas por tarea mensual</h2>
+            <h2>Horas Tarea mensual</h2>
             {% set chart_rows = team_task_month_chart %}
             {% include "dashboard/_bar_chart.html" %}
           </div>
@@ -259,13 +259,13 @@
 
   <section class="two-columns">
     <div class="panel">
-      <h2>Horas por área últimos 7 días</h2>
+      <h2>Horas Área últimos 7 días</h2>
       {% set chart_rows = area_week_chart %}
       {% include "dashboard/_bar_chart.html" %}
     </div>
 
     <div class="panel">
-      <h2>Horas por área mensual</h2>
+      <h2>Horas Área mensual</h2>
       {% set chart_rows = area_month_chart %}
       {% include "dashboard/_bar_chart.html" %}
     </div>
@@ -273,13 +273,13 @@
 
   <section class="two-columns">
     <div class="panel">
-      <h2>Ranking últimos 7 días por colaborador</h2>
+      <h2>Ranking últimos 7 días Colaborador</h2>
       {% set chart_rows = employee_week_chart %}
       {% include "dashboard/_bar_chart.html" %}
     </div>
 
     <div class="panel">
-      <h2>Ranking mensual por colaborador</h2>
+      <h2>Ranking mensual Colaborador</h2>
       {% set chart_rows = employee_chart %}
       {% include "dashboard/_bar_chart.html" %}
     </div>
