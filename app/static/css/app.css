@@ -1454,6 +1454,10 @@ main.auth-main:has(.landing-page) {
   padding: var(--space-4);
 }
 
+.metric-grid.employee-metric-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
 .two-columns {
   display: grid;
   grid-template-columns: repeat(2, minmax(320px, 1fr));

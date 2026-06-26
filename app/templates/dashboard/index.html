@@ -13,20 +13,23 @@
 </section>
 
 {% if dashboard_role == "employee" %}
-  <section class="metric-grid">
+  <section class="metric-grid employee-metric-grid">
     <article><span>Horas hoy</span><strong>{{ format_duration_hs(metrics.total_hours_today) }}</strong></article>
     <article><span>Horas últimos 7 días</span><strong>{{ format_duration_hs(metrics.total_hours_week) }}</strong></article>
     <article><span>Horas mes</span><strong>{{ format_duration_hs(metrics.total_hours_month) }}</strong></article>
-    <article><span>Tareas abiertas</span><strong>{{ metrics.open_records }}</strong></article>
   </section>
 
-  <section class="metric-grid">
-    <article><span>Horas por área día</span><strong>{{ format_duration_hs(employee_area_hours.day) }}</strong></article>
-    <article><span>Horas por área semana</span><strong>{{ format_duration_hs(employee_area_hours.week) }}</strong></article>
-    <article><span>Horas por área mes</span><strong>{{ format_duration_hs(employee_area_hours.month) }}</strong></article>
-    <article><span>Horas por tarea día</span><strong>{{ format_duration_hs(employee_task_hours.day) }}</strong></article>
-    <article><span>Horas por tarea semana</span><strong>{{ format_duration_hs(employee_task_hours.week) }}</strong></article>
-    <article><span>Horas por tarea mes</span><strong>{{ format_duration_hs(employee_task_hours.month) }}</strong></article>
+  <section class="metric-grid employee-metric-grid">
+    <article><span>Horas Área hoy</span><strong>{{ format_duration_hs(employee_area_hours.day) }}</strong></article>
+    <article><span>Horas Área últimos 7 días</span><strong>{{ format_duration_hs(employee_area_hours.week) }}</strong></article>
+    <article><span>Horas Área mes</span><strong>{{ format_duration_hs(employee_area_hours.month) }}</strong></article>
+    <article><span>Horas Tarea hoy</span><strong>{{ format_duration_hs(employee_task_hours.day) }}</strong></article>
+    <article><span>Horas Tarea últimos 7 días</span><strong>{{ format_duration_hs(employee_task_hours.week) }}</strong></article>
+    <article><span>Horas Tarea mes</span><strong>{{ format_duration_hs(employee_task_hours.month) }}</strong></article>
+  </section>
+
+  <section class="metric-grid employee-metric-grid">
+    <article><span>Tareas abiertas</span><strong>{{ metrics.open_records }}</strong></article>
   </section>
 
   <section class="two-columns">
