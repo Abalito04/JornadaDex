@@ -24,25 +24,25 @@
   --color-primary: #0b7a53;
   --color-primary-hover: #075f41;
   --color-accent-green: #0b7a53;
-  --color-accent-blue: #0a6f9d;
-  --color-accent-cyan: #01696f;
+  --color-accent-blue: #6aa895;
+  --color-accent-cyan: #4d9a84;
   --gradient-accent: linear-gradient(135deg, var(--color-accent-green), var(--color-primary) 62%, var(--color-accent-cyan) 86%, var(--color-accent-blue));
   --gradient-accent-soft: linear-gradient(135deg, color-mix(in oklch, var(--color-accent-green) 18%, transparent), color-mix(in oklch, var(--color-primary) 12%, transparent) 62%, color-mix(in oklch, var(--color-accent-blue) 7%, transparent));
   --color-success: #16804a;
   --color-warning: #a97906;
   --color-error: #b63434;
-  --color-bg: oklch(0.975 0.004 220);
-  --color-surface: oklch(0.997 0.002 220);
-  --color-surface-2: oklch(0.955 0.006 220);
-  --color-surface-offset: oklch(0.925 0.008 220);
-  --color-surface-dynamic: oklch(0.985 0.003 220);
-  --color-text: oklch(0.22 0.025 230);
-  --color-text-muted: oklch(0.48 0.02 230);
-  --color-text-faint: oklch(0.67 0.015 230);
-  --color-divider: oklch(from var(--color-text) l c h / 0.10);
-  --color-divider-soft: oklch(from var(--color-text) l c h / 0.08);
-  --shadow-sm: 0 1px 2px oklch(0.2 0.01 220 / 0.06), 0 4px 12px oklch(0.2 0.01 220 / 0.05);
-  --shadow-lg: 0 12px 30px oklch(0.2 0.01 220 / 0.12), 0 28px 70px oklch(0.2 0.01 220 / 0.10);
+  --color-bg: oklch(0.955 0.026 118);
+  --color-surface: oklch(0.988 0.014 96);
+  --color-surface-2: oklch(0.935 0.028 118);
+  --color-surface-offset: oklch(0.89 0.038 116);
+  --color-surface-dynamic: oklch(0.972 0.019 105);
+  --color-text: oklch(0.235 0.034 150);
+  --color-text-muted: oklch(0.46 0.03 142);
+  --color-text-faint: oklch(0.61 0.026 132);
+  --color-divider: oklch(0.55 0.045 126 / 0.18);
+  --color-divider-soft: oklch(0.62 0.04 122 / 0.12);
+  --shadow-sm: 0 1px 2px oklch(0.28 0.035 132 / 0.07), 0 5px 14px oklch(0.28 0.035 132 / 0.06);
+  --shadow-lg: 0 12px 30px oklch(0.28 0.035 132 / 0.14), 0 28px 70px oklch(0.28 0.035 132 / 0.10);
   --sidebar-width: 248px;
   --topbar-height: 56px;
 }
@@ -156,7 +156,7 @@ p { margin: 0; }
   padding: 5px 8px;
   border: 1px solid var(--color-divider);
   border-radius: var(--radius-lg);
-  background: color-mix(in oklch, var(--color-surface) 92%, white);
+  background: color-mix(in oklch, var(--color-surface) 90%, var(--color-bg));
   box-shadow: var(--shadow-sm);
 }
 
@@ -184,7 +184,7 @@ p { margin: 0; }
 }
 
 .brand-logo-frame {
-  background: color-mix(in oklch, var(--color-surface) 92%, white);
+  background: color-mix(in oklch, var(--color-surface) 90%, var(--color-bg));
 }
 
 [data-theme="dark"] .brand-logo-frame {
@@ -397,7 +397,7 @@ main.auth-main:has(.landing-page) {
   padding: 6px 10px;
   border: 1px solid var(--color-divider);
   border-radius: var(--radius-lg);
-  background: color-mix(in oklch, var(--color-surface) 92%, white);
+  background: color-mix(in oklch, var(--color-surface) 90%, var(--color-bg));
   box-shadow: var(--shadow-sm);
 }
 
@@ -1182,7 +1182,7 @@ main.auth-main:has(.landing-page) {
   padding: var(--space-4);
   border: 1px solid var(--color-divider);
   border-radius: var(--radius-lg);
-  background: color-mix(in oklch, var(--color-surface) 92%, white);
+  background: color-mix(in oklch, var(--color-surface) 90%, var(--color-bg));
   box-shadow: var(--shadow-sm);
 }
 
@@ -1194,7 +1194,7 @@ main.auth-main:has(.landing-page) {
 }
 
 .auth-logo-card {
-  background: color-mix(in oklch, var(--color-surface) 92%, white);
+  background: color-mix(in oklch, var(--color-surface) 90%, var(--color-bg));
 }
 
 [data-theme="dark"] .auth-logo-card {
@@ -2750,7 +2750,7 @@ details.area-block:not([open]) .accordion-indicator::after { content: " tareas";
   background:
     radial-gradient(circle at 10% 0%, color-mix(in oklch, var(--color-primary) 16%, transparent), transparent 25rem),
     radial-gradient(circle at 90% 16%, color-mix(in oklch, var(--color-accent-cyan) 10%, transparent), transparent 28rem),
-    linear-gradient(180deg, white, color-mix(in oklch, var(--color-surface) 90%, var(--color-bg)));
+    linear-gradient(180deg, var(--color-surface), color-mix(in oklch, var(--color-surface) 90%, var(--color-bg)));
   color: var(--color-text);
   overflow: hidden;
   position: relative;
