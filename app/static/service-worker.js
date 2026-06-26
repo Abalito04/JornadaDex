@@ -1,6 +1,6 @@
-const CACHE_NAME = "jornadadex-static-v6";
+const CACHE_NAME = "jornadadex-static-v7";
 const STATIC_ASSETS = [
-  "/static/css/app.css?v=20260626-employee-metric-cards",
+  "/static/css/app.css?v=20260626-employee-metric-size",
   "/static/js/app.js",
   "/static/js/pwa.js",
   "/static/img/favicon.svg",
