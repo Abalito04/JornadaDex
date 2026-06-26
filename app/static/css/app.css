@@ -2748,9 +2748,9 @@ details.area-block:not([open]) .accordion-indicator::after { content: " tareas";
 .landing-hero-band {
   min-height: 640px;
   background:
-    radial-gradient(circle at 10% 0%, color-mix(in oklch, var(--color-primary) 16%, transparent), transparent 25rem),
-    radial-gradient(circle at 90% 16%, color-mix(in oklch, var(--color-accent-cyan) 10%, transparent), transparent 28rem),
-    linear-gradient(180deg, var(--color-surface), color-mix(in oklch, var(--color-surface) 90%, var(--color-bg)));
+    radial-gradient(circle at 10% 0%, color-mix(in oklch, var(--color-primary) 18%, transparent), transparent 25rem),
+    radial-gradient(circle at 90% 16%, color-mix(in oklch, var(--color-accent-cyan) 16%, transparent), transparent 28rem),
+    linear-gradient(180deg, color-mix(in oklch, var(--color-bg) 86%, var(--color-surface-offset)), var(--color-bg));
   color: var(--color-text);
   overflow: hidden;
   position: relative;
@@ -2808,7 +2808,7 @@ details.area-block:not([open]) .accordion-indicator::after { content: " tareas";
 }
 
 .landing-v2 .icon-button {
-  background: var(--color-surface);
+  background: color-mix(in oklch, var(--color-surface) 88%, var(--color-bg));
   color: var(--color-text);
 }
 
@@ -2886,7 +2886,7 @@ details.area-block:not([open]) .accordion-indicator::after { content: " tareas";
   padding: var(--space-5);
   border: 1px solid var(--color-divider);
   border-radius: var(--radius-lg);
-  background: color-mix(in oklch, var(--color-surface) 92%, transparent);
+  background: var(--color-surface);
   box-shadow: var(--shadow-lg);
   backdrop-filter: blur(16px);
 }
@@ -3007,8 +3007,8 @@ details.area-block:not([open]) .accordion-indicator::after { content: " tareas";
   position: relative;
   overflow: hidden;
   background:
-    radial-gradient(ellipse at 50% 8%, color-mix(in oklch, var(--color-primary) 10%, transparent), transparent 36rem),
-    linear-gradient(180deg, var(--color-bg), color-mix(in oklch, var(--color-surface) 76%, var(--color-bg)) 46%, var(--color-bg));
+    radial-gradient(ellipse at 50% 8%, color-mix(in oklch, var(--color-primary) 14%, transparent), transparent 36rem),
+    linear-gradient(180deg, var(--color-bg), color-mix(in oklch, var(--color-bg) 82%, var(--color-surface-offset)) 46%, var(--color-bg));
 }
 
 .landing-demo::before {
@@ -3192,7 +3192,9 @@ details.area-block:not([open]) .accordion-indicator::after { content: " tareas";
 
 .landing-v2 .landing-evidence {
   grid-template-columns: 0.68fr 1.1fr;
-  background: var(--color-bg);
+  background:
+    radial-gradient(circle at 0% 10%, color-mix(in oklch, var(--color-primary) 10%, transparent), transparent 28rem),
+    var(--color-bg);
 }
 
 .evidence-dashboard {
