@@ -156,7 +156,7 @@ def index():
     employee_chart = _chart_rows([(f"{first} {last}", hours) for first, last, hours in by_employee])
     team_task_week_chart = []
     team_task_month_chart = []
-    if dashboard_role == "supervisor":
+    if dashboard_role in ("supervisor", "owner"):
         team_task_records = base.join(
             Task,
             and_(
