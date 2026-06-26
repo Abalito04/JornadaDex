@@ -250,6 +250,17 @@
     </div>
   </div>
 {% else %}
+  <section class="panel">
+    <h2>Resumen mensual general</h2>
+    <div class="metric-grid compact-metrics owner-summary-grid">
+      <article><span>Total colaboradores</span><strong>{{ metrics.active_employees }}</strong></article>
+      <article><span>Total clientes</span><strong>{{ metrics.active_clients }}</strong></article>
+      <article><span>Áreas</span><strong>{{ metrics.active_areas }}</strong></article>
+      <article><span>Tareas</span><strong>{{ metrics.active_tasks }}</strong></article>
+      <article><span>Registros del mes</span><strong>{{ metrics.total_records_month }}</strong></article>
+    </div>
+  </section>
+
   <section class="metric-grid">
     <article><span>Horas hoy</span><strong>{{ format_duration_hs(metrics.total_hours_today) }}</strong></article>
     <article><span>Horas últimos 7 días</span><strong>{{ format_duration_hs(metrics.total_hours_week) }}</strong></article>
@@ -313,15 +324,5 @@
     </div>
   </section>
 
-  <section class="panel">
-    <h2>Resumen mensual general</h2>
-    <div class="metric-grid compact-metrics">
-      <article><span>Total colaboradores</span><strong>{{ metrics.active_employees }}</strong></article>
-      <article><span>Total clientes</span><strong>{{ metrics.active_clients }}</strong></article>
-      <article><span>Áreas</span><strong>{{ metrics.active_areas }}</strong></article>
-      <article><span>Tareas</span><strong>{{ metrics.active_tasks }}</strong></article>
-      <article><span>Registros del mes</span><strong>{{ metrics.total_records_month }}</strong></article>
-    </div>
-  </section>
 {% endif %}
 {% endblock %}

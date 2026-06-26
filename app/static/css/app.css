@@ -1518,6 +1518,10 @@ main.auth-main:has(.landing-page) {
   padding: var(--space-4);
 }
 
+.metric-grid.owner-summary-grid {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
 .metric-grid.single-metric {
   grid-template-columns: 1fr;
 }
