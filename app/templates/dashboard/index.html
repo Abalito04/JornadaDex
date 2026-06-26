@@ -87,125 +87,140 @@
     {% include "dashboard/_recent_records.html" %}
   </details>
 {% elif dashboard_role == "supervisor" %}
-  <section class="dashboard-subtitle">
-    <h2>Mi dashboard</h2>
-  </section>
+  <div class="dashboard-tabs">
+    <input class="dashboard-tab-control" type="radio" name="supervisor_dashboard_tab" id="supervisor-work-tab" checked>
+    <input class="dashboard-tab-control" type="radio" name="supervisor_dashboard_tab" id="supervisor-team-tab">
+    <div class="dashboard-tab-labels" role="tablist" aria-label="Dashboard encargado">
+      <label for="supervisor-work-tab" role="tab">Dashboard laboral</label>
+      <label for="supervisor-team-tab" role="tab">Dashboard supervisión</label>
+    </div>
 
-  <section class="panel">
-    <h2>Tarea en curso</h2>
-    <div class="dashboard-list">
-      {% for record in personal_open_records %}
-        <article class="dashboard-row">
-          <div>
-            <strong>{{ record.task.name }}</strong>
-            <span>{{ record.area.name }}{% if record.accounting_client %} · {{ record.accounting_client.name }}{% endif %}{% if record.supervisor %} · Encargado: {{ record.supervisor.employee.full_name if record.supervisor.employee else record.supervisor.username }}{% endif %}</span>
+    <div class="dashboard-tab-panels">
+      <section class="dashboard-tab-panel" id="supervisor-work-panel" role="tabpanel">
+        <section class="dashboard-subtitle">
+          <h2>Mi dashboard</h2>
+        </section>
+
+        <section class="panel">
+          <h2>Tarea en curso</h2>
+          <div class="dashboard-list">
+            {% for record in personal_open_records %}
+              <article class="dashboard-row">
+                <div>
+                  <strong>{{ record.task.name }}</strong>
+                  <span>{{ record.area.name }}{% if record.accounting_client %} · {{ record.accounting_client.name }}{% endif %}{% if record.supervisor %} · Encargado: {{ record.supervisor.employee.full_name if record.supervisor.employee else record.supervisor.username }}{% endif %}</span>
+                </div>
+                <div class="table-actions">
+                  <span class="status-badge {{ 'blocked' if record.is_paused else 'en-curso' }}">{{ "Pausada" if record.is_paused else format_time_hs(record.start_time) }}</span>
+                  <form method="post" action="{{ url_for('time_records.toggle_pause', record_id=record.id) }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button class="small secondary" type="submit">{{ "Reanudar" if record.is_paused else "Pausar" }}</button>
+                  </form>
+                </div>
+              </article>
+            {% else %}
+              <div class="empty-state compact">
+                <i data-lucide="timer-off"></i>
+                <strong>No tenés tareas abiertas.</strong>
+                <span>Cuando inicies una tarea va a aparecer acá.</span>
+              </div>
+            {% endfor %}
           </div>
-          <div class="table-actions">
-            <span class="status-badge {{ 'blocked' if record.is_paused else 'en-curso' }}">{{ "Pausada" if record.is_paused else format_time_hs(record.start_time) }}</span>
-            <form method="post" action="{{ url_for('time_records.toggle_pause', record_id=record.id) }}">
-              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-              <button class="small secondary" type="submit">{{ "Reanudar" if record.is_paused else "Pausar" }}</button>
-            </form>
+        </section>
+
+        <section class="metric-grid employee-metric-grid">
+          <article><span>Horas hoy</span><strong>{{ format_duration_hs(personal_metrics.total_hours_today) }}</strong></article>
+          <article><span>Horas últimos 7 días</span><strong>{{ format_duration_hs(personal_metrics.total_hours_week) }}</strong></article>
+          <article><span>Horas mes</span><strong>{{ format_duration_hs(personal_metrics.total_hours_month) }}</strong></article>
+        </section>
+
+        <section class="two-columns">
+          <div class="panel">
+            <h2>Horas por área últimos 7 días</h2>
+            {% set chart_rows = employee_area_week_chart %}
+            {% include "dashboard/_bar_chart.html" %}
           </div>
-        </article>
-      {% else %}
-        <div class="empty-state compact">
-          <i data-lucide="timer-off"></i>
-          <strong>No tenés tareas abiertas.</strong>
-          <span>Cuando inicies una tarea va a aparecer acá.</span>
-        </div>
-      {% endfor %}
+
+          <div class="panel">
+            <h2>Horas por área mensual</h2>
+            {% set chart_rows = employee_area_month_chart %}
+            {% include "dashboard/_bar_chart.html" %}
+          </div>
+        </section>
+
+        <section class="two-columns">
+          <div class="panel">
+            <h2>Horas por tarea últimos 7 días</h2>
+            {% set chart_rows = employee_task_week_chart %}
+            {% include "dashboard/_bar_chart.html" %}
+          </div>
+
+          <div class="panel">
+            <h2>Horas por tarea mensual</h2>
+            {% set chart_rows = employee_task_month_chart %}
+            {% include "dashboard/_bar_chart.html" %}
+          </div>
+        </section>
+
+        <section class="panel">
+          <h2>Mis horas por cliente</h2>
+          {% set chart_rows = personal_client_chart %}
+          {% include "dashboard/_bar_chart.html" %}
+        </section>
+
+        <details class="panel records-panel">
+          <summary class="records-summary">
+            <span>Mis últimos registros</span>
+            <strong>{{ personal_recent_records|length }} visibles</strong>
+          </summary>
+          {% with recent_records = personal_recent_records %}
+            {% include "dashboard/_recent_records.html" %}
+          {% endwith %}
+        </details>
+      </section>
+
+      <section class="dashboard-tab-panel" id="supervisor-team-panel" role="tabpanel">
+        <section class="dashboard-subtitle">
+          <h2>Colaboradores a cargo</h2>
+        </section>
+
+        <section class="metric-grid">
+          <article><span>Horas equipo hoy</span><strong>{{ format_duration_hs(metrics.total_hours_today) }}</strong></article>
+          <article><span>Horas equipo últimos 7 días</span><strong>{{ format_duration_hs(metrics.total_hours_week) }}</strong></article>
+          <article><span>Horas equipo mes</span><strong>{{ format_duration_hs(metrics.total_hours_month) }}</strong></article>
+          <article><span>Tareas abiertas equipo</span><strong>{{ metrics.open_records }}</strong></article>
+        </section>
+
+        <section class="two-columns">
+          <div class="panel">
+            <h2>Ranking últimos 7 días por colaborador</h2>
+            {% set chart_rows = employee_week_chart %}
+            {% include "dashboard/_bar_chart.html" %}
+          </div>
+
+          <div class="panel">
+            <h2>Ranking mensual por colaborador</h2>
+            {% set chart_rows = employee_chart %}
+            {% include "dashboard/_bar_chart.html" %}
+          </div>
+        </section>
+
+        <section class="two-columns">
+          <div class="panel">
+            <h2>Horas por cliente últimos 7 días</h2>
+            {% set chart_rows = client_week_chart %}
+            {% include "dashboard/_bar_chart.html" %}
+          </div>
+
+          <div class="panel">
+            <h2>Horas por cliente mensual</h2>
+            {% set chart_rows = client_month_chart %}
+            {% include "dashboard/_bar_chart.html" %}
+          </div>
+        </section>
+      </section>
     </div>
-  </section>
-
-  <section class="metric-grid employee-metric-grid">
-    <article><span>Horas hoy</span><strong>{{ format_duration_hs(personal_metrics.total_hours_today) }}</strong></article>
-    <article><span>Horas últimos 7 días</span><strong>{{ format_duration_hs(personal_metrics.total_hours_week) }}</strong></article>
-    <article><span>Horas mes</span><strong>{{ format_duration_hs(personal_metrics.total_hours_month) }}</strong></article>
-  </section>
-
-  <section class="two-columns">
-    <div class="panel">
-      <h2>Horas por área últimos 7 días</h2>
-      {% set chart_rows = employee_area_week_chart %}
-      {% include "dashboard/_bar_chart.html" %}
-    </div>
-
-    <div class="panel">
-      <h2>Horas por área mensual</h2>
-      {% set chart_rows = employee_area_month_chart %}
-      {% include "dashboard/_bar_chart.html" %}
-    </div>
-  </section>
-
-  <section class="two-columns">
-    <div class="panel">
-      <h2>Horas por tarea últimos 7 días</h2>
-      {% set chart_rows = employee_task_week_chart %}
-      {% include "dashboard/_bar_chart.html" %}
-    </div>
-
-    <div class="panel">
-      <h2>Horas por tarea mensual</h2>
-      {% set chart_rows = employee_task_month_chart %}
-      {% include "dashboard/_bar_chart.html" %}
-    </div>
-  </section>
-
-  <section class="panel">
-    <h2>Mis horas por cliente</h2>
-    {% set chart_rows = personal_client_chart %}
-    {% include "dashboard/_bar_chart.html" %}
-  </section>
-
-  <details class="panel records-panel">
-    <summary class="records-summary">
-      <span>Mis últimos registros</span>
-      <strong>{{ personal_recent_records|length }} visibles</strong>
-    </summary>
-    {% with recent_records = personal_recent_records %}
-      {% include "dashboard/_recent_records.html" %}
-    {% endwith %}
-  </details>
-
-  <section class="dashboard-subtitle">
-    <h2>Colaboradores a cargo</h2>
-  </section>
-
-  <section class="metric-grid">
-    <article><span>Horas equipo hoy</span><strong>{{ format_duration_hs(metrics.total_hours_today) }}</strong></article>
-    <article><span>Horas equipo últimos 7 días</span><strong>{{ format_duration_hs(metrics.total_hours_week) }}</strong></article>
-    <article><span>Horas equipo mes</span><strong>{{ format_duration_hs(metrics.total_hours_month) }}</strong></article>
-    <article><span>Tareas abiertas equipo</span><strong>{{ metrics.open_records }}</strong></article>
-  </section>
-
-  <section class="two-columns">
-    <div class="panel">
-      <h2>Ranking últimos 7 días por colaborador</h2>
-      {% set chart_rows = employee_week_chart %}
-      {% include "dashboard/_bar_chart.html" %}
-    </div>
-
-    <div class="panel">
-      <h2>Ranking mensual por colaborador</h2>
-      {% set chart_rows = employee_chart %}
-      {% include "dashboard/_bar_chart.html" %}
-    </div>
-  </section>
-
-  <section class="two-columns">
-    <div class="panel">
-      <h2>Horas por cliente últimos 7 días</h2>
-      {% set chart_rows = client_week_chart %}
-      {% include "dashboard/_bar_chart.html" %}
-    </div>
-
-    <div class="panel">
-      <h2>Horas por cliente mensual</h2>
-      {% set chart_rows = client_month_chart %}
-      {% include "dashboard/_bar_chart.html" %}
-    </div>
-  </section>
+  </div>
 {% else %}
   <section class="metric-grid">
     <article><span>Horas hoy</span><strong>{{ format_duration_hs(metrics.total_hours_today) }}</strong></article>
