@@ -2,7 +2,9 @@ param(
     [string]$DatabaseUrl = $env:DATABASE_URL,
     [string]$BackupDir = (Join-Path $PSScriptRoot "..\backups"),
     [string]$PgDumpPath = "pg_dump",
-    [int]$KeepDays = 30
+    [int]$KeepDays = 30,
+    [int]$RetryCount = 5,
+    [int]$RetryDelaySeconds = 30
 )
 
 $timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
@@ -27,15 +29,43 @@ if (-not $pgDumpCommand) {
 }
 
 $backupFile = Join-Path $BackupDir ("jornadadex-{0}.dump" -f $timestamp)
+$pgDumpErrorFile = Join-Path $BackupDir ("jornadadex-{0}.pg_dump.err" -f $timestamp)
 
 Write-BackupLog "Iniciando backup en $backupFile"
 
-& $pgDumpCommand.Source --format=custom --no-owner --no-privileges --file $backupFile $DatabaseUrl
-if ($LASTEXITCODE -ne 0) {
+$lastPgDumpError = ""
+for ($attempt = 1; $attempt -le $RetryCount; $attempt++) {
+    if (Test-Path -LiteralPath $pgDumpErrorFile) {
+        Remove-Item -LiteralPath $pgDumpErrorFile -Force
+    }
+
+    & $pgDumpCommand.Source --format=custom --no-owner --no-privileges --file $backupFile $DatabaseUrl 2> $pgDumpErrorFile
+    if ($LASTEXITCODE -eq 0) {
+        break
+    }
+
+    $lastPgDumpError = ""
+    if (Test-Path -LiteralPath $pgDumpErrorFile) {
+        $lastPgDumpError = (Get-Content -LiteralPath $pgDumpErrorFile -Raw).Trim()
+    }
+
     if (Test-Path -LiteralPath $backupFile) {
         Remove-Item -LiteralPath $backupFile -Force
     }
-    throw "pg_dump fallo con codigo $LASTEXITCODE"
+
+    Write-BackupLog "pg_dump fallo en intento $attempt/$RetryCount con codigo $LASTEXITCODE. Error: $lastPgDumpError"
+
+    if ($attempt -lt $RetryCount) {
+        Start-Sleep -Seconds $RetryDelaySeconds
+    }
+}
+
+if ($LASTEXITCODE -ne 0) {
+    throw "pg_dump fallo despues de $RetryCount intentos. Ultimo error: $lastPgDumpError"
+}
+
+if (Test-Path -LiteralPath $pgDumpErrorFile) {
+    Remove-Item -LiteralPath $pgDumpErrorFile -Force
 }
 
 $hash = Get-FileHash -LiteralPath $backupFile -Algorithm SHA256

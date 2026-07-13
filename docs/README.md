@@ -1,6 +1,6 @@
 # Project Documentation Index
 
-This folder contains the pre-implementation analysis and architecture derived from the source prototype `control_tiempo_tareas.html`.
+This folder contains the analysis, architecture and current application flow documentation.
 
 Files:
 
@@ -10,5 +10,6 @@ Files:
 4. `04-api-design.md`
 5. `05-rbac-matrix.md`
 6. `06-development-roadmap.md`
+7. `07-app-flow-diagram.md`
 
-No application code has been generated yet. The next step is validation before implementation.
+The application flow diagram documents the implemented modules, roles and operational workflows.
