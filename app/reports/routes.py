@@ -47,13 +47,14 @@ def index():
         total_hours=total_hours,
         can_filter_employee=can_filter_employee,
         can_filter_supervisor=can_filter_supervisor,
+        can_export=not _is_employee_scope(),
     )
 
 
 @reports_bp.route("/export.csv")
 @login_required
 def export_csv():
-    if is_platform_admin():
+    if is_platform_admin() or _is_employee_scope():
         abort(403)
     records = _filtered_records().all()
     output = StringIO()
@@ -73,7 +74,7 @@ def export_csv():
 @reports_bp.route("/export.xlsx")
 @login_required
 def export_excel():
-    if is_platform_admin():
+    if is_platform_admin() or _is_employee_scope():
         abort(403)
     records = _filtered_records().all()
     wb = Workbook()
