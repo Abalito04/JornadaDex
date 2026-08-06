@@ -101,7 +101,7 @@
       <input name="budgeted_hours" inputmode="numeric" placeholder="00:00" value="{{ format_duration_input(client.budgeted_hours) if client.budgeted_hours is not none else '' }}" data-time-budget-input>
     </div>
     <div>
-      <label>Honorarios</label>
+      <label>Honorarios s/ IVA</label>
       <input name="fees" inputmode="decimal" placeholder="$ 1.000" value="{{ format_currency_ars(client.fees) if client.fees is not none else '' }}" data-currency-input>
     </div>
     <div class="checkbox-row">

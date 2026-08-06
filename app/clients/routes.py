@@ -33,7 +33,7 @@ CLIENT_IMPORT_COLUMNS = [
     ("Grupo", "group_enabled"),
     ("Nombre grupo", "group_name"),
     ("Horas presupuestadas", "budgeted_hours"),
-    ("Honorarios", "fees"),
+    ("Honorarios s/ IVA", "fees"),
     ("Activo", "active"),
     ("Notas", "notes"),
 ]
@@ -72,6 +72,9 @@ HEADER_ALIASES = {
     "horas presupuestadas": "budgeted_hours",
     "horas_presupuestadas": "budgeted_hours",
     "honorarios": "fees",
+    "honorarios s/ iva": "fees",
+    "honorarios s iva": "fees",
+    "honorarios sin iva": "fees",
     "activo": "active",
     "estado": "active",
     "notas": "notes",
@@ -748,7 +751,7 @@ def _build_template_workbook():
         "K": 22,
         "M": 22,
         "N": 22,
-        "O": 16,
+        "O": 18,
         "Q": 34,
     }
     for index in range(1, len(headers) + 1):
@@ -775,7 +778,7 @@ def _build_template_workbook():
         "Grupo": "Si o No.",
         "Nombre grupo": "Completar solo si Grupo es Si.",
         "Horas presupuestadas": "Formato 00:00, horas decimales o vacio.",
-        "Honorarios": "Numero o importe, por ejemplo 150000 o $ 150.000.",
+        "Honorarios s/ IVA": "Numero o importe sin IVA, por ejemplo 150000 o $ 150.000.",
         "Activo": "Si o No. Si queda vacio, se considera Si.",
         "Notas": "Opcional.",
     }
