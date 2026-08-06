@@ -281,7 +281,8 @@ def _save_client(client, success_message, audit_action):
 
 def _validate_import_row_count(rows):
     max_rows = current_app.config["CLIENT_IMPORT_MAX_ROWS"]
-    if rows is not None and len(rows) > max_rows:
+    row_count = sum(1 for _row_number, row in rows or [] if not _row_is_empty(row))
+    if row_count > max_rows:
         raise ValueError(f"El archivo supera el maximo de {max_rows} filas permitidas.")
 
 
@@ -348,7 +349,8 @@ def _read_csv_rows(uploaded_file):
             field = normalized_headers.get(header)
             if field:
                 row[field] = value
-        rows.append((index, row))
+        if not _row_is_empty(row):
+            rows.append((index, row))
     return rows
 
 
@@ -367,7 +369,8 @@ def _read_xlsx_rows(uploaded_file):
         for field, value in zip(fields, values):
             if field:
                 row[field] = value
-        rows.append((index, row))
+        if not _row_is_empty(row):
+            rows.append((index, row))
     workbook.close()
     return rows
 
