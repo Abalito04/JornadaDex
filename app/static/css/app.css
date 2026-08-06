@@ -1895,6 +1895,58 @@ button svg {
   border-radius: var(--radius-md);
 }
 
+.clients-list-panel {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.clients-table-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.clients-table-search {
+  position: relative;
+  flex: 1;
+  max-width: 440px;
+  margin: 0;
+}
+
+.clients-table-search svg {
+  position: absolute;
+  top: 50%;
+  left: var(--space-3);
+  z-index: 1;
+  width: 18px;
+  height: 18px;
+  color: var(--color-text-muted);
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+
+.clients-table-search input {
+  padding-left: 42px;
+}
+
+.clients-result-count {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.clients-table-wrap {
+  max-height: min(68vh, 720px);
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+
+.clients-table {
+  min-width: 1480px;
+}
+
 table {
   width: 100%;
   border-collapse: separate;

@@ -11,6 +11,8 @@ const conditionalToggles = document.querySelectorAll("[data-conditional-toggle]"
 const timeBudgetInputs = document.querySelectorAll("[data-time-budget-input]");
 const currencyInputs = document.querySelectorAll("[data-currency-input]");
 const sortableTables = document.querySelectorAll("[data-sortable-table]");
+const clientSearch = document.querySelector("[data-client-search]");
+const clientTable = document.querySelector("[data-client-table]");
 const root = document.documentElement;
 const themeStorageKey = "jornadadex-theme";
 
@@ -205,6 +207,41 @@ sortableTables.forEach((table) => {
     });
   });
 });
+
+if (clientSearch && clientTable) {
+  const rows = Array.from(clientTable.querySelectorAll("[data-client-row]"));
+  const emptyRow = clientTable.querySelector("[data-client-empty]");
+  const resultCount = document.querySelector("[data-client-result-count]");
+  const normalizeSearchText = (value) => value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLocaleLowerCase("es")
+    .trim();
+
+  const filterClients = () => {
+    const query = normalizeSearchText(clientSearch.value);
+    let visibleCount = 0;
+
+    rows.forEach((row) => {
+      const matches = !query || normalizeSearchText(row.textContent).includes(query);
+      row.hidden = !matches;
+      if (matches) {
+        visibleCount += 1;
+      }
+    });
+
+    if (emptyRow) {
+      emptyRow.hidden = visibleCount > 0;
+    }
+    if (resultCount) {
+      resultCount.textContent = query
+        ? `${visibleCount} de ${rows.length} clientes`
+        : `${rows.length} clientes`;
+    }
+  };
+
+  clientSearch.addEventListener("input", filterClients);
+}
 
 smoothLinks.forEach((link) => {
   link.addEventListener("click", (event) => {

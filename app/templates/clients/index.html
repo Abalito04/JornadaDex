@@ -29,15 +29,23 @@
   </form>
 </section>
 
-<section class="panel">
-  <div class="table-wrap">
-    <table>
+<section class="panel clients-list-panel">
+  <div class="clients-table-toolbar">
+    <label class="clients-table-search" aria-label="Buscar clientes">
+      <i data-lucide="search"></i>
+      <input type="search" placeholder="Buscar cliente, CUIT, grupo..." autocomplete="off" data-client-search>
+    </label>
+    <span class="clients-result-count" data-client-result-count>{{ clients|length }} clientes</span>
+  </div>
+
+  <div class="table-wrap clients-table-wrap">
+    <table class="clients-table" data-sortable-table data-client-table>
       <thead>
         <tr><th>Razón social</th><th>CUIT</th><th>Situación IVA</th><th>Situación IIBB</th><th>Balance</th><th>SICORE</th><th>Ganancias</th><th>Bienes personales</th><th>Sueldos</th><th>Grupo</th><th>Horas presup.</th><th>Honorarios</th><th>Estado</th><th></th></tr>
       </thead>
       <tbody>
         {% for client in clients %}
-          <tr>
+          <tr data-client-row>
             <td>{{ client.name }}</td>
             <td>{{ client.tax_id or "" }}</td>
             <td>{{ client.fiscal_condition or "" }}</td>
@@ -70,6 +78,17 @@
             </td>
           </tr>
         {% endfor %}
+        {% if clients %}
+          <tr data-client-empty hidden>
+            <td colspan="14">
+              <div class="empty-state compact">
+                <i data-lucide="search-x"></i>
+                <strong>No hay clientes que coincidan.</strong>
+                <span>Probá con otro nombre, CUIT o dato del cliente.</span>
+              </div>
+            </td>
+          </tr>
+        {% endif %}
       </tbody>
     </table>
   </div>
