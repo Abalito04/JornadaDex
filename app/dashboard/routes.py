@@ -32,7 +32,7 @@ def terms_conditions():
 @dashboard_bp.route("/dashboard")
 @login_required
 def index():
-    if is_platform_admin():
+    if is_platform_admin() and not current_company_id():
         return redirect(url_for("platform.companies"))
     today = argentina_now().date()
     company_id = current_company_id()

@@ -248,6 +248,27 @@ p { margin: 0; }
   content: "";
 }
 
+.nav-context-form {
+  margin: 0;
+}
+
+button.nav-context-button {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--color-text-muted);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+button.nav-context-button:hover {
+  background: var(--color-surface-2);
+  color: var(--color-text);
+  transform: none;
+}
+
 .app-shell {
   min-height: 100vh;
   padding-left: var(--sidebar-width);

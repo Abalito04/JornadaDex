@@ -37,7 +37,7 @@
     {% set current_path = request.path %}
     {% set company = active_company() %}
     <aside class="sidebar" aria-label="Navegacion principal">
-      <a class="brand" href="{{ url_for('platform.companies') if is_platform_admin() else url_for('dashboard.index') }}">
+      <a class="brand" href="{{ url_for('platform.companies') if is_platform_admin() and not company else url_for('dashboard.index') }}">
         <span class="brand-logo-frame">
           <img class="logo-light" src="{{ url_for('static', filename='img/jornadadex-logo.svg') }}" alt="JornadaDex">
           <img class="logo-dark" src="{{ url_for('static', filename='img/jornadadex-logo-dark.svg') }}" alt="JornadaDex">
@@ -45,7 +45,7 @@
       </a>
 
       <nav class="nav-section">
-        {% if is_platform_admin() %}
+        {% if is_platform_admin() and not company %}
           <a class="nav-item {{ 'active' if current_path.startswith('/platform/companies') else '' }}" href="{{ url_for('platform.companies') }}" aria-label="Empresas">
             <i data-lucide="building-2"></i><span>Empresas</span>
           </a>
@@ -56,13 +56,21 @@
             <i data-lucide="activity"></i><span>Actividad</span>
           </a>
         {% else %}
+          {% if is_platform_admin() %}
+            <form class="nav-context-form" method="post" action="{{ url_for('platform.clear_company_selection') }}">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button class="nav-item nav-context-button" type="submit" aria-label="Volver a plataforma">
+                <i data-lucide="arrow-left"></i><span>Volver a plataforma</span>
+              </button>
+            </form>
+          {% endif %}
           <a class="nav-item {{ 'active' if current_path == url_for('dashboard.index') else '' }}" href="{{ url_for('dashboard.index') }}" aria-label="Dashboard">
             <i data-lucide="layout-dashboard"></i><span>Dashboard</span>
           </a>
           <a class="nav-item {{ 'active' if current_path.startswith('/time-records') else '' }}" href="{{ url_for('time_records.index') }}" aria-label="Horas">
             <i data-lucide="timer"></i><span>Horas</span>
           </a>
-          {% if current_user.role in ['Owner', 'Supervisor'] or current_user.is_company_owner %}
+          {% if current_user.role in ['Owner', 'Supervisor'] or current_user.is_company_owner or is_platform_admin() %}
             <a class="nav-item {{ 'active' if current_path.startswith('/employees') else '' }}" href="{{ url_for('employees.index') }}" aria-label="Colaboradores">
               <i data-lucide="users"></i><span>Colaboradores</span>
             </a>
@@ -88,7 +96,7 @@
           <i data-lucide="scan-line"></i>
           <div>
             <strong>{% block page_heading %}{{ self.title() }}{% endblock %}</strong>
-            <span>{{ "Vista de plataforma" if is_platform_admin() else (company.name if company else "Sin empresa activa") }}</span>
+            <span>{{ "Vista de plataforma" if is_platform_admin() and not company else (company.name if company else "Sin empresa activa") }}</span>
           </div>
         </div>
         <div class="top-actions">
