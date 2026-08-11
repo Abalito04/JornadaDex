@@ -60,6 +60,12 @@ def _record_signup_attempt():
     record_attempt("signup_attempt", _client_ip())
 
 
+def _public_url(endpoint, **values):
+    path = url_for(endpoint, _external=False, **values)
+    public_app_url = current_app.config["PUBLIC_APP_URL"]
+    return f"{public_app_url}{path}" if public_app_url else url_for(endpoint, _external=True, **values)
+
+
 def _turnstile_configured():
     site_key = current_app.config["TURNSTILE_SITE_KEY"]
     secret_key = current_app.config["TURNSTILE_SECRET_KEY"]
@@ -108,7 +114,7 @@ def _email_verification_required(user):
 def _send_verification_email(user):
     max_age_hours = current_app.config["EMAIL_VERIFICATION_MAX_AGE_HOURS"]
     token = create_security_token("email-verify", {"user_id": user.id, "email": user.email})
-    verify_url = url_for("auth.verify_email", token=token, _external=True)
+    verify_url = _public_url("auth.verify_email", token=token)
     body = (
         "Hola,\n\n"
         "Confirma tu email para activar tu cuenta de JornadaDex:\n"
@@ -125,7 +131,7 @@ def _send_password_reset_email(user):
         "password-reset",
         {"user_id": user.id, "email": user.email, "password_hash": user.password_hash},
     )
-    reset_url = url_for("auth.reset_password", token=token, _external=True)
+    reset_url = _public_url("auth.reset_password", token=token)
     body = (
         "Hola,\n\n"
         "Recibimos una solicitud para restablecer tu clave de JornadaDex:\n"

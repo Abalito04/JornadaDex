@@ -46,12 +46,14 @@ class Config:
     EMAIL_VERIFICATION_REQUIRED = clean_env_value(os.getenv("EMAIL_VERIFICATION_REQUIRED", "false")).lower() == "true"
     EMAIL_VERIFICATION_MAX_AGE_HOURS = int(clean_env_value(os.getenv("EMAIL_VERIFICATION_MAX_AGE_HOURS", "24")))
     PASSWORD_RESET_MAX_AGE_MINUTES = int(clean_env_value(os.getenv("PASSWORD_RESET_MAX_AGE_MINUTES", "60")))
+    PUBLIC_APP_URL = clean_env_value(os.getenv("PUBLIC_APP_URL", "")).rstrip("/")
     SMTP_HOST = clean_env_value(os.getenv("SMTP_HOST", ""))
     SMTP_PORT = int(clean_env_value(os.getenv("SMTP_PORT", "587")))
     SMTP_USERNAME = clean_env_value(os.getenv("SMTP_USERNAME", ""))
     SMTP_PASSWORD = clean_env_value(os.getenv("SMTP_PASSWORD", ""))
     SMTP_FROM_EMAIL = clean_env_value(os.getenv("SMTP_FROM_EMAIL", ""))
     SMTP_USE_TLS = clean_env_value(os.getenv("SMTP_USE_TLS", "true")).lower() == "true"
+    BREVO_API_KEY = clean_env_value(os.getenv("BREVO_API_KEY", ""))
     RESEND_API_KEY = clean_env_value(os.getenv("RESEND_API_KEY", ""))
 
 

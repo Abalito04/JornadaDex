@@ -18,12 +18,14 @@ TURNSTILE_SECRET_KEY=
 EMAIL_VERIFICATION_REQUIRED=false
 EMAIL_VERIFICATION_MAX_AGE_HOURS=24
 PASSWORD_RESET_MAX_AGE_MINUTES=60
+PUBLIC_APP_URL=
 SMTP_HOST=
 SMTP_PORT=587
 SMTP_USERNAME=
 SMTP_PASSWORD=
 SMTP_FROM_EMAIL=
 SMTP_USE_TLS=true
+BREVO_API_KEY=
 RESEND_API_KEY=
 ```
 
@@ -41,8 +43,9 @@ TURNSTILE_SECRET_KEY=your-cloudflare-turnstile-secret-key
 EMAIL_VERIFICATION_REQUIRED=true
 EMAIL_VERIFICATION_MAX_AGE_HOURS=24
 PASSWORD_RESET_MAX_AGE_MINUTES=60
-SMTP_FROM_EMAIL=JornadaDex <onboarding@resend.dev>
-RESEND_API_KEY=your-resend-api-key
+PUBLIC_APP_URL=https://jornadadex.com
+SMTP_FROM_EMAIL=JornadaDex <no-reply@jornadadex.com>
+BREVO_API_KEY=your-brevo-api-key
 DATABASE_URL=postgresql+psycopg://user:password@db:5432/time_control
 ```
 
@@ -79,7 +82,7 @@ Then create the first company owner from `/auth/signup`.
 2. Set a strong `SECRET_KEY`.
 3. Enable secure cookies.
 4. Configure Cloudflare Turnstile keys when public signup is enabled.
-5. Configure `RESEND_API_KEY` or SMTP before enabling email verification and password reset emails.
+5. Configure `BREVO_API_KEY`, `RESEND_API_KEY`, or SMTP before enabling email verification and password reset emails.
 6. Run behind a reverse proxy with HTTPS.
 7. Schedule database backups.
 8. Use migrations for schema changes.
