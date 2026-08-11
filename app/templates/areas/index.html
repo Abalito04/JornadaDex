@@ -33,7 +33,10 @@
             {{ visible_tasks|length }} tareas{% if area.description %} · {{ area.description }}{% endif %}
           </p>
         </div>
-        <span class="accordion-indicator">Mostrar</span>
+        <span class="accordion-indicator">
+          <span class="accordion-label-closed">Mostrar tareas</span>
+          <span class="accordion-label-open">Mostrar menos</span>
+        </span>
       </summary>
 
       <div class="area-actions">

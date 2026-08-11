@@ -2241,8 +2241,17 @@ td:nth-child(5) {
   white-space: nowrap;
 }
 
-details.area-block[open] .accordion-indicator::after { content: " menos"; }
-details.area-block:not([open]) .accordion-indicator::after { content: " tareas"; }
+.accordion-label-open {
+  display: none;
+}
+
+details.area-block[open] .accordion-label-closed {
+  display: none;
+}
+
+details.area-block[open] .accordion-label-open {
+  display: inline;
+}
 
 .area-actions {
   display: flex;

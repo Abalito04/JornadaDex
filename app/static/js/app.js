@@ -16,15 +16,13 @@ const clientTable = document.querySelector("[data-client-table]");
 const root = document.documentElement;
 const themeStorageKey = "jornadadex-theme";
 
-let themePreference = localStorage.getItem(themeStorageKey) || "system";
+let themePreference = localStorage.getItem(themeStorageKey) === "dark" ? "dark" : "light";
 
 function applyTheme() {
-  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-  const resolvedTheme = themePreference === "system" ? (prefersDark ? "dark" : "light") : themePreference;
-  root.dataset.theme = resolvedTheme;
+  root.dataset.theme = themePreference;
 
   themeToggles.forEach((themeToggle) => {
-    themeToggle.innerHTML = resolvedTheme === "dark" ? '<i data-lucide="sun"></i>' : '<i data-lucide="moon"></i>';
+    themeToggle.innerHTML = themePreference === "dark" ? '<i data-lucide="sun"></i>' : '<i data-lucide="moon"></i>';
   });
 
   if (window.lucide) {
@@ -278,12 +276,6 @@ themeToggles.forEach((themeToggle) => {
     localStorage.setItem(themeStorageKey, themePreference);
     applyTheme();
   });
-});
-
-window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
-  if (themePreference === "system") {
-    applyTheme();
-  }
 });
 
 applyTheme();

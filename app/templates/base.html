@@ -19,8 +19,7 @@
   <script>
     (function () {
       var storedTheme = localStorage.getItem("jornadadex-theme");
-      var prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
-      var theme = storedTheme || (prefersDark ? "dark" : "light");
+      var theme = storedTheme === "dark" ? "dark" : "light";
       document.documentElement.dataset.theme = theme;
     })();
   </script>
@@ -121,7 +120,7 @@
     {% block content %}{% endblock %}
     </main>
   </div>
-  <script src="{{ url_for('static', filename='js/app.js', v='20260806-client-list') }}"></script>
+  <script src="{{ url_for('static', filename='js/app.js', v='20260811-local-theme') }}"></script>
   <script src="{{ url_for('static', filename='js/pwa.js') }}"></script>
 </body>
 </html>
