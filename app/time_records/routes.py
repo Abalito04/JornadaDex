@@ -1,7 +1,7 @@
 from flask import Blueprint, abort, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 
-from app.context import current_company_id, is_platform_admin
+from app.context import current_company_id, is_platform_admin, is_platform_view
 from app.extensions import db
 from app.models import AccountingClient, Area, Employee, Task, TimeRecord
 from app.roles import ROLE_EMPLOYEE, ROLE_SUPERVISOR
@@ -17,7 +17,7 @@ time_records_bp = Blueprint("time_records", __name__, url_prefix="/time-records"
 @time_records_bp.route("/", methods=["GET", "POST"])
 @login_required
 def index():
-    if is_platform_admin():
+    if is_platform_view():
         abort(403)
     can_choose_employee = current_user.role != ROLE_EMPLOYEE or current_user.is_company_owner or is_platform_admin()
     can_choose_supervisor = current_user.role != ROLE_SUPERVISOR or current_user.is_company_owner or is_platform_admin()
@@ -105,7 +105,7 @@ def index():
 @time_records_bp.route("/<int:record_id>/edit", methods=["GET", "POST"])
 @login_required
 def edit(record_id):
-    if is_platform_admin():
+    if is_platform_view():
         abort(403)
     if not _can_edit_records():
         return ("Forbidden", 403)
@@ -198,7 +198,7 @@ def edit(record_id):
 @time_records_bp.route("/<int:record_id>/finish", methods=["POST"])
 @login_required
 def finish(record_id):
-    if is_platform_admin():
+    if is_platform_view():
         abort(403)
     record = TimeRecord.query.filter_by(id=record_id, company_id=current_company_id(), deleted_at=None).first_or_404()
     if not employee_is_visible(record.employee):
@@ -218,7 +218,7 @@ def finish(record_id):
 @time_records_bp.route("/<int:record_id>/toggle-pause", methods=["POST"])
 @login_required
 def toggle_pause(record_id):
-    if is_platform_admin():
+    if is_platform_view():
         abort(403)
     record = TimeRecord.query.filter_by(id=record_id, company_id=current_company_id(), deleted_at=None).first_or_404()
     if not employee_is_visible(record.employee):
@@ -270,7 +270,7 @@ def toggle_pause(record_id):
 @time_records_bp.route("/<int:record_id>/delete", methods=["POST"])
 @login_required
 def delete(record_id):
-    if is_platform_admin():
+    if is_platform_view():
         abort(403)
     record = TimeRecord.query.filter_by(id=record_id, company_id=current_company_id(), deleted_at=None).first_or_404()
     if not employee_is_visible(record.employee):

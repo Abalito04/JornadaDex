@@ -6,7 +6,7 @@ from flask_login import current_user, login_required
 from openpyxl import Workbook
 from sqlalchemy import func
 
-from app.context import current_company_id, is_platform_admin
+from app.context import current_company_id, is_platform_admin, is_platform_view
 from app.extensions import db
 from app.models import AccountingClient, Area, Employee, Task, TimeRecord
 from app.roles import ROLE_EMPLOYEE
@@ -23,7 +23,7 @@ reports_bp = Blueprint("reports", __name__, url_prefix="/reports")
 @reports_bp.route("/")
 @login_required
 def index():
-    if is_platform_admin():
+    if is_platform_view():
         abort(403)
     records = _filtered_records().all()
     can_filter_employee = not _is_employee_scope()
@@ -54,7 +54,7 @@ def index():
 @reports_bp.route("/export.csv")
 @login_required
 def export_csv():
-    if is_platform_admin() or _is_employee_scope():
+    if is_platform_view() or _is_employee_scope():
         abort(403)
     records = _filtered_records().all()
     output = StringIO()
@@ -74,7 +74,7 @@ def export_csv():
 @reports_bp.route("/export.xlsx")
 @login_required
 def export_excel():
-    if is_platform_admin() or _is_employee_scope():
+    if is_platform_view() or _is_employee_scope():
         abort(403)
     records = _filtered_records().all()
     wb = Workbook()

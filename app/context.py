@@ -19,6 +19,10 @@ def current_company_id():
     return current_user.company_id
 
 
+def is_platform_view():
+    return is_platform_admin() and not current_company_id()
+
+
 def current_company():
     company_id = current_company_id()
     if not company_id:
