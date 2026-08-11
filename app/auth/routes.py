@@ -282,7 +282,11 @@ def request_password_reset():
             log_security_event("password_reset_requested", identifier=identifier, user=user, metadata={"email_sent": sent})
             write_audit("PASSWORD_RESET_REQUEST", "users", user.id, company_id=user.company_id)
             db.session.commit()
-        flash("Si existe una cuenta activa con esos datos, te enviamos un enlace para restablecer la clave.", "success")
+        flash(
+            "Si existe una cuenta activa con esos datos, te enviamos un enlace para restablecer la clave. "
+            "Revisa tambien la carpeta de Spam o Correo no deseado.",
+            "success",
+        )
         return redirect(url_for("auth.login"))
 
     return render_template("auth/password_reset_request.html")
