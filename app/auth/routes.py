@@ -13,6 +13,7 @@ from app.models import User
 from app.services.audit_service import write_audit
 from app.services.company_service import create_company_with_owner
 from app.services.email_service import send_email
+from app.services.email_template import build_action_email
 from app.services.password_policy import validate_password_strength
 from app.services.rate_limit_service import clear_attempts, is_limited, record_attempt
 from app.services.security_event_service import log_security_event
@@ -122,7 +123,15 @@ def _send_verification_email(user):
         f"Este enlace vence en {max_age_hours} horas.\n\n"
         "Si no solicitaste esta cuenta, podes ignorar este mensaje."
     )
-    return send_email(user.email, "Confirma tu email en JornadaDex", body)
+    html_body = build_action_email(
+        "Confirma tu correo electronico",
+        "Completa la verificacion para activar tu cuenta de JornadaDex.",
+        "Confirmar mi correo",
+        verify_url,
+        f"Este enlace vence en {max_age_hours} horas.",
+        "Si no creaste esta cuenta, podes ignorar este mensaje.",
+    )
+    return send_email(user.email, "Confirma tu email en JornadaDex", body, html_body)
 
 
 def _send_password_reset_email(user):
@@ -139,7 +148,15 @@ def _send_password_reset_email(user):
         f"Este enlace vence en {max_age_minutes} minutos y se invalida al cambiar la clave.\n\n"
         "Si no fuiste vos, podes ignorar este mensaje."
     )
-    return send_email(user.email, "Restablece tu clave de JornadaDex", body)
+    html_body = build_action_email(
+        "Restablece tu contrasena",
+        "Recibimos una solicitud para crear una nueva contrasena para tu cuenta.",
+        "Cambiar mi contrasena",
+        reset_url,
+        f"Este enlace vence en {max_age_minutes} minutos y se invalida despues de cambiar la contrasena.",
+        "Si no solicitaste este cambio, no hace falta que hagas nada.",
+    )
+    return send_email(user.email, "Restablece tu clave de JornadaDex", body, html_body)
 
 
 @auth_bp.route("/signup", methods=["GET", "POST"])

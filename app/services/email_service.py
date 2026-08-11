@@ -28,15 +28,16 @@ def _resend_api_key():
     return ""
 
 
-def _send_resend_email(to_email, subject, body):
-    payload = json.dumps(
-        {
-            "from": current_app.config["SMTP_FROM_EMAIL"],
-            "to": [to_email],
-            "subject": subject,
-            "text": body,
-        }
-    ).encode("utf-8")
+def _send_resend_email(to_email, subject, body, html_body=None):
+    message_payload = {
+        "from": current_app.config["SMTP_FROM_EMAIL"],
+        "to": [to_email],
+        "subject": subject,
+        "text": body,
+    }
+    if html_body:
+        message_payload["html"] = html_body
+    payload = json.dumps(message_payload).encode("utf-8")
     resend_request = urlrequest.Request(
         "https://api.resend.com/emails",
         data=payload,
@@ -70,20 +71,21 @@ def _send_resend_email(to_email, subject, body):
     return True
 
 
-def _send_brevo_email(to_email, subject, body):
+def _send_brevo_email(to_email, subject, body, html_body=None):
     sender_name, sender_email = parseaddr(current_app.config["SMTP_FROM_EMAIL"])
     sender = {"email": sender_email}
     if sender_name:
         sender["name"] = sender_name
 
-    payload = json.dumps(
-        {
-            "sender": sender,
-            "to": [{"email": to_email}],
-            "subject": subject,
-            "textContent": body,
-        }
-    ).encode("utf-8")
+    message_payload = {
+        "sender": sender,
+        "to": [{"email": to_email}],
+        "subject": subject,
+        "textContent": body,
+    }
+    if html_body:
+        message_payload["htmlContent"] = html_body
+    payload = json.dumps(message_payload).encode("utf-8")
     brevo_request = urlrequest.Request(
         "https://api.brevo.com/v3/smtp/email",
         data=payload,
@@ -118,22 +120,24 @@ def _send_brevo_email(to_email, subject, body):
     return True
 
 
-def send_email(to_email, subject, body):
+def send_email(to_email, subject, body, html_body=None):
     if not email_configured():
         current_app.logger.warning(
             "SMTP email delivery skipped because SMTP_HOST or SMTP_FROM_EMAIL is not configured."
         )
         return False
     if current_app.config.get("BREVO_API_KEY"):
-        return _send_brevo_email(to_email, subject, body)
+        return _send_brevo_email(to_email, subject, body, html_body)
     if _resend_api_key():
-        return _send_resend_email(to_email, subject, body)
+        return _send_resend_email(to_email, subject, body, html_body)
 
     message = EmailMessage()
     message["Subject"] = subject
     message["From"] = current_app.config["SMTP_FROM_EMAIL"]
     message["To"] = to_email
     message.set_content(body)
+    if html_body:
+        message.add_alternative(html_body, subtype="html")
 
     try:
         with smtplib.SMTP(current_app.config["SMTP_HOST"], current_app.config["SMTP_PORT"], timeout=10) as server:
