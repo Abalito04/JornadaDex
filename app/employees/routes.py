@@ -6,12 +6,34 @@ from app.context import current_company_id, is_platform_admin
 from app.extensions import db
 from app.models import Employee, User
 from app.permissions.decorators import manager_required
-from app.roles import ROLE_EMPLOYEE, ROLE_SUPERVISOR
+from app.roles import LEGACY_ADMIN, ROLE_EMPLOYEE, ROLE_OWNER, ROLE_SUPERVISOR
 from app.services.audit_service import write_audit
 from app.services.password_policy import validate_password_strength
 from app.services.visibility_service import employee_is_visible, visible_employees_query
 
 employees_bp = Blueprint("employees", __name__, url_prefix="/employees")
+
+
+def _can_manage_administrators():
+    return (
+        is_platform_admin()
+        or current_user.is_company_owner
+        or current_user.role in (ROLE_OWNER, LEGACY_ADMIN)
+    )
+
+
+def _requested_role(default=ROLE_EMPLOYEE):
+    role = request.form.get("role", default)
+    if role not in (ROLE_EMPLOYEE, ROLE_SUPERVISOR, ROLE_OWNER):
+        return ROLE_EMPLOYEE
+    if role == ROLE_OWNER and not _can_manage_administrators():
+        raise ValueError("No tenes permisos para asignar el rol Administrador.")
+    return role
+
+
+def _apply_company_role(user, role):
+    user.role = role
+    user.is_company_owner = role == ROLE_OWNER
 
 
 @employees_bp.route("/")
@@ -75,9 +97,7 @@ def create():
             elif request.form.get("create_user") == "on":
                 username = request.form.get("username", "").strip().lower()
                 password = request.form.get("password", "")
-                role = request.form.get("role", ROLE_EMPLOYEE)
-                if role not in (ROLE_EMPLOYEE, ROLE_SUPERVISOR):
-                    role = ROLE_EMPLOYEE
+                role = _requested_role()
                 if not username or not password:
                     raise ValueError("Para crear usuario, completa usuario y clave.")
                 email = employee.email or f"{username}@local"
@@ -88,11 +108,10 @@ def create():
                     user.company_id = current_company_id()
                     user.employee_id = employee.id
                     user.email = email
-                    user.role = role
+                    _apply_company_role(user, role)
                     user.deleted_at = None
                     user.deleted_by = None
                     user.is_active_flag = True
-                    user.is_company_owner = False
                     user.is_platform_admin = False
                     user.updated_by = current_user.id
                 else:
@@ -102,6 +121,7 @@ def create():
                         username=username,
                         email=email,
                         role=role,
+                        is_company_owner=role == ROLE_OWNER,
                         created_by=current_user.id,
                     )
                 validate_password_strength(password)
@@ -125,7 +145,13 @@ def create():
         "position": request.form.get("position", existing_user.employee.position if existing_user and existing_user.employee and existing_user.employee.position else ""),
         "notes": request.form.get("notes", existing_user.employee.notes if existing_user and existing_user.employee and existing_user.employee.notes else ""),
     }
-    return render_template("employees/form.html", employee=None, existing_user=existing_user, form_defaults=form_defaults)
+    return render_template(
+        "employees/form.html",
+        employee=None,
+        existing_user=existing_user,
+        form_defaults=form_defaults,
+        can_manage_administrators=_can_manage_administrators(),
+    )
 
 
 @employees_bp.route("/<int:employee_id>/edit", methods=["GET", "POST"])
@@ -166,9 +192,8 @@ def edit(employee_id):
 
             if employee.user:
                 employee.user.email = employee.email or employee.user.email
-                role = request.form.get("role", employee.user.role)
-                if role in (ROLE_EMPLOYEE, ROLE_SUPERVISOR):
-                    employee.user.role = role
+                role = _requested_role(employee.user.role)
+                _apply_company_role(employee.user, role)
                 employee.user.updated_by = current_user.id
                 new_password = request.form.get("password", "")
                 if new_password:
@@ -183,9 +208,7 @@ def edit(employee_id):
             elif request.form.get("create_user") == "on":
                 username = request.form.get("username", "").strip().lower()
                 password = request.form.get("password", "")
-                role = request.form.get("role", ROLE_EMPLOYEE)
-                if role not in (ROLE_EMPLOYEE, ROLE_SUPERVISOR):
-                    role = ROLE_EMPLOYEE
+                role = _requested_role()
                 if not username or not password:
                     raise ValueError("Para crear usuario, completa usuario y clave.")
                 email = employee.email or f"{username}@local"
@@ -196,11 +219,10 @@ def edit(employee_id):
                     user.company_id = current_company_id()
                     user.employee_id = employee.id
                     user.email = email
-                    user.role = role
+                    _apply_company_role(user, role)
                     user.deleted_at = None
                     user.deleted_by = None
                     user.is_active_flag = True
-                    user.is_company_owner = False
                     user.is_platform_admin = False
                     user.updated_by = current_user.id
                 else:
@@ -210,6 +232,7 @@ def edit(employee_id):
                         username=username,
                         email=email,
                         role=role,
+                        is_company_owner=role == ROLE_OWNER,
                         created_by=current_user.id,
                     )
                 validate_password_strength(password)
@@ -237,7 +260,13 @@ def edit(employee_id):
             db.session.rollback()
             flash(str(getattr(exc, "orig", exc)), "danger")
 
-    return render_template("employees/form.html", employee=employee, existing_user=None, form_defaults=None)
+    return render_template(
+        "employees/form.html",
+        employee=employee,
+        existing_user=None,
+        form_defaults=None,
+        can_manage_administrators=_can_manage_administrators(),
+    )
 
 
 @employees_bp.route("/<int:employee_id>/delete", methods=["POST"])

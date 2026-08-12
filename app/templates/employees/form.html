@@ -31,6 +31,9 @@
           <select name="role">
             <option value="Employee" {% if employee.user.role == "Employee" %}selected{% endif %}>Colaborador</option>
             <option value="Supervisor" {% if employee.user.role == "Supervisor" %}selected{% endif %}>Encargado</option>
+            {% if can_manage_administrators %}
+              <option value="Owner" {% if employee.user.role in ["Owner", "Administrator"] or employee.user.is_company_owner %}selected{% endif %}>Administrador</option>
+            {% endif %}
           </select>
         </div>
         <div>
@@ -49,6 +52,7 @@
           <select name="role">
             <option value="Employee">Colaborador</option>
             <option value="Supervisor">Encargado</option>
+            {% if can_manage_administrators %}<option value="Owner">Administrador</option>{% endif %}
           </select>
         </div>
       {% endif %}
@@ -69,6 +73,7 @@
         <select name="role">
           <option value="Employee">Colaborador</option>
           <option value="Supervisor">Encargado</option>
+          {% if can_manage_administrators %}<option value="Owner">Administrador</option>{% endif %}
         </select>
       </div>
     {% endif %}
