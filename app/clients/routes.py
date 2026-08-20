@@ -167,6 +167,37 @@ def import_clients():
     return redirect(url_for("clients.index"))
 
 
+@clients_bp.route("/export.xlsx")
+@manager_required
+def export_xlsx():
+    clients = (
+        AccountingClient.query.filter_by(company_id=current_company_id(), deleted_at=None)
+        .order_by(AccountingClient.name)
+        .all()
+    )
+    workbook = _build_template_workbook()
+    sheet = workbook["Clientes"]
+    for client in clients:
+        sheet.append([_client_export_value(client, field) for _header, field in CLIENT_IMPORT_COLUMNS])
+
+    output = BytesIO()
+    workbook.save(output)
+    output.seek(0)
+    write_audit(
+        "EXPORT",
+        "accounting_clients",
+        new_values={"format": "xlsx", "count": len(clients)},
+        company_id=current_company_id(),
+    )
+    db.session.commit()
+    return send_file(
+        output,
+        as_attachment=True,
+        download_name="listado_clientes.xlsx",
+        mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    )
+
+
 @clients_bp.route("/template.csv")
 @manager_required
 def template_csv():
@@ -787,4 +818,26 @@ def _build_template_workbook():
     notes.column_dimensions["A"].width = 28
     notes.column_dimensions["B"].width = 76
     return workbook
+
+
+def _client_export_value(client, field):
+    value = getattr(client, field)
+    if field in {
+        "does_balance",
+        "sicore",
+        "income_tax",
+        "personal_assets",
+        "payroll_enabled",
+        "group_enabled",
+        "active",
+    }:
+        return "Si" if value else "No"
+    if field == "budgeted_hours":
+        if value is None:
+            return ""
+        total_minutes = int(Decimal(value) * 60)
+        return f"{total_minutes // 60:02d}:{total_minutes % 60:02d}"
+    if field == "fees":
+        return float(value) if value is not None else ""
+    return value if value is not None else ""
 

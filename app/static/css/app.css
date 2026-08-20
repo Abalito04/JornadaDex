@@ -2693,6 +2693,7 @@ details.area-block[open] .accordion-label-open {
 
   .page-actions .button,
   .import-form button,
+  .import-form .button,
   .file-picker {
     width: 100%;
   }

@@ -26,6 +26,7 @@
       <input name="clients_file" type="file" accept=".csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" required>
     </label>
     <button type="submit"><i data-lucide="upload-cloud"></i>Importar clientes</button>
+    <a class="button secondary" href="{{ url_for('clients.export_xlsx') }}"><i data-lucide="download"></i>Exportar clientes</a>
   </form>
 </section>
 
