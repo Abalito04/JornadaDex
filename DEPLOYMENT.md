@@ -46,7 +46,7 @@ PASSWORD_RESET_MAX_AGE_MINUTES=60
 PUBLIC_APP_URL=https://jornadadex.com
 SMTP_FROM_EMAIL=JornadaDex <no-reply@jornadadex.com>
 BREVO_API_KEY=your-brevo-api-key
-DATABASE_URL=postgresql+psycopg://user:password@db:5432/time_control
+DATABASE_URL=postgresql://user:password@db:5432/time_control
 ```
 
 If you use a generic SMTP provider instead of Resend API, configure:

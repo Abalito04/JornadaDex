@@ -13,8 +13,14 @@ def clean_env_value(value):
 
 def normalize_database_url(url):
     url = clean_env_value(url)
-    if url and url.startswith("postgres://"):
-        return url.replace("postgres://", "postgresql://", 1)
+    if not url:
+        return url
+    if url.startswith("postgres://"):
+        url = url.replace("postgres://", "postgresql://", 1)
+    if url.startswith("postgresql+psycopg://"):
+        url = url.replace("postgresql+psycopg://", "postgresql+psycopg2://", 1)
+    elif url.startswith("postgresql+psycopg3://"):
+        url = url.replace("postgresql+psycopg3://", "postgresql+psycopg2://", 1)
     return url
 
 
